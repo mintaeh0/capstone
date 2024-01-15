@@ -184,9 +184,54 @@ class BMIPage extends StatelessWidget {
       child: Column(
         children: [
           Container(
-              height: 400,
+              padding: const EdgeInsets.all(30),
+              height: 300,
               child: LineChart(LineChartData(
                   borderData: FlBorderData(show: false),
+                  gridData: const FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        switch (value.toInt()) {
+                          case 1:
+                            return Text("Mon");
+                          case 3:
+                            return Text("Wed");
+                          case 5:
+                            return Text("Fri");
+                          case 7:
+                            return Text("Sun");
+                          default:
+                            return Text("");
+                        }
+                      },
+                    )),
+                    leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 50,
+                      reservedSize: 50,
+                      getTitlesWidget: (value, meta) {
+                        switch (value.toInt()) {
+                          case 0:
+                            return Text("");
+                          default:
+                            return Text(value.toInt().toString());
+                        }
+                      },
+                    )),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                  ),
                   minX: 1,
                   maxX: 7,
                   minY: 0,
