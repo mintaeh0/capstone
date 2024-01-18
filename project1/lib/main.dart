@@ -167,7 +167,32 @@ class DietPage extends StatelessWidget {
                     ),
                   ])),
             ),
-            ElevatedButton(onPressed: () {}, child: const Text("편집/등록")),
+            ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Container(
+                        height: 500,
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                        child: const Column(children: [
+                          TextField(
+                            decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.all(double.minPositive),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide()),
+                                hintText: "검색",
+                                prefixIcon: Icon(Icons.search)),
+                          )
+                        ]),
+                      );
+                    },
+                  );
+                },
+                child: const Text("편집/등록")),
           ],
         ));
   }
@@ -263,7 +288,31 @@ class BMIPage extends StatelessWidget {
             DataRow(cells: [DataCell(Text("골격근량")), DataCell(Text("30"))]),
             DataRow(cells: [DataCell(Text("체지방률")), DataCell(Text("10"))]),
           ]),
-          ElevatedButton(onPressed: () {}, child: const Text("편집/등록"))
+          ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return Container(
+                      height: 500,
+                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                      child: const Column(children: [
+                        TextField(
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.all(double.minPositive),
+                              border:
+                                  OutlineInputBorder(borderSide: BorderSide()),
+                              hintText: "검색",
+                              prefixIcon: Icon(Icons.search)),
+                        )
+                      ]),
+                    );
+                  },
+                );
+              },
+              child: const Text("편집/등록")),
         ],
       ),
     );
