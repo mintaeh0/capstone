@@ -276,6 +276,20 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Icon(Icons.person);
+    return Column(children: [
+      Text("민태호"),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("24"),
+          Text(" / "),
+          Text("174cm"),
+        ],
+      ),
+      Column(children: [
+        ElevatedButton(onPressed: () {}, child: Text("Cantact")),
+        ElevatedButton(onPressed: () {}, child: Text("Setting")),
+      ])
+    ]);
   }
 }
