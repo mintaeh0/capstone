@@ -100,19 +100,13 @@ class DietPage extends StatelessWidget {
               DataRow(cells: [DataCell(Text("칼로리")), DataCell(Text("2000"))]),
             ]),
             Container(
-                child: const SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
               child: Row(children: [
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
-                Text(" 식사1 "),
+                Text(" 아침 "),
+                Text(" 점심 "),
+                Text(" 저녁 "),
+                Text(" 간식 "),
               ]),
-            )),
+            ),
             Container(
               child: const SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -176,7 +170,7 @@ class DietPage extends StatelessWidget {
                       return Container(
                         height: 500,
                         margin:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                         child: const Column(children: [
                           TextField(
                             decoration: InputDecoration(
@@ -296,7 +290,8 @@ class BMIPage extends StatelessWidget {
                   builder: (context) {
                     return Container(
                       height: 500,
-                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: const Column(children: [
                         TextField(
                           decoration: InputDecoration(
@@ -327,18 +322,49 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       Text("민태호"),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("24"),
-          Text(" / "),
-          Text("174cm"),
-        ],
+      Container(
+          margin: EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("24"),
+              Text(" / "),
+              Text("174cm"),
+            ],
+          )),
+      GestureDetector(
+        onTap: () {
+          print("clicked");
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7), color: Colors.grey[300]),
+          margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          padding: EdgeInsets.all(10),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text("개인정보 수정"),
+            Icon(Icons.arrow_forward_ios, size: 15),
+          ]),
+        ),
       ),
-      Column(children: [
-        ElevatedButton(onPressed: () {}, child: Text("Cantact")),
-        ElevatedButton(onPressed: () {}, child: Text("Setting")),
-      ])
+      GestureDetector(
+          onTap: () {
+            print("clicked2");
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(7),
+                color: Colors.grey[300]),
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+            padding: EdgeInsets.all(10),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("신체스펙 수정"),
+                  Icon(Icons.arrow_forward_ios, size: 15),
+                ]),
+          ))
     ]);
   }
 }
