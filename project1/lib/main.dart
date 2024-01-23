@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/proflie_setting_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -334,7 +335,8 @@ class ProfilePage extends StatelessWidget {
           )),
       GestureDetector(
         onTap: () {
-          print("clicked");
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const ProflieSettingPage()));
         },
         child: Container(
           decoration: BoxDecoration(
