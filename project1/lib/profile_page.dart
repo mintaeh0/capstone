@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'proflie_setting_page.dart';
+import 'package:project1/bodyspec_set_page.dart';
+import 'proflie_set_page.dart';
 
 // 프로필 페이지
 class ProfilePage extends StatelessWidget {
@@ -22,7 +23,8 @@ class ProfilePage extends StatelessWidget {
       GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const ProflieSettingPage()));
+            builder: (context) => const ProflieSetPage(),
+          ));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -38,7 +40,9 @@ class ProfilePage extends StatelessWidget {
       ),
       GestureDetector(
           onTap: () {
-            print("clicked2");
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const BodyspecSetPage(),
+            ));
           },
           child: Container(
             decoration: BoxDecoration(
