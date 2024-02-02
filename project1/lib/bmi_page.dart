@@ -99,19 +99,10 @@ class BMIPage extends StatelessWidget {
                   builder: (context) {
                     return Container(
                       height: 500,
+                      width: double.infinity,
                       margin:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: const Column(children: [
-                        TextField(
-                          decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.all(double.minPositive),
-                              border:
-                                  OutlineInputBorder(borderSide: BorderSide()),
-                              hintText: "검색",
-                              prefixIcon: Icon(Icons.search)),
-                        )
-                      ]),
+                      child: const Column(children: [Text("체성분 등록/편집")]),
                     );
                   },
                 );
