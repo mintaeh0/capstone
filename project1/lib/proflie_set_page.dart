@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:project1/login_page.dart';
 
 class ProflieSetPage extends StatelessWidget {
-  const ProflieSetPage({super.key});
+  ProflieSetPage({super.key});
+
+  final storage = FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,15 @@ class ProflieSetPage extends StatelessWidget {
                 TextFormField(
                   initialValue: "174",
                 ),
-                ElevatedButton(onPressed: () {}, child: Text("수정"))
+                ElevatedButton(onPressed: () {}, child: Text("수정")),
+                ElevatedButton(
+                    onPressed: () async {
+                      await storage.delete(key: "uid");
+                      await storage.write(key: "loginState", value: "false");
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    child: Text("로그아웃")),
               ],
             )));
   }

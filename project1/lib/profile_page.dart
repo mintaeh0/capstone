@@ -22,7 +22,7 @@ class ProfilePage extends StatelessWidget {
       GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const ProflieSetPage(),
+            builder: (context) => ProflieSetPage(),
           ));
         },
         child: Container(
