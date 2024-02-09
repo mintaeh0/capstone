@@ -5,7 +5,9 @@ import 'package:project1/login_page.dart';
 import 'package:project1/main_page.dart';
 import 'firebase_options.dart';
 
-String? str = "";
+// 시작
+
+String? str = ""; // 로그인 정보 저장
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +22,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

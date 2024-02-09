@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 // 체성분 페이지
+
 class BMIPage extends StatelessWidget {
   const BMIPage({super.key});
 

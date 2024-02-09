@@ -3,6 +3,8 @@ import 'bmi_page.dart';
 import 'diet_page.dart';
 import 'profile_page.dart';
 
+// 메인 페이지
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -11,7 +13,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // BottomNavigation Body
   int _currentIndex = 0;
   List<Widget> body = const [
     DietPage(),
@@ -23,6 +24,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text("Test Title"),
       ),
       body: body[_currentIndex],

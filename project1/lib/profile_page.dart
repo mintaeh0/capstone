@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'proflie_set_page.dart';
 
 // 프로필 페이지
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 

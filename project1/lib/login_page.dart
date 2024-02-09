@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project1/main_page.dart';
 
+// 로그인 페이지
+
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'diet_add_page.dart';
 
 // 식단 페이지
+
 class DietPage extends StatelessWidget {
   const DietPage({super.key});
 

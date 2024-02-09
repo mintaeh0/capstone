@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project1/login_page.dart';
 
+// 프로필 설정 페이지
+
 class ProflieSetPage extends StatelessWidget {
   ProflieSetPage({super.key});
 
