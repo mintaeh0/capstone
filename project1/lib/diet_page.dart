@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'diet_add_page.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 // 식단 페이지
+
+String getToday() {
+  return DateFormat('yyyy-MM-dd').format(DateTime.now());
+}
 
 class DietPage extends StatelessWidget {
   const DietPage({super.key});
@@ -12,48 +18,59 @@ class DietPage extends StatelessWidget {
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.keyboard_arrow_left),
-                Text("2023-11-16"),
+                Text(getToday()),
                 Icon(Icons.keyboard_arrow_right)
               ],
             ),
+            Stack(alignment: Alignment.center, children: [
+              Text("2000 kcal"),
+              Container(
+                  height: 200,
+                  child: PieChart(PieChartData(sections: [
+                    PieChartSectionData(
+                      title: "탄수화물",
+                      showTitle: true,
+                      value: 200,
+                      radius: 50,
+                    ),
+                    PieChartSectionData(
+                      title: "단백질",
+                      showTitle: true,
+                      value: 100,
+                      radius: 50,
+                    ),
+                    PieChartSectionData(
+                      title: "지방",
+                      showTitle: true,
+                      value: 60,
+                      radius: 50,
+                    ),
+                  ])))
+            ]),
             DataTable(columns: const [
               DataColumn(label: Text("성분")),
               DataColumn(label: Text("수치"))
             ], rows: const [
               DataRow(cells: [DataCell(Text("탄수화물")), DataCell(Text("200"))]),
               DataRow(cells: [DataCell(Text("단백질")), DataCell(Text("100"))]),
-              DataRow(cells: [DataCell(Text("지방")), DataCell(Text("50"))]),
+              DataRow(cells: [DataCell(Text("지방")), DataCell(Text("60"))]),
               DataRow(cells: [DataCell(Text("칼로리")), DataCell(Text("2000"))]),
             ]),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DietAddPage()));
+                        builder: (context) =>
+                            DietAddPage(getToday(), "breakfast")));
                   },
                   child: Text("아침")),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DietAddPage()));
-                  },
-                  child: Text("점심")),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DietAddPage()));
-                  },
-                  child: Text("저녁")),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DietAddPage()));
-                  },
-                  child: Text("간식")),
+              ElevatedButton(onPressed: () {}, child: Text("점심")),
+              ElevatedButton(onPressed: () {}, child: Text("저녁")),
+              ElevatedButton(onPressed: () {}, child: Text("간식")),
             ]),
           ],
         ));

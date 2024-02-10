@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 // 식단 추가 페이지
 
 class DietAddPage extends StatelessWidget {
-  const DietAddPage({super.key});
+  final String mealType;
+  final String mealDate;
+
+  const DietAddPage(this.mealDate, this.mealType, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,11 @@ class DietAddPage extends StatelessWidget {
                   TextFormField(
                     decoration: InputDecoration(hintText: "칼로리(kcal)"),
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text("저장"))
+                  ElevatedButton(
+                      onPressed: () {
+                        print(mealDate + " " + mealType);
+                      },
+                      child: Text("저장"))
                 ]),
               );
             },

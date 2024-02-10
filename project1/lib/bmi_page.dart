@@ -103,7 +103,19 @@ class BMIPage extends StatelessWidget {
                       width: double.infinity,
                       margin:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: const Column(children: [Text("체성분 등록/편집")]),
+                      child: Column(children: [
+                        Text("체성분 등록/편집"),
+                        TextFormField(
+                          decoration: InputDecoration(hintText: "체중"),
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(hintText: "골격근량"),
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(hintText: "체지방률"),
+                        ),
+                        ElevatedButton(onPressed: () {}, child: Text("편집/등록"))
+                      ]),
                     );
                   },
                 );
