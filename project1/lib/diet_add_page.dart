@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'functions/add_diet_info.dart';
 
 // 식단 추가 페이지
 
@@ -47,9 +48,7 @@ class DietAddPage extends StatelessWidget {
                     decoration: InputDecoration(hintText: "칼로리(kcal)"),
                   ),
                   ElevatedButton(
-                      onPressed: () {
-                        print(mealDate + " " + mealType);
-                      },
+                      onPressed: () => addDietInfo(mealDate, mealType),
                       child: Text("저장"))
                 ]),
               );

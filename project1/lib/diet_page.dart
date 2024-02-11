@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'diet_add_page.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
+import 'functions/date_controller.dart';
 
 // 식단 페이지
-
-String getToday() {
-  return DateFormat('yyyy-MM-dd').format(DateTime.now());
-}
 
 class DietPage extends StatelessWidget {
   const DietPage({super.key});
