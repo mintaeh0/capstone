@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'bmi_page.dart';
+import 'inbody_page.dart';
 import 'diet_page.dart';
 import 'profile_page.dart';
 
@@ -14,9 +14,9 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
-  List<Widget> body = const [
+  List<Widget> body = [
     DietPage(),
-    BMIPage(),
+    InbodyPage(),
     ProfilePage(),
   ];
 

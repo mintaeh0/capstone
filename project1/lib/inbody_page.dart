@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:project1/functions/add_inbody_func.dart';
+import 'package:project1/functions/date_controller.dart';
+import 'package:project1/widgets/std_text_form.dart';
 
 // 체성분 페이지
 
-class BMIPage extends StatelessWidget {
-  const BMIPage({super.key});
+class InbodyPage extends StatelessWidget {
+  InbodyPage({super.key});
+
+  final weightController = TextEditingController();
+  final musclemassController = TextEditingController();
+  final bodyFatController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    Map bodyMap;
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -99,22 +108,30 @@ class BMIPage extends StatelessWidget {
                   isScrollControlled: true,
                   builder: (context) {
                     return Container(
-                      height: 500,
                       width: double.infinity,
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
                       margin:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: Column(children: [
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
                         Text("체성분 등록/편집"),
-                        TextFormField(
-                          decoration: InputDecoration(hintText: "체중"),
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(hintText: "골격근량"),
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(hintText: "체지방률"),
-                        ),
-                        ElevatedButton(onPressed: () {}, child: Text("편집/등록"))
+                        StdTextForm(
+                            hint: "체중(kg)", controller: weightController),
+                        StdTextForm(
+                            hint: "골격근량(kg)", controller: musclemassController),
+                        StdTextForm(
+                            hint: "체지방률(%)", controller: bodyFatController),
+                        ElevatedButton(
+                            onPressed: () {
+                              bodyMap = {
+                                "weight": int.parse(weightController.text),
+                                "musclemass":
+                                    int.parse(musclemassController.text),
+                                "bodyfat": int.parse(bodyFatController.text),
+                              };
+                              addInbodyFunc(getToday(), bodyMap);
+                            },
+                            child: Text("편집/등록"))
                       ]),
                     );
                   },

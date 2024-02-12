@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project1/main_page.dart';
-import 'functions/login_state_info.dart';
-import 'functions/uid_info.dart';
+import 'functions/login_state_controller.dart';
+import 'functions/uid_info_controller.dart';
 
 // 로그인 페이지
 

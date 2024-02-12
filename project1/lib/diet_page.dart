@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'diet_add_page.dart';
+import 'add_diet_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'functions/date_controller.dart';
 
