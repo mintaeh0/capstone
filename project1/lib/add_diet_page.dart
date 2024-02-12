@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project1/widgets/diet_list_builder.dart';
 import 'functions/add_diet_func.dart';
 import 'widgets/std_text_form.dart';
 
@@ -25,9 +26,9 @@ class DietAddPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("식단 추가"),
+        title: Text("hello"),
       ),
-      body: Text("식단 추가"),
+      body: DietListBuilder(mealDate, mealType),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

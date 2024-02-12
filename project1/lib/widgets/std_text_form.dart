@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class StdTextForm extends StatelessWidget {
   final String? hint;
@@ -13,6 +14,8 @@ class StdTextForm extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(hintText: hint),
       controller: controller,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
     );
   }
 }

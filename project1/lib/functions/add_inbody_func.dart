@@ -4,7 +4,7 @@ import 'uid_info_controller.dart';
 addInbodyFunc(String bodyDate, Map bodyMap) async {
   // Firebase 경로 설정
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final mealRef = firestore
+  final inbodyRef = firestore
       .collection("users")
       .doc(await getUid())
       .collection("date")
@@ -12,5 +12,5 @@ addInbodyFunc(String bodyDate, Map bodyMap) async {
 
   String bodyFieldName = "inbody";
 
-  mealRef.set({bodyFieldName: bodyMap}, SetOptions(merge: true));
+  inbodyRef.set({bodyFieldName: bodyMap}, SetOptions(merge: true));
 }
