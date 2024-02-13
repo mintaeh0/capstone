@@ -38,18 +38,42 @@ class _DietListBuilderState extends State<DietListBuilder> {
             .doc(widget.mealDate)
             .snapshots(),
         builder: (context, snapshot) {
-          var dataArray =
-              (snapshot.data?.get(widget.mealType) ?? []) as List<dynamic>;
+          // var dataArray = snapshot.hasData && snapshot.data!.exists
+          //     ? snapshot.data?.get(widget.mealType)
+          //     : [];
 
-          return ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemCount: dataArray.length,
-            itemBuilder: (context, index) {
-              var mapData = dataArray[index] as Map<String, dynamic>;
-              return DietListContainer(mapData);
-            },
-          );
+          // var dataArray =
+          //     (snapshot.data?.get(widget.mealType) ?? []) as List<dynamic>;
+
+          // return ListView.builder(
+          //   shrinkWrap: true,
+          //   scrollDirection: Axis.vertical,
+          //   itemCount: dataArray.length,
+          //   itemBuilder: (context, index) {
+          //     var mapData = dataArray[index] as Map<String, dynamic>;
+          //     return DietListContainer(mapData);
+          //   },
+          // );
+          dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
+
+          if (snapshot.hasData &&
+              snapshot.data!.exists &&
+              snapshotData != null &&
+              snapshotData.containsKey(widget.mealType)) {
+            dynamic dataArray = snapshot.data?.get(widget.mealType);
+
+            return ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: dataArray.length,
+              itemBuilder: (context, index) {
+                var mapData = dataArray[index] as Map<String, dynamic>;
+                return DietListContainer(mapData);
+              },
+            );
+          } else {
+            return Center(child: Text("식단을 추가해보세요!"));
+          }
         });
   }
 
