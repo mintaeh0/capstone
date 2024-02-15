@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project1/widgets/diet_pie_chart.dart';
 import 'add_diet_page.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'functions/date_controller.dart';
 import 'widgets/diet_table.dart';
 
@@ -23,31 +23,7 @@ class DietPage extends StatelessWidget {
                 Icon(Icons.keyboard_arrow_right)
               ],
             ),
-            Stack(alignment: Alignment.center, children: [
-              Text("2000 kcal"),
-              Container(
-                  height: 200,
-                  child: PieChart(PieChartData(sections: [
-                    PieChartSectionData(
-                      title: "탄수화물",
-                      showTitle: true,
-                      value: 200,
-                      radius: 50,
-                    ),
-                    PieChartSectionData(
-                      title: "단백질",
-                      showTitle: true,
-                      value: 100,
-                      radius: 50,
-                    ),
-                    PieChartSectionData(
-                      title: "지방",
-                      showTitle: true,
-                      value: 60,
-                      radius: 50,
-                    ),
-                  ])))
-            ]),
+            DietPieChart(getToday(), "breakfast"),
             DietTable(getToday(), "breakfast"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               ElevatedButton(
