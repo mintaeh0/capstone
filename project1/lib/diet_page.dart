@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'add_diet_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'functions/date_controller.dart';
+import 'widgets/diet_table.dart';
 
 // 식단 페이지
 
@@ -47,21 +48,13 @@ class DietPage extends StatelessWidget {
                     ),
                   ])))
             ]),
-            DataTable(columns: const [
-              DataColumn(label: Text("성분")),
-              DataColumn(label: Text("수치"))
-            ], rows: const [
-              DataRow(cells: [DataCell(Text("탄수화물")), DataCell(Text("200"))]),
-              DataRow(cells: [DataCell(Text("단백질")), DataCell(Text("100"))]),
-              DataRow(cells: [DataCell(Text("지방")), DataCell(Text("60"))]),
-              DataRow(cells: [DataCell(Text("칼로리")), DataCell(Text("2000"))]),
-            ]),
+            DietTable(getToday(), "breakfast"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            DietAddPage(getToday(), "breakfast")));
+                            AddDietPage(getToday(), "breakfast")));
                   },
                   child: Text("아침")),
               ElevatedButton(onPressed: () {}, child: Text("점심")),

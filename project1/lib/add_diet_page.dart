@@ -5,7 +5,7 @@ import 'widgets/std_text_form.dart';
 
 // 식단 추가 페이지
 
-class DietAddPage extends StatelessWidget {
+class AddDietPage extends StatelessWidget {
   final String mealType;
   final String mealDate;
 
@@ -17,7 +17,7 @@ class DietAddPage extends StatelessWidget {
   final kcalController = TextEditingController();
   final amountController = TextEditingController();
 
-  DietAddPage(this.mealDate, this.mealType, {super.key});
+  AddDietPage(this.mealDate, this.mealType, {super.key});
 
   @override
   Widget build(BuildContext context) {

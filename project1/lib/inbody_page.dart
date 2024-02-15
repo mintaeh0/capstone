@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:project1/functions/add_inbody_func.dart';
-import 'package:project1/functions/date_controller.dart';
+import 'functions/add_inbody_func.dart';
+import 'functions/date_controller.dart';
 import 'package:project1/widgets/std_text_form.dart';
+import 'widgets/inbody_table.dart';
 
 // 체성분 페이지
 
@@ -85,22 +86,15 @@ class InbodyPage extends StatelessWidget {
                       FlSpot(7, 68),
                     ])
                   ]))),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.keyboard_arrow_left),
-              Text("2024-01-13"),
+              Text(getToday()),
               Icon(Icons.keyboard_arrow_right)
             ],
           ),
-          DataTable(columns: const [
-            DataColumn(label: Text("항목")),
-            DataColumn(label: Text("수치"))
-          ], rows: const [
-            DataRow(cells: [DataCell(Text("체중")), DataCell(Text("70"))]),
-            DataRow(cells: [DataCell(Text("골격근량")), DataCell(Text("30"))]),
-            DataRow(cells: [DataCell(Text("체지방률")), DataCell(Text("10"))]),
-          ]),
+          InbodyTable(getToday()),
           ElevatedButton(
               onPressed: () {
                 showModalBottomSheet(

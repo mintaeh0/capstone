@@ -38,22 +38,6 @@ class _DietListBuilderState extends State<DietListBuilder> {
             .doc(widget.mealDate)
             .snapshots(),
         builder: (context, snapshot) {
-          // var dataArray = snapshot.hasData && snapshot.data!.exists
-          //     ? snapshot.data?.get(widget.mealType)
-          //     : [];
-
-          // var dataArray =
-          //     (snapshot.data?.get(widget.mealType) ?? []) as List<dynamic>;
-
-          // return ListView.builder(
-          //   shrinkWrap: true,
-          //   scrollDirection: Axis.vertical,
-          //   itemCount: dataArray.length,
-          //   itemBuilder: (context, index) {
-          //     var mapData = dataArray[index] as Map<String, dynamic>;
-          //     return DietListContainer(mapData);
-          //   },
-          // );
           dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
 
           if (snapshot.hasData &&
