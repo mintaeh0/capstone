@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project1/widgets/diet_pie_chart.dart';
+import 'package:project1/widgets/diet_chart.dart';
 import 'add_diet_page.dart';
 import 'functions/date_controller.dart';
-import 'widgets/diet_table.dart';
 
 // 식단 페이지
 
@@ -23,8 +22,7 @@ class DietPage extends StatelessWidget {
                 Icon(Icons.keyboard_arrow_right)
               ],
             ),
-            DietPieChart(getToday(), "breakfast"),
-            DietTable(getToday(), "breakfast"),
+            DietChart(getToday(), "breakfast"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               ElevatedButton(
                   onPressed: () {
