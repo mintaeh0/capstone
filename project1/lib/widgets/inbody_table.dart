@@ -38,6 +38,7 @@ class _InbodyTableState extends State<InbodyTable> {
           .snapshots(),
       builder: (context, snapshot) {
         dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
+        List array;
 
         if (snapshot.hasData &&
             snapshot.data!.exists &&
@@ -45,27 +46,35 @@ class _InbodyTableState extends State<InbodyTable> {
             snapshotData.containsKey("inbody")) {
           dynamic bodyData = snapshot.data?.get("inbody");
 
-          return DataTable(columns: const [
-            DataColumn(label: Text("항목")),
-            DataColumn(label: Text("수치"))
-          ], rows: [
-            DataRow(cells: [
-              DataCell(Text("체중")),
-              DataCell(Text(bodyData["weight"].toString()))
-            ]),
-            DataRow(cells: [
-              DataCell(Text("골격근량")),
-              DataCell(Text(bodyData["musclemass"].toString()))
-            ]),
-            DataRow(cells: [
-              DataCell(Text("체지방률")),
-              DataCell(Text(bodyData["bodyfat"].toString()))
-            ]),
-          ]);
+          array = [
+            bodyData["weight"],
+            bodyData["musclemass"],
+            bodyData["bodyfat"]
+          ];
         } else {
-          return Text("no data!");
+          array = [0, 0, 0];
         }
+
+        return BodyTable(array);
       },
     );
   }
+}
+
+Widget BodyTable(List bodylist) {
+  return DataTable(columns: const [
+    DataColumn(label: Text("항목")),
+    DataColumn(label: Text("수치"))
+  ], rows: [
+    DataRow(
+        cells: [DataCell(Text("체중")), DataCell(Text(bodylist[0].toString()))]),
+    DataRow(cells: [
+      DataCell(Text("골격근량")),
+      DataCell(Text(bodylist[1].toString()))
+    ]),
+    DataRow(cells: [
+      DataCell(Text("체지방률")),
+      DataCell(Text(bodylist[2].toString()))
+    ]),
+  ]);
 }

@@ -40,6 +40,7 @@ class _DietChartState extends State<DietChart> {
             .snapshots(),
         builder: (context, snapshot) {
           dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
+          List array;
 
           if (snapshot.hasData &&
               snapshot.data!.exists &&
@@ -58,17 +59,17 @@ class _DietChartState extends State<DietChart> {
               kcal += ch["kcal"] * ch["amount"];
             }
 
-            List array = [carbo, protein, fat, kcal];
-
-            return Column(
-              children: [
-                DietPieChart(array),
-                DietTable(array),
-              ],
-            );
+            array = [carbo, protein, fat, kcal];
           } else {
-            return Text("Error");
+            array = [0, 0, 0, 0];
           }
+
+          return Column(
+            children: [
+              DietPieChart(array),
+              DietTable(array),
+            ],
+          );
         });
   }
 }
@@ -80,23 +81,23 @@ Widget DietPieChart(List list) {
         height: 200,
         child: PieChart(PieChartData(sections: [
           PieChartSectionData(
-            title: "탄수화물",
-            showTitle: true,
-            value: list[0].toDouble(),
-            radius: 50,
-          ),
+              title: "탄수화물",
+              showTitle: true,
+              value: list[0].toDouble(),
+              radius: 50,
+              color: Colors.lightBlue.shade200),
           PieChartSectionData(
-            title: "단백질",
-            showTitle: true,
-            value: list[1].toDouble(),
-            radius: 50,
-          ),
+              title: "단백질",
+              showTitle: true,
+              value: list[1].toDouble(),
+              radius: 50,
+              color: Colors.indigo.shade200),
           PieChartSectionData(
-            title: "지방",
-            showTitle: true,
-            value: list[2].toDouble(),
-            radius: 50,
-          ),
+              title: "지방",
+              showTitle: true,
+              value: list[2].toDouble(),
+              radius: 50,
+              color: Colors.teal.shade200),
         ])))
   ]);
 }
