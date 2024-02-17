@@ -7,12 +7,39 @@ import 'widgets/inbody_table.dart';
 
 // 체성분 페이지
 
-class InbodyPage extends StatelessWidget {
-  InbodyPage({super.key});
+class InbodyPage extends StatefulWidget {
+  const InbodyPage({super.key});
 
+  @override
+  State<InbodyPage> createState() => _InbodyPageState();
+}
+
+class _InbodyPageState extends State<InbodyPage> {
   final weightController = TextEditingController();
   final musclemassController = TextEditingController();
   final bodyFatController = TextEditingController();
+
+  String dateString = getTodayString();
+
+  void changeDate(DateTime datetime) {
+    setState(() {
+      dateString = dateToString(datetime);
+    });
+  }
+
+  void incDate() {
+    var stor = stringToDate(dateString).add(Duration(days: 1));
+    setState(() {
+      dateString = dateToString(stor);
+    });
+  }
+
+  void decDate() {
+    var stor = stringToDate(dateString).subtract(Duration(days: 1));
+    setState(() {
+      dateString = dateToString(stor);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,12 +116,40 @@ class InbodyPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.keyboard_arrow_left),
-              Text(getToday()),
-              Icon(Icons.keyboard_arrow_right)
+              IconButton(
+                  onPressed: () {
+                    decDate();
+                  },
+                  icon: Icon(
+                    Icons.keyboard_arrow_left,
+                    size: 40,
+                  )),
+              Text(dateString, style: TextStyle(fontSize: 20)),
+              IconButton(
+                  onPressed: () async {
+                    DateTime? datetime = await showDatePicker(
+                        context: context,
+                        initialDate: stringToDate(dateString),
+                        firstDate: DateTime(2024),
+                        lastDate: DateTime.now());
+                    if (datetime != null) {
+                      changeDate(datetime);
+                    }
+                  },
+                  icon: Icon(Icons.calendar_today)),
+              IconButton(
+                  onPressed: () {
+                    if (dateString != getTodayString()) {
+                      incDate();
+                    }
+                  },
+                  icon: Icon(
+                    Icons.keyboard_arrow_right,
+                    size: 40,
+                  )),
             ],
           ),
-          InbodyTable(getToday()),
+          InbodyTable(dateString),
           ElevatedButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -123,7 +178,7 @@ class InbodyPage extends StatelessWidget {
                                     int.parse(musclemassController.text),
                                 "bodyfat": int.parse(bodyFatController.text),
                               };
-                              addInbodyFunc(getToday(), bodyMap);
+                              addInbodyFunc(dateString, bodyMap);
                             },
                             child: Text("편집/등록"))
                       ]),

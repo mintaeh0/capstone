@@ -3,10 +3,35 @@ import 'package:project1/widgets/diet_chart.dart';
 import 'add_diet_page.dart';
 import 'functions/date_controller.dart';
 
-// 식단 페이지
-
-class DietPage extends StatelessWidget {
+class DietPage extends StatefulWidget {
   const DietPage({super.key});
+
+  @override
+  State<DietPage> createState() => _DietPageState();
+}
+
+class _DietPageState extends State<DietPage> {
+  String dateString = getTodayString();
+
+  void changeDate(DateTime datetime) {
+    setState(() {
+      dateString = dateToString(datetime);
+    });
+  }
+
+  void incDate() {
+    var stor = stringToDate(dateString).add(Duration(days: 1));
+    setState(() {
+      dateString = dateToString(stor);
+    });
+  }
+
+  void decDate() {
+    var stor = stringToDate(dateString).subtract(Duration(days: 1));
+    setState(() {
+      dateString = dateToString(stor);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,18 +42,46 @@ class DietPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.keyboard_arrow_left),
-                Text(getToday()),
-                Icon(Icons.keyboard_arrow_right)
+                IconButton(
+                    onPressed: () {
+                      decDate();
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_left,
+                      size: 40,
+                    )),
+                Text(dateString, style: TextStyle(fontSize: 20)),
+                IconButton(
+                    onPressed: () async {
+                      DateTime? datetime = await showDatePicker(
+                          context: context,
+                          initialDate: stringToDate(dateString),
+                          firstDate: DateTime(2024),
+                          lastDate: DateTime.now());
+                      if (datetime != null) {
+                        changeDate(datetime);
+                      }
+                    },
+                    icon: Icon(Icons.calendar_today)),
+                IconButton(
+                    onPressed: () {
+                      if (dateString != getTodayString()) {
+                        incDate();
+                      }
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_right,
+                      size: 40,
+                    )),
               ],
             ),
-            DietChart(getToday(), "breakfast"),
+            DietChart(dateString, "breakfast"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            AddDietPage(getToday(), "breakfast")));
+                            AddDietPage(dateString, "breakfast")));
                   },
                   child: Text("아침")),
               ElevatedButton(onPressed: () {}, child: Text("점심")),

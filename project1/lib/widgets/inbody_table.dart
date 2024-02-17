@@ -62,9 +62,9 @@ class _InbodyTableState extends State<InbodyTable> {
 }
 
 Widget BodyTable(List bodylist) {
-  return DataTable(columns: const [
-    DataColumn(label: Text("항목")),
-    DataColumn(label: Text("수치"))
+  return DataTable(headingRowHeight: 0, columns: const [
+    DataColumn(label: Text("항목항목항목")),
+    DataColumn(label: Text("수치수치"))
   ], rows: [
     DataRow(
         cells: [DataCell(Text("체중")), DataCell(Text(bodylist[0].toString()))]),

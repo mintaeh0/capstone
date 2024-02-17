@@ -103,9 +103,9 @@ Widget DietPieChart(List list) {
 }
 
 Widget DietTable(List list) {
-  return DataTable(columns: const [
-    DataColumn(label: Text("성분")),
-    DataColumn(label: Text("수치"))
+  return DataTable(headingRowHeight: 0, columns: const [
+    DataColumn(label: Text("성분성분성분")),
+    DataColumn(label: Text("수치수치수치"))
   ], rows: [
     DataRow(cells: [
       DataCell(Text("탄수화물")),
