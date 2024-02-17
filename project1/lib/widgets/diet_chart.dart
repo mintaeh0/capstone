@@ -75,30 +75,43 @@ class _DietChartState extends State<DietChart> {
 }
 
 Widget DietPieChart(List list) {
+  List<PieChartSectionData> chartSectionList;
+  if (list[0] == 0 && list[1] == 0 && list[2] == 0) {
+    chartSectionList = [
+      PieChartSectionData(
+          title: "none",
+          showTitle: false,
+          value: 1,
+          radius: 50,
+          color: Colors.grey.shade300),
+    ];
+  } else {
+    chartSectionList = [
+      PieChartSectionData(
+          title: "탄수화물",
+          showTitle: true,
+          value: list[0].toDouble(),
+          radius: 50,
+          color: Colors.lightBlue.shade200),
+      PieChartSectionData(
+          title: "단백질",
+          showTitle: true,
+          value: list[1].toDouble(),
+          radius: 50,
+          color: Colors.indigo.shade200),
+      PieChartSectionData(
+          title: "지방",
+          showTitle: true,
+          value: list[2].toDouble(),
+          radius: 50,
+          color: Colors.teal.shade200),
+    ];
+  }
+
   return Stack(alignment: Alignment.center, children: [
     Text(list[3].toString() + " kcal"),
     Container(
-        height: 200,
-        child: PieChart(PieChartData(sections: [
-          PieChartSectionData(
-              title: "탄수화물",
-              showTitle: true,
-              value: list[0].toDouble(),
-              radius: 50,
-              color: Colors.lightBlue.shade200),
-          PieChartSectionData(
-              title: "단백질",
-              showTitle: true,
-              value: list[1].toDouble(),
-              radius: 50,
-              color: Colors.indigo.shade200),
-          PieChartSectionData(
-              title: "지방",
-              showTitle: true,
-              value: list[2].toDouble(),
-              radius: 50,
-              color: Colors.teal.shade200),
-        ])))
+        height: 200, child: PieChart(PieChartData(sections: chartSectionList)))
   ]);
 }
 
