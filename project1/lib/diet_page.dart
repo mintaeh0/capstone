@@ -84,9 +84,27 @@ class _DietPageState extends State<DietPage> {
                             AddDietPage(dateString, "breakfast")));
                   },
                   child: Text("아침")),
-              ElevatedButton(onPressed: () {}, child: Text("점심")),
-              ElevatedButton(onPressed: () {}, child: Text("저녁")),
-              ElevatedButton(onPressed: () {}, child: Text("간식")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            AddDietPage(dateString, "lunch")));
+                  },
+                  child: Text("점심")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            AddDietPage(dateString, "dinner")));
+                  },
+                  child: Text("저녁")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            AddDietPage(dateString, "snack")));
+                  },
+                  child: Text("간식")),
             ]),
           ],
         ));

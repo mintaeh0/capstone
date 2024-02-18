@@ -26,7 +26,7 @@ class AddDietPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("hello"),
+        title: Text(mealType),
       ),
       body: DietListBuilder(mealDate, mealType),
       floatingActionButton: FloatingActionButton(
