@@ -68,6 +68,7 @@ class _DietChartState extends State<DietChart> {
               snapshot.data!.exists &&
               snapshotData != null) {
             snapshotData.remove("inbody");
+            snapshotData.remove("docdate");
             num carbo = 0;
             num protein = 0;
             num fat = 0;

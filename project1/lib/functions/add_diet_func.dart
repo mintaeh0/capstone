@@ -11,7 +11,6 @@ addDietFunc(String mealDate, String mealType, Map foodMap) async {
       .doc(mealDate);
 
   dynamic stor;
-  bool isNull;
 
   // 데이터 읽기
   await mealRef.get().then((DocumentSnapshot doc) {
@@ -19,9 +18,8 @@ addDietFunc(String mealDate, String mealType, Map foodMap) async {
   });
 
   // 비어있는지 검사
-  isNull = stor == null ? true : stor[mealType] == null;
 
-  if (isNull) {
+  if (stor == null ? true : stor[mealType] == null) {
     // 비어있을 경우 새로 저장
     mealRef.set({
       mealType: [foodMap]
@@ -31,5 +29,9 @@ addDietFunc(String mealDate, String mealType, Map foodMap) async {
     mealRef.update({
       mealType: FieldValue.arrayUnion([foodMap])
     });
+  }
+
+  if (stor == null ? true : stor["docdate"] == null) {
+    mealRef.set({"docdate": mealDate}, SetOptions(merge: true));
   }
 }

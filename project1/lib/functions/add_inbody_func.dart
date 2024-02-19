@@ -11,6 +11,15 @@ addInbodyFunc(String bodyDate, Map bodyMap) async {
       .doc(bodyDate);
 
   String bodyFieldName = "inbody";
+  dynamic stor;
+
+  inbodyRef.get().then((DocumentSnapshot doc) {
+    stor = doc.data();
+  });
 
   inbodyRef.set({bodyFieldName: bodyMap}, SetOptions(merge: true));
+
+  if (stor == null ? true : stor["docdate"] == null) {
+    inbodyRef.set({"docdate": bodyDate}, SetOptions(merge: true));
+  }
 }
