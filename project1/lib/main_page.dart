@@ -45,7 +45,7 @@ class _MainPageState extends State<MainPage> {
             icon: Icon(Icons.monitor_weight),
           ),
           BottomNavigationBarItem(
-            label: '프로필',
+            label: '내 정보',
             icon: Icon(Icons.person),
           ),
         ],
