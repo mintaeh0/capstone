@@ -47,84 +47,89 @@ class _InbodyPageState extends State<InbodyPage> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          InbodyChart(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    decDate();
-                  },
-                  icon: Icon(
-                    Icons.keyboard_arrow_left,
-                    size: 40,
-                  )),
-              Text(dateString, style: TextStyle(fontSize: 20)),
-              IconButton(
-                  onPressed: () async {
-                    DateTime? datetime = await showDatePicker(
-                        context: context,
-                        initialDate: stringToDate(dateString),
-                        firstDate: DateTime(2024),
-                        lastDate: DateTime.now());
-                    if (datetime != null) {
-                      changeDate(datetime);
-                    }
-                  },
-                  icon: Icon(Icons.calendar_today)),
-              IconButton(
-                  onPressed: () {
-                    if (dateString != getTodayString()) {
-                      incDate();
-                    }
-                  },
-                  icon: Icon(
-                    Icons.keyboard_arrow_right,
-                    size: 40,
-                  )),
-            ],
-          ),
-          InbodyTable(dateString),
-          ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Text("체성분 등록/편집"),
-                        StdTextForm(
-                            hint: "체중(kg)", controller: weightController),
-                        StdTextForm(
-                            hint: "골격근량(kg)", controller: musclemassController),
-                        StdTextForm(
-                            hint: "체지방률(%)", controller: bodyFatController),
-                        ElevatedButton(
-                            onPressed: () {
-                              bodyMap = {
-                                "weight": int.parse(weightController.text),
-                                "musclemass":
-                                    int.parse(musclemassController.text),
-                                "bodyfat": int.parse(bodyFatController.text),
-                              };
-                              addInbodyFunc(dateString, bodyMap);
-                            },
-                            child: Text("편집/등록"))
-                      ]),
-                    );
-                  },
-                );
-              },
-              child: const Text("편집/등록")),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      decDate();
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_left,
+                      size: 40,
+                    )),
+                Text(dateString, style: TextStyle(fontSize: 20)),
+                IconButton(
+                    onPressed: () async {
+                      DateTime? datetime = await showDatePicker(
+                          context: context,
+                          initialDate: stringToDate(dateString),
+                          firstDate: DateTime(2024),
+                          lastDate: DateTime.now());
+                      if (datetime != null) {
+                        changeDate(datetime);
+                      }
+                    },
+                    icon: Icon(Icons.calendar_today)),
+                IconButton(
+                    onPressed: () {
+                      if (dateString != getTodayString()) {
+                        incDate();
+                      }
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_right,
+                      size: 40,
+                    )),
+              ],
+            ),
+            InbodyTable(dateString),
+            ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Text("체성분 등록/편집"),
+                          StdTextForm(
+                              hint: "체중(kg)", controller: weightController),
+                          StdTextForm(
+                              hint: "골격근량(kg)",
+                              controller: musclemassController),
+                          StdTextForm(
+                              hint: "체지방률(%)", controller: bodyFatController),
+                          ElevatedButton(
+                              onPressed: () {
+                                bodyMap = {
+                                  "weight": int.parse(weightController.text),
+                                  "musclemass":
+                                      int.parse(musclemassController.text),
+                                  "bodyfat": int.parse(bodyFatController.text),
+                                };
+                                addInbodyFunc(dateString, bodyMap);
+                              },
+                              child: Text("편집/등록"))
+                        ]),
+                      );
+                    },
+                  );
+                },
+                child: const Text("편집/등록")),
+            InbodyChart(),
+          ],
+        ),
       ),
     );
   }

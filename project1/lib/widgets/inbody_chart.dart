@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../functions/uid_info_controller.dart';
+import 'dart:math';
 
 class InbodyChart extends StatefulWidget {
   const InbodyChart({super.key});
@@ -40,72 +41,106 @@ class _InbodyChartState extends State<InbodyChart> {
           .snapshots(),
       builder: (context, snapshot) {
         dynamic snapshotData = snapshot.data?.docs;
-        List<num> nlist = [];
+
+        List<num> weightData = [];
+        List<num> musclemassData = [];
+        List<num> bodyfatData = [];
+
+        List<String> dateData = [];
+
+        List<FlSpot> weightList;
+        List<FlSpot> musclemassList;
+        List<FlSpot> bodyfatList;
 
         if (snapshot.hasData && snapshotData != null) {
-          print(snapshotData.length);
           snapshotData.forEach((data) {
-            nlist.add(data.get("inbody")["weight"]);
+            weightData.add(data.get("inbody")["weight"]);
+            musclemassData.add(data.get("inbody")["musclemass"]);
+            bodyfatData.add(data.get("inbody")["bodyfat"]);
+            dateData.add(data.get("docdate"));
           });
-          List<FlSpot> array = [
-            FlSpot(1, nlist[4].toDouble()),
-            FlSpot(2, nlist[3].toDouble()),
-            FlSpot(3, nlist[2].toDouble()),
-            FlSpot(4, nlist[1].toDouble()),
-            FlSpot(5, nlist[0].toDouble())
-          ];
-          return InbodyLineChart(array);
+          weightList = makeFlSpotList(List.from(weightData.reversed));
+          musclemassList = makeFlSpotList(List.from(musclemassData.reversed));
+          bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
         } else {
-          return Text("Error");
+          weightList = [];
+          musclemassList = [];
+          bodyfatList = [];
         }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "체중",
+              style: TextStyle(fontSize: 20),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: inbodyLineChart(weightList, dateData),
+            ),
+            Text(
+              "골격근량",
+              style: TextStyle(fontSize: 20),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: inbodyLineChart(musclemassList, dateData),
+            ),
+            Text(
+              "체지방률",
+              style: TextStyle(fontSize: 20),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: inbodyLineChart(bodyfatList, dateData),
+            ),
+          ],
+        );
       },
     );
   }
 }
 
-Widget InbodyLineChart(List<FlSpot> array) {
-  return Container(
-      padding: EdgeInsets.all(30),
-      height: 300,
+Widget inbodyLineChart(List<FlSpot> list, List<String> dateList) {
+  return SizedBox(
+      height: 200,
       child: LineChart(LineChartData(
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(
-            show: true,
-            drawVerticalLine: false,
-          ),
+              show: true, drawVerticalLine: false, drawHorizontalLine: false),
           titlesData: FlTitlesData(
             show: true,
             bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
               showTitles: true,
               interval: 1,
-              getTitlesWidget: (value, meta) {
-                switch (value.toInt()) {
-                  case 1:
-                    return Text("Mon");
-                  case 3:
-                    return Text("Wed");
-                  case 5:
-                    return Text("Fri");
-                  case 7:
-                    return Text("Sun");
-                  default:
-                    return Text("");
-                }
-              },
+              reservedSize: 40,
+              // getTitlesWidget: (value, meta) {
+              //   // switch (value.toInt()) {
+              //   //   case 1:
+              //   //     return Text("\nMon");
+              //   //   case 3:
+              //   //     return Text("\nWed");
+              //   //   case 5:
+              //   //     return Text("\nFri");
+              //   //   case 7:
+              //   //     return Text("\nSun");
+              //   //   default:
+              //   //     return Text("");
+              //   // }
+
+              //   return Transform.rotate(
+              //       angle: -pi / 4, child: Text(dateList[value.toInt()]));
+              // },
             )),
             leftTitles: AxisTitles(
                 sideTitles: SideTitles(
               showTitles: true,
-              interval: 50,
-              reservedSize: 50,
+              interval: 10,
+              reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                switch (value.toInt()) {
-                  case 0:
-                    return Text("");
-                  default:
-                    return Text(value.toInt().toString());
-                }
+                return Text(value.toInt().toString());
               },
             )),
             topTitles:
@@ -113,9 +148,17 @@ Widget InbodyLineChart(List<FlSpot> array) {
             rightTitles:
                 const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
-          minX: 1,
-          maxX: 7,
-          minY: 0,
-          maxY: 200,
-          lineBarsData: [LineChartBarData(isCurved: true, spots: array)])));
+          lineBarsData: [LineChartBarData(isCurved: true, spots: list)])));
+}
+
+List<FlSpot> makeFlSpotList(List<num> list) {
+  List<FlSpot> dataList = [];
+
+  list.asMap().forEach(
+    (key, value) {
+      dataList.add(FlSpot(key.toDouble(), value.toDouble()));
+    },
+  );
+
+  return dataList;
 }
