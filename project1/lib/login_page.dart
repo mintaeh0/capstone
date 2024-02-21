@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const MainPage()));
-            setUid("mth1150");
+            setUid("abc123");
             setLoginState("true");
           },
           child: Text("로그인"),

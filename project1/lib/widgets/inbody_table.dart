@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/constants.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 class InbodyTable extends StatefulWidget {
@@ -31,9 +32,9 @@ class _InbodyTableState extends State<InbodyTable> {
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("users")
+          .collection(kUsersCollectionText)
           .doc(uid)
-          .collection("date")
+          .collection(kInbodyCollectionText)
           .doc(widget.bodyDate)
           .snapshots(),
       builder: (context, snapshot) {

@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/constants.dart';
 import 'package:project1/widgets/diet_chart.dart';
 import 'add_diet_page.dart';
 import 'functions/date_controller.dart';
+import 'functions/uid_info_controller.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});
@@ -11,7 +14,22 @@ class DietPage extends StatefulWidget {
 }
 
 class _DietPageState extends State<DietPage> {
-  String dateString = getTodayString();
+  late String dateString;
+  dynamic uid;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    dateString = getTodayString();
+  }
+
+  fetchData() async {
+    dynamic val = await getUid();
+    setState(() {
+      uid = val;
+    });
+  }
 
   void changeDate(DateTime datetime) {
     setState(() {
@@ -106,6 +124,50 @@ class _DietPageState extends State<DietPage> {
                   },
                   child: Text("간식")),
             ]),
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(dateString),
+                        content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    FirebaseFirestore.instance
+                                        .collection(kUsersCollectionText)
+                                        .doc(uid)
+                                        .collection(kDietCollectionText)
+                                        .doc(dateString)
+                                        .delete();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
+                                      child: Text("삭제",
+                                          style:
+                                              TextStyle(color: Colors.red)))),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
+                                      child: Text("취소")))
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text("일일 식단 삭제"))
           ],
         ));
   }

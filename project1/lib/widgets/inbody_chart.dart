@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:project1/constants.dart';
 import '../functions/uid_info_controller.dart';
 import 'dart:math';
 
@@ -31,9 +32,9 @@ class _InbodyChartState extends State<InbodyChart> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection("users")
+          .collection(kUsersCollectionText)
           .doc(uid)
-          .collection("date")
+          .collection(kInbodyCollectionText)
           .where("docdate", isNull: false)
           .orderBy("docdate", descending: true)
           .orderBy("inbody", descending: true)

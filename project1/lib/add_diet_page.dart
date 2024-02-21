@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/constants.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import 'functions/add_diet_func.dart';
 import 'functions/uid_info_controller.dart';
@@ -11,7 +12,7 @@ class AddDietPage extends StatefulWidget {
   final String mealType;
   final String mealDate;
 
-  AddDietPage(this.mealDate, this.mealType, {super.key});
+  const AddDietPage(this.mealDate, this.mealType, {super.key});
 
   @override
   State<AddDietPage> createState() => _AddDietPageState();
@@ -66,9 +67,9 @@ class _AddDietPageState extends State<AddDietPage> {
                           InkWell(
                               onTap: () {
                                 FirebaseFirestore.instance
-                                    .collection("users")
+                                    .collection(kUsersCollectionText)
                                     .doc(uid)
-                                    .collection("date")
+                                    .collection(kDietCollectionText)
                                     .doc(widget.mealDate)
                                     .update(
                                         {widget.mealType: FieldValue.delete()});

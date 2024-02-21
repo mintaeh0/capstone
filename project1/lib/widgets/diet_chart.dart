@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/constants.dart';
 import '../functions/uid_info_controller.dart';
 
 class DietChart extends StatefulWidget {
@@ -33,9 +34,9 @@ class _DietChartState extends State<DietChart> {
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("users")
+            .collection(kUsersCollectionText)
             .doc(uid)
-            .collection("date")
+            .collection(kDietCollectionText)
             .doc(widget.mealDate)
             .snapshots(),
         builder: (context, snapshot) {

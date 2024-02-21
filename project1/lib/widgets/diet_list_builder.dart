@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project1/constants.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 class DietListBuilder extends StatefulWidget {
@@ -32,9 +33,9 @@ class _DietListBuilderState extends State<DietListBuilder> {
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("users")
+            .collection(kUsersCollectionText)
             .doc(uid)
-            .collection("date")
+            .collection(kDietCollectionText)
             .doc(widget.mealDate)
             .snapshots(),
         builder: (context, snapshot) {
@@ -80,9 +81,9 @@ class _DietListBuilderState extends State<DietListBuilder> {
                     InkWell(
                         onTap: () {
                           FirebaseFirestore.instance
-                              .collection("users")
+                              .collection(kUsersCollectionText)
                               .doc(uid)
-                              .collection("date")
+                              .collection(kDietCollectionText)
                               .doc(widget.mealDate)
                               .update({
                             widget.mealType: FieldValue.arrayRemove([mapData])
