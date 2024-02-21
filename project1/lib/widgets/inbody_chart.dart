@@ -52,7 +52,9 @@ class _InbodyChartState extends State<InbodyChart> {
         List<FlSpot> musclemassList;
         List<FlSpot> bodyfatList;
 
-        if (snapshot.hasData && snapshotData != null) {
+        if (snapshot.hasData &&
+            snapshotData != null &&
+            snapshotData.isNotEmpty) {
           snapshotData.forEach((data) {
             weightData.add(data.get("inbody")["weight"]);
             musclemassData.add(data.get("inbody")["musclemass"]);
@@ -116,23 +118,14 @@ Widget inbodyLineChart(List<FlSpot> list, List<String> dateList) {
               showTitles: true,
               interval: 1,
               reservedSize: 40,
-              // getTitlesWidget: (value, meta) {
-              //   // switch (value.toInt()) {
-              //   //   case 1:
-              //   //     return Text("\nMon");
-              //   //   case 3:
-              //   //     return Text("\nWed");
-              //   //   case 5:
-              //   //     return Text("\nFri");
-              //   //   case 7:
-              //   //     return Text("\nSun");
-              //   //   default:
-              //   //     return Text("");
-              //   // }
-
-              //   return Transform.rotate(
-              //       angle: -pi / 4, child: Text(dateList[value.toInt()]));
-              // },
+              getTitlesWidget: (value, meta) {
+                return Transform.rotate(
+                    angle: -pi / 15,
+                    child: Text("\n" +
+                        (dateList.length == 0
+                            ? value.toInt().toString()
+                            : dateList[value.toInt()].substring(5))));
+              },
             )),
             leftTitles: AxisTitles(
                 sideTitles: SideTitles(

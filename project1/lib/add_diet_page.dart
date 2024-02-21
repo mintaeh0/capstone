@@ -1,14 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import 'functions/add_diet_func.dart';
+import 'functions/uid_info_controller.dart';
 import 'widgets/std_text_form.dart';
 
 // 식단 추가 페이지
 
-class AddDietPage extends StatelessWidget {
+class AddDietPage extends StatefulWidget {
   final String mealType;
   final String mealDate;
 
+  AddDietPage(this.mealDate, this.mealType, {super.key});
+
+  @override
+  State<AddDietPage> createState() => _AddDietPageState();
+}
+
+class _AddDietPageState extends State<AddDietPage> {
   // 텍스트 불러오기
   final nameController = TextEditingController();
   final carboController = TextEditingController();
@@ -17,7 +26,20 @@ class AddDietPage extends StatelessWidget {
   final kcalController = TextEditingController();
   final amountController = TextEditingController();
 
-  AddDietPage(this.mealDate, this.mealType, {super.key});
+  dynamic uid;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  fetchData() async {
+    dynamic val = await getUid();
+    setState(() {
+      uid = val;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +48,56 @@ class AddDietPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(mealDate + " " + mealType),
+        title: Text(widget.mealDate + " " + widget.mealType),
         actions: [
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(widget.mealDate + " " + widget.mealType),
+                    content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          InkWell(
+                              onTap: () {
+                                FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(uid)
+                                    .collection("date")
+                                    .doc(widget.mealDate)
+                                    .update(
+                                        {widget.mealType: FieldValue.delete()});
+                                Navigator.pop(context);
+                              },
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  child: Text("삭제",
+                                      style: TextStyle(color: Colors.red)))),
+                          InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  child: Text("취소")))
+                        ],
+                      )
+                    ],
+                  );
+                },
+              );
+            },
           )
         ],
       ),
-      body: DietListBuilder(mealDate, mealType),
+      body: DietListBuilder(widget.mealDate, widget.mealType),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -77,7 +140,8 @@ class AddDietPage extends StatelessWidget {
                               "kcal": int.parse(kcalController.text),
                               "amount": int.parse(amountController.text),
                             },
-                            addDietFunc(mealDate, mealType, foodMap)
+                            addDietFunc(
+                                widget.mealDate, widget.mealType, foodMap)
                           },
                       child: Text("저장"))
                 ]),
