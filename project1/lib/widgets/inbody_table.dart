@@ -41,11 +41,8 @@ class _InbodyTableState extends State<InbodyTable> {
         dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
         List array;
 
-        if (snapshot.hasData &&
-            snapshot.data!.exists &&
-            snapshotData != null &&
-            snapshotData.containsKey("inbody")) {
-          dynamic bodyData = snapshot.data?.get("inbody");
+        if (snapshot.hasData && snapshot.data!.exists && snapshotData != null) {
+          dynamic bodyData = snapshot.data!.data();
 
           array = [
             bodyData["weight"],

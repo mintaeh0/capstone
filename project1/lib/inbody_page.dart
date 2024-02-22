@@ -43,7 +43,7 @@ class _InbodyPageState extends State<InbodyPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map bodyMap;
+    Map<String, dynamic> bodyMap;
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

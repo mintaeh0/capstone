@@ -37,7 +37,6 @@ class _InbodyChartState extends State<InbodyChart> {
           .collection(kInbodyCollectionText)
           .where("docdate", isNull: false)
           .orderBy("docdate", descending: true)
-          .orderBy("inbody", descending: true)
           .limit(7)
           .snapshots(),
       builder: (context, snapshot) {
@@ -57,9 +56,9 @@ class _InbodyChartState extends State<InbodyChart> {
             snapshotData != null &&
             snapshotData.isNotEmpty) {
           snapshotData.forEach((data) {
-            weightData.add(data.get("inbody")["weight"]);
-            musclemassData.add(data.get("inbody")["musclemass"]);
-            bodyfatData.add(data.get("inbody")["bodyfat"]);
+            weightData.add(data.get("weight"));
+            musclemassData.add(data.get("musclemass"));
+            bodyfatData.add(data.get("bodyfat"));
             dateData.add(data.get("docdate"));
           });
           weightList = makeFlSpotList(List.from(weightData.reversed));

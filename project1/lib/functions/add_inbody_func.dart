@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project1/constants.dart';
 import 'uid_info_controller.dart';
 
-addInbodyFunc(String bodyDate, Map bodyMap) async {
+addInbodyFunc(String bodyDate, Map<String, dynamic> bodyMap) async {
   // Firebase 경로 설정
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final inbodyRef = firestore
@@ -11,14 +11,13 @@ addInbodyFunc(String bodyDate, Map bodyMap) async {
       .collection(kInbodyCollectionText)
       .doc(bodyDate);
 
-  String bodyFieldName = "inbody";
   dynamic stor;
 
   inbodyRef.get().then((DocumentSnapshot doc) {
     stor = doc.data();
   });
 
-  inbodyRef.set({bodyFieldName: bodyMap}, SetOptions(merge: true));
+  inbodyRef.set(bodyMap, SetOptions(merge: true));
 
   if (stor == null ? true : stor["docdate"] == null) {
     inbodyRef.set({"docdate": bodyDate}, SetOptions(merge: true));
