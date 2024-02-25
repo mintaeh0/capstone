@@ -95,28 +95,28 @@ class _DietPageState extends State<DietPage> {
             ),
             DietChart(dateString, "breakfast"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              ElevatedButton(
+              FilledButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
                             AddDietPage(dateString, "breakfast")));
                   },
                   child: Text("아침")),
-              ElevatedButton(
+              FilledButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
                             AddDietPage(dateString, "lunch")));
                   },
                   child: Text("점심")),
-              ElevatedButton(
+              FilledButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
                             AddDietPage(dateString, "dinner")));
                   },
                   child: Text("저녁")),
-              ElevatedButton(
+              FilledButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
@@ -124,7 +124,7 @@ class _DietPageState extends State<DietPage> {
                   },
                   child: Text("간식")),
             ]),
-            FilledButton(
+            FilledButton.tonal(
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -136,8 +136,8 @@ class _DietPageState extends State<DietPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              InkWell(
-                                  onTap: () {
+                              FilledButton(
+                                  onPressed: () {
                                     FirebaseFirestore.instance
                                         .collection(kUsersCollectionText)
                                         .doc(uid)
@@ -146,20 +146,12 @@ class _DietPageState extends State<DietPage> {
                                         .delete();
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 10),
-                                      child: Text("삭제",
-                                          style:
-                                              TextStyle(color: Colors.red)))),
-                              InkWell(
-                                  onTap: () {
+                                  child: Text("삭제")),
+                              TextButton(
+                                  onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 10),
-                                      child: Text("취소")))
+                                  child: Text("취소"))
                             ],
                           )
                         ],

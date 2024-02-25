@@ -21,9 +21,6 @@ class ProflieSetPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
-                  initialValue: "민태호",
-                ),
-                TextFormField(
                   initialValue: "24",
                 ),
                 TextFormField(

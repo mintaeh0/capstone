@@ -64,8 +64,8 @@ class _AddDietPageState extends State<AddDietPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          InkWell(
-                              onTap: () {
+                          FilledButton(
+                              onPressed: () {
                                 FirebaseFirestore.instance
                                     .collection(kUsersCollectionText)
                                     .doc(uid)
@@ -75,19 +75,12 @@ class _AddDietPageState extends State<AddDietPage> {
                                         {widget.mealType: FieldValue.delete()});
                                 Navigator.pop(context);
                               },
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 10),
-                                  child: Text("삭제",
-                                      style: TextStyle(color: Colors.red)))),
-                          InkWell(
-                              onTap: () {
+                              child: Text("삭제")),
+                          TextButton(
+                              onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 10),
-                                  child: Text("취소")))
+                              child: Text("취소"))
                         ],
                       )
                     ],
@@ -142,7 +135,14 @@ class _AddDietPageState extends State<AddDietPage> {
                               "amount": int.parse(amountController.text),
                             },
                             addDietFunc(
-                                widget.mealDate, widget.mealType, foodMap)
+                                widget.mealDate, widget.mealType, foodMap),
+                            nameController.clear(),
+                            carboController.clear(),
+                            proteinController.clear(),
+                            fatController.clear(),
+                            kcalController.clear(),
+                            amountController.clear(),
+                            Navigator.of(context).pop()
                           },
                       child: Text("저장"))
                 ]),

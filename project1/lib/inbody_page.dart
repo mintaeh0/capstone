@@ -106,7 +106,7 @@ class _InbodyPageState extends State<InbodyPage> {
               ],
             ),
             InbodyTable(dateString),
-            ElevatedButton(
+            FilledButton(
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -145,7 +145,7 @@ class _InbodyPageState extends State<InbodyPage> {
                   );
                 },
                 child: const Text("편집/등록")),
-            FilledButton(
+            FilledButton.tonal(
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -157,8 +157,8 @@ class _InbodyPageState extends State<InbodyPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              InkWell(
-                                  onTap: () {
+                              FilledButton(
+                                  onPressed: () {
                                     FirebaseFirestore.instance
                                         .collection(kUsersCollectionText)
                                         .doc(uid)
@@ -167,20 +167,12 @@ class _InbodyPageState extends State<InbodyPage> {
                                         .delete();
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 10),
-                                      child: Text("삭제",
-                                          style:
-                                              TextStyle(color: Colors.red)))),
-                              InkWell(
-                                  onTap: () {
+                                  child: Text("삭제")),
+                              TextButton(
+                                  onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 10),
-                                      child: Text("취소")))
+                                  child: Text("취소"))
                             ],
                           )
                         ],

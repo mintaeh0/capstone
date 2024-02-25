@@ -149,7 +149,13 @@ Widget inbodyLineChart(List<FlSpot> list, List<String> dateList) {
             rightTitles:
                 const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
-          lineBarsData: [LineChartBarData(isCurved: true, spots: list)])));
+          lineBarsData: [
+            LineChartBarData(
+                isCurved: true,
+                spots: list,
+                color: Colors.green,
+                dotData: FlDotData(show: false))
+          ])));
 }
 
 List<FlSpot> makeFlSpotList(List<num> list) {
