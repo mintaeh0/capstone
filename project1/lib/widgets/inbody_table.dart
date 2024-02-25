@@ -38,6 +38,9 @@ class _InbodyTableState extends State<InbodyTable> {
           .doc(widget.bodyDate)
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
         dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
         List array;
 

@@ -43,28 +43,6 @@ class _DietChartState extends State<DietChart> {
           dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
           List array;
 
-          // if (snapshot.hasData &&
-          //     snapshot.data!.exists &&
-          //     snapshotData != null &&
-          //     snapshotData.containsKey(widget.mealType)) {
-          //   dynamic dataArray = snapshot.data?.get(widget.mealType);
-          //   num carbo = 0;
-          //   num protein = 0;
-          //   num fat = 0;
-          //   num kcal = 0;
-
-          //   for (Map ch in dataArray) {
-          //     carbo += ch["carbo"] * ch["amount"];
-          //     protein += ch["protein"] * ch["amount"];
-          //     fat += ch["fat"] * ch["amount"];
-          //     kcal += ch["kcal"] * ch["amount"];
-          //   }
-
-          //   array = [carbo, protein, fat, kcal];
-          // } else {
-          //   array = [0, 0, 0, 0];
-          // }
-
           if (snapshot.hasData &&
               snapshot.data!.exists &&
               snapshotData != null) {

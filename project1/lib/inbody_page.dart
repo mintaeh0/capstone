@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/widgets/inbody_chart.dart';
 import 'functions/add_inbody_func.dart';
 import 'functions/date_controller.dart';
 import 'package:project1/widgets/std_text_form.dart';
+import 'functions/uid_info_controller.dart';
 import 'widgets/inbody_table.dart';
+import 'constants.dart';
 
 // 체성분 페이지
 
@@ -20,6 +23,21 @@ class _InbodyPageState extends State<InbodyPage> {
   final bodyFatController = TextEditingController();
 
   String dateString = getTodayString();
+  dynamic uid;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    dateString = getTodayString();
+  }
+
+  fetchData() async {
+    dynamic val = await getUid();
+    setState(() {
+      uid = val;
+    });
+  }
 
   void changeDate(DateTime datetime) {
     setState(() {
@@ -127,6 +145,50 @@ class _InbodyPageState extends State<InbodyPage> {
                   );
                 },
                 child: const Text("편집/등록")),
+            FilledButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(dateString),
+                        content: const Text("해당 체성분 정보를 삭제하시겠습니까?"),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    FirebaseFirestore.instance
+                                        .collection(kUsersCollectionText)
+                                        .doc(uid)
+                                        .collection(kInbodyCollectionText)
+                                        .doc(dateString)
+                                        .delete();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
+                                      child: Text("삭제",
+                                          style:
+                                              TextStyle(color: Colors.red)))),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
+                                      child: Text("취소")))
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text("삭제")),
             InbodyChart(),
           ],
         ),

@@ -124,7 +124,7 @@ class _DietPageState extends State<DietPage> {
                   },
                   child: Text("간식")),
             ]),
-            ElevatedButton(
+            FilledButton(
                 onPressed: () {
                   showDialog(
                     context: context,

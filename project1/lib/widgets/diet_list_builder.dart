@@ -39,6 +39,12 @@ class _DietListBuilderState extends State<DietListBuilder> {
             .doc(widget.mealDate)
             .snapshots(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
           dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
 
           if (snapshot.hasData &&

@@ -40,6 +40,12 @@ class _InbodyChartState extends State<InbodyChart> {
           .limit(7)
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
         dynamic snapshotData = snapshot.data?.docs;
 
         List<num> weightData = [];
@@ -64,6 +70,8 @@ class _InbodyChartState extends State<InbodyChart> {
           weightList = makeFlSpotList(List.from(weightData.reversed));
           musclemassList = makeFlSpotList(List.from(musclemassData.reversed));
           bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
+
+          dateData = List.from(dateData.reversed);
         } else {
           weightList = [];
           musclemassList = [];
@@ -122,7 +130,7 @@ Widget inbodyLineChart(List<FlSpot> list, List<String> dateList) {
                 return Transform.rotate(
                     angle: -pi / 15,
                     child: Text("\n" +
-                        (dateList.length == 0
+                        (dateList.isEmpty
                             ? value.toInt().toString()
                             : dateList[value.toInt()].substring(5))));
               },
