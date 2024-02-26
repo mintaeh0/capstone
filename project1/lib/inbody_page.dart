@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:project1/widgets/inbody_chart.dart';
 import 'functions/add_inbody_func.dart';
 import 'functions/date_controller.dart';
-import 'package:project1/widgets/std_text_form.dart';
 import 'functions/uid_info_controller.dart';
 import 'widgets/inbody_table.dart';
 import 'constants.dart';
@@ -18,9 +18,8 @@ class InbodyPage extends StatefulWidget {
 }
 
 class _InbodyPageState extends State<InbodyPage> {
-  final weightController = TextEditingController();
-  final musclemassController = TextEditingController();
-  final bodyFatController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  late String _weight, _musclemass, _bodyfat;
 
   String dateString = getTodayString();
   dynamic uid;
@@ -61,8 +60,6 @@ class _InbodyPageState extends State<InbodyPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> bodyMap;
-
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Padding(
@@ -116,75 +113,148 @@ class _InbodyPageState extends State<InbodyPage> {
                         width: double.infinity,
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                          Text("체성분 등록/편집"),
-                          StdTextForm(
-                              hint: "체중(kg)", controller: weightController),
-                          StdTextForm(
-                              hint: "골격근량(kg)",
-                              controller: musclemassController),
-                          StdTextForm(
-                              hint: "체지방률(%)", controller: bodyFatController),
-                          ElevatedButton(
-                              onPressed: () {
-                                bodyMap = {
-                                  "weight": int.parse(weightController.text),
-                                  "musclemass":
-                                      int.parse(musclemassController.text),
-                                  "bodyfat": int.parse(bodyFatController.text),
-                                };
-                                addInbodyFunc(dateString, bodyMap);
-                              },
-                              child: Text("편집/등록"))
-                        ]),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            Text("체성분 등록/편집"),
+                            Form(
+                                key: _form,
+                                child: Column(
+                                  children: [
+                                    weightInput(),
+                                    Container(height: 10),
+                                    musclemassInput(),
+                                    Container(height: 10),
+                                    bodyfatInput(),
+                                    Container(height: 10),
+                                    inbodySubmitButton()
+                                  ],
+                                )),
+                          ]),
+                        ),
                       );
                     },
                   );
                 },
                 child: const Text("편집/등록")),
-            FilledButton.tonal(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(dateString),
-                        content: const Text("해당 체성분 정보를 삭제하시겠습니까?"),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              FilledButton(
-                                  onPressed: () {
-                                    FirebaseFirestore.instance
-                                        .collection(kUsersCollectionText)
-                                        .doc(uid)
-                                        .collection(kInbodyCollectionText)
-                                        .doc(dateString)
-                                        .delete();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("삭제")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("취소"))
-                            ],
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Text("삭제")),
+            inbodyDeleteButton(),
             InbodyChart(),
           ],
         ),
       ),
     );
+  }
+
+  Widget weightInput() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "체중을 입력해주세요";
+        } else {
+          return null;
+        }
+      },
+      onSaved: (newValue) {
+        _weight = newValue as String;
+      },
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
+      decoration:
+          InputDecoration(label: Text("체중(kg)"), border: OutlineInputBorder()),
+    );
+  }
+
+  Widget musclemassInput() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "골격근량을 입력해주세요";
+        } else {
+          return null;
+        }
+      },
+      onSaved: (newValue) {
+        _musclemass = newValue as String;
+      },
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+          label: Text("골격근량(kg)"), border: OutlineInputBorder()),
+    );
+  }
+
+  Widget bodyfatInput() {
+    return TextFormField(
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "체지방률을 입력해주세요";
+        } else {
+          return null;
+        }
+      },
+      onSaved: (newValue) {
+        _bodyfat = newValue as String;
+      },
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: TextInputType.number,
+      decoration:
+          InputDecoration(label: Text("체지방률(%)"), border: OutlineInputBorder()),
+    );
+  }
+
+  Widget inbodySubmitButton() {
+    return ElevatedButton(
+        onPressed: () async {
+          if (_form.currentState!.validate()) {
+            _form.currentState!.save();
+            Map<String, dynamic> bodyMap = {
+              "weight": int.parse(_weight),
+              "musclemass": int.parse(_musclemass),
+              "bodyfat": int.parse(_bodyfat),
+            };
+            addInbodyFunc(dateString, bodyMap);
+          }
+        },
+        child: Text("편집/등록"));
+  }
+
+  Widget inbodyDeleteButton() {
+    return FilledButton.tonal(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(dateString),
+                content: const Text("해당 체성분 정보를 삭제하시겠습니까?"),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      FilledButton(
+                          onPressed: () {
+                            FirebaseFirestore.instance
+                                .collection(kUsersCollectionText)
+                                .doc(uid)
+                                .collection(kInbodyCollectionText)
+                                .doc(dateString)
+                                .delete();
+                            Navigator.pop(context);
+                          },
+                          child: Text("삭제")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("취소"))
+                    ],
+                  )
+                ],
+              );
+            },
+          );
+        },
+        child: Text("삭제"));
   }
 }

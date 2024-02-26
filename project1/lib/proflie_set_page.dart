@@ -13,29 +13,40 @@ class ProflieSetPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("개인정보 수정"),
+          title: const Text("설정"),
         ),
-        body: Container(
-            padding: EdgeInsets.all(30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  initialValue: "24",
-                ),
-                TextFormField(
-                  initialValue: "174",
-                ),
-                ElevatedButton(onPressed: () {}, child: Text("수정")),
-                ElevatedButton(
-                    onPressed: () async {
-                      await storage.delete(key: "uid");
-                      await storage.write(key: "loginState", value: "false");
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    child: Text("로그아웃")),
-              ],
-            )));
+        body: SingleChildScrollView(
+            child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(), label: Text("나이")),
+                initialValue: "24",
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(), label: Text("신장")),
+                initialValue: "174",
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(), label: Text("목표 체중")),
+                initialValue: "70",
+              ),
+              ElevatedButton(onPressed: () {}, child: Text("수정")),
+              ElevatedButton(
+                  onPressed: () async {
+                    await storage.delete(key: "uid");
+                    await storage.write(key: "loginState", value: "false");
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  },
+                  child: Text("로그아웃")),
+            ],
+          ),
+        )));
   }
 }

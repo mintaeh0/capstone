@@ -10,16 +10,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       Text("민태호"),
-      Container(
-          margin: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("24"),
-              Text(" / "),
-              Text("174cm"),
-            ],
-          )),
+      Container(margin: EdgeInsets.all(10), child: Text("24 / 174cm")),
       GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
@@ -33,7 +24,7 @@ class ProfilePage extends StatelessWidget {
           padding: EdgeInsets.all(10),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text("개인정보 수정"),
+            Text("설정"),
             Icon(Icons.arrow_forward_ios, size: 15),
           ]),
         ),
