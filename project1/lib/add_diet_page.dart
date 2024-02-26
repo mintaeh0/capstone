@@ -276,7 +276,7 @@ class _AddDietPageState extends State<AddDietPage> {
         onPressed: () {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
-            Map foodMap = {
+            Map<String, dynamic> foodMap = {
               "name": _name,
               "carbo": int.parse(_carbo),
               "protein": int.parse(_protein),
