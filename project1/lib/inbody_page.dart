@@ -63,7 +63,7 @@ class _InbodyPageState extends State<InbodyPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           children: [
             Row(
@@ -115,23 +115,22 @@ class _InbodyPageState extends State<InbodyPage> {
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Padding(
                           padding: const EdgeInsets.all(20),
-                          child:
-                              Column(mainAxisSize: MainAxisSize.min, children: [
-                            Text("체성분 등록/편집"),
-                            Form(
-                                key: _form,
-                                child: Column(
-                                  children: [
-                                    weightInput(),
-                                    Container(height: 10),
-                                    musclemassInput(),
-                                    Container(height: 10),
-                                    bodyfatInput(),
-                                    Container(height: 10),
-                                    inbodySubmitButton()
-                                  ],
-                                )),
-                          ]),
+                          child: Form(
+                              key: _form,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("체성분 등록/편집"),
+                                  Container(height: 10),
+                                  weightInput(),
+                                  Container(height: 10),
+                                  musclemassInput(),
+                                  Container(height: 10),
+                                  bodyfatInput(),
+                                  Container(height: 10),
+                                  inbodySubmitButton()
+                                ],
+                              )),
                         ),
                       );
                     },
@@ -160,8 +159,12 @@ class _InbodyPageState extends State<InbodyPage> {
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
-      decoration:
-          InputDecoration(label: Text("체중(kg)"), border: OutlineInputBorder()),
+      decoration: InputDecoration(
+          label: Text("체중"),
+          border: OutlineInputBorder(),
+          errorStyle: TextStyle(fontSize: 0),
+          contentPadding: EdgeInsets.all(10),
+          suffixText: "kg"),
     );
   }
 
@@ -180,7 +183,11 @@ class _InbodyPageState extends State<InbodyPage> {
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-          label: Text("골격근량(kg)"), border: OutlineInputBorder()),
+          label: Text("골격근량"),
+          border: OutlineInputBorder(),
+          errorStyle: TextStyle(fontSize: 0),
+          contentPadding: EdgeInsets.all(10),
+          suffixText: "kg"),
     );
   }
 
@@ -198,14 +205,18 @@ class _InbodyPageState extends State<InbodyPage> {
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
-      decoration:
-          InputDecoration(label: Text("체지방률(%)"), border: OutlineInputBorder()),
+      decoration: InputDecoration(
+          label: Text("체지방률"),
+          border: OutlineInputBorder(),
+          errorStyle: TextStyle(fontSize: 0),
+          contentPadding: EdgeInsets.all(10),
+          suffixText: "%"),
     );
   }
 
   Widget inbodySubmitButton() {
     return ElevatedButton(
-        onPressed: () async {
+        onPressed: () {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
             Map<String, dynamic> bodyMap = {
@@ -214,6 +225,7 @@ class _InbodyPageState extends State<InbodyPage> {
               "bodyfat": int.parse(_bodyfat),
             };
             addInbodyFunc(dateString, bodyMap);
+            Navigator.of(context).pop();
           }
         },
         child: Text("편집/등록"));

@@ -55,112 +55,115 @@ class _DietPageState extends State<DietPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        decDate();
+                      },
+                      icon: Icon(
+                        Icons.keyboard_arrow_left,
+                        size: 40,
+                      )),
+                  Text(dateString, style: TextStyle(fontSize: 20)),
+                  IconButton(
+                      onPressed: () async {
+                        DateTime? datetime = await showDatePicker(
+                            context: context,
+                            initialDate: stringToDate(dateString),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now());
+                        if (datetime != null) {
+                          changeDate(datetime);
+                        }
+                      },
+                      icon: Icon(Icons.calendar_today)),
+                  IconButton(
+                      onPressed: () {
+                        if (dateString != getTodayString()) {
+                          incDate();
+                        }
+                      },
+                      icon: Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 40,
+                      )),
+                ],
+              ),
+              DietChart(dateString, "breakfast"),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                FilledButton(
                     onPressed: () {
-                      decDate();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              AddDietPage(dateString, "breakfast")));
                     },
-                    icon: Icon(
-                      Icons.keyboard_arrow_left,
-                      size: 40,
-                    )),
-                Text(dateString, style: TextStyle(fontSize: 20)),
-                IconButton(
-                    onPressed: () async {
-                      DateTime? datetime = await showDatePicker(
-                          context: context,
-                          initialDate: stringToDate(dateString),
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime.now());
-                      if (datetime != null) {
-                        changeDate(datetime);
-                      }
-                    },
-                    icon: Icon(Icons.calendar_today)),
-                IconButton(
+                    child: Text("아침")),
+                FilledButton(
                     onPressed: () {
-                      if (dateString != getTodayString()) {
-                        incDate();
-                      }
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              AddDietPage(dateString, "lunch")));
                     },
-                    icon: Icon(
-                      Icons.keyboard_arrow_right,
-                      size: 40,
-                    )),
-              ],
-            ),
-            DietChart(dateString, "breakfast"),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AddDietPage(dateString, "breakfast")));
-                  },
-                  child: Text("아침")),
-              FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AddDietPage(dateString, "lunch")));
-                  },
-                  child: Text("점심")),
-              FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AddDietPage(dateString, "dinner")));
-                  },
-                  child: Text("저녁")),
-              FilledButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AddDietPage(dateString, "snack")));
-                  },
-                  child: Text("간식")),
-            ]),
-            FilledButton.tonal(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(dateString),
-                        content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              FilledButton(
-                                  onPressed: () {
-                                    FirebaseFirestore.instance
-                                        .collection(kUsersCollectionText)
-                                        .doc(uid)
-                                        .collection(kDietCollectionText)
-                                        .doc(dateString)
-                                        .delete();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("삭제")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("취소"))
-                            ],
-                          )
-                        ],
-                      );
+                    child: Text("점심")),
+                FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              AddDietPage(dateString, "dinner")));
                     },
-                  );
-                },
-                child: Text("일일 식단 삭제"))
-          ],
+                    child: Text("저녁")),
+                FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              AddDietPage(dateString, "snack")));
+                    },
+                    child: Text("간식")),
+              ]),
+              FilledButton.tonal(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(dateString),
+                          content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                FilledButton(
+                                    onPressed: () {
+                                      FirebaseFirestore.instance
+                                          .collection(kUsersCollectionText)
+                                          .doc(uid)
+                                          .collection(kDietCollectionText)
+                                          .doc(dateString)
+                                          .delete();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("삭제")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("취소"))
+                              ],
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text("일일 식단 삭제"))
+            ],
+          ),
         ));
   }
 }
