@@ -14,10 +14,15 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
-  List<Widget> body = [
+  final List<Widget> _body = const [
     DietPage(),
     InbodyPage(),
     ProfilePage(),
+  ];
+  final List<Widget> _title = const [
+    Text("식단 관리"),
+    Text("체성분 관리"),
+    Text("내 정보"),
   ];
 
   @override
@@ -25,9 +30,9 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Test Title"),
+        title: _title[_currentIndex],
       ),
-      body: body[_currentIndex],
+      body: _body[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (int newIndex) {

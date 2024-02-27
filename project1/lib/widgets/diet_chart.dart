@@ -70,6 +70,7 @@ class _DietChartState extends State<DietChart> {
           return Column(
             children: [
               DietPieChart(array),
+              Container(height: 10),
               DietTable(array),
             ],
           );

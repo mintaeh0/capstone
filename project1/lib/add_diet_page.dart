@@ -9,10 +9,10 @@ import 'functions/uid_info_controller.dart';
 // 식단 추가 페이지
 
 class AddDietPage extends StatefulWidget {
-  final String mealType;
+  final int mealIndex;
   final String mealDate;
 
-  const AddDietPage(this.mealDate, this.mealType, {super.key});
+  const AddDietPage(this.mealDate, this.mealIndex, {super.key});
 
   @override
   State<AddDietPage> createState() => _AddDietPageState();
@@ -21,6 +21,8 @@ class AddDietPage extends StatefulWidget {
 class _AddDietPageState extends State<AddDietPage> {
   final _form = GlobalKey<FormState>();
   late String _name, _carbo, _protein, _fat, _kcal, _amount;
+  List mealType = ["breakfast", "lunch", "dinner", "snack"];
+  List mealTypeKor = ["아침", "점심", "저녁", "간식"];
 
   dynamic uid;
 
@@ -42,7 +44,7 @@ class _AddDietPageState extends State<AddDietPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.mealDate + " " + widget.mealType),
+        title: Text(widget.mealDate + " " + mealTypeKor[widget.mealIndex]),
         actions: [
           IconButton(
             icon: Icon(Icons.delete),
@@ -51,7 +53,8 @@ class _AddDietPageState extends State<AddDietPage> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text(widget.mealDate + " " + widget.mealType),
+                    title: Text(
+                        widget.mealDate + " " + mealTypeKor[widget.mealIndex]),
                     content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
                     actions: [
                       Row(
@@ -64,8 +67,10 @@ class _AddDietPageState extends State<AddDietPage> {
                                     .doc(uid)
                                     .collection(kDietCollectionText)
                                     .doc(widget.mealDate)
-                                    .update(
-                                        {widget.mealType: FieldValue.delete()});
+                                    .update({
+                                  mealType[widget.mealIndex]:
+                                      FieldValue.delete()
+                                });
                                 Navigator.pop(context);
                               },
                               child: Text("삭제")),
@@ -84,7 +89,7 @@ class _AddDietPageState extends State<AddDietPage> {
           )
         ],
       ),
-      body: DietListBuilder(widget.mealDate, widget.mealType),
+      body: DietListBuilder(widget.mealDate, mealType[widget.mealIndex]),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -102,7 +107,13 @@ class _AddDietPageState extends State<AddDietPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Text("식단 추가"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("식단 추가", style: TextStyle(fontSize: 15)),
+                            Text("※ 정보가 없을 시 0 입력"),
+                          ],
+                        ),
                         Container(height: 10),
                         GridView(
                           gridDelegate:
@@ -272,7 +283,7 @@ class _AddDietPageState extends State<AddDietPage> {
   }
 
   Widget dietSubmitButton() {
-    return ElevatedButton(
+    return FilledButton(
         onPressed: () {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
@@ -284,7 +295,7 @@ class _AddDietPageState extends State<AddDietPage> {
               "kcal": int.parse(_kcal),
               "amount": int.parse(_amount),
             };
-            addDietFunc(widget.mealDate, widget.mealType, foodMap);
+            addDietFunc(widget.mealDate, mealType[widget.mealIndex], foodMap);
             Navigator.of(context).pop();
           }
         },

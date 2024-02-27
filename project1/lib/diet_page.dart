@@ -56,7 +56,7 @@ class _DietPageState extends State<DietPage> {
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               Row(
@@ -95,34 +95,32 @@ class _DietPageState extends State<DietPage> {
                       )),
                 ],
               ),
+              Container(height: 10),
               DietChart(dateString, "breakfast"),
+              Container(height: 10),
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 FilledButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              AddDietPage(dateString, "breakfast")));
+                          builder: (context) => AddDietPage(dateString, 0)));
                     },
                     child: Text("아침")),
                 FilledButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              AddDietPage(dateString, "lunch")));
+                          builder: (context) => AddDietPage(dateString, 1)));
                     },
                     child: Text("점심")),
                 FilledButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              AddDietPage(dateString, "dinner")));
+                          builder: (context) => AddDietPage(dateString, 2)));
                     },
                     child: Text("저녁")),
                 FilledButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              AddDietPage(dateString, "snack")));
+                          builder: (context) => AddDietPage(dateString, 3)));
                     },
                     child: Text("간식")),
               ]),

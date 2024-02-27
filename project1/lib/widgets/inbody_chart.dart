@@ -14,6 +14,7 @@ class InbodyChart extends StatefulWidget {
 
 class _InbodyChartState extends State<InbodyChart> {
   dynamic uid;
+  List<String> dateData = [];
 
   @override
   void initState() {
@@ -52,8 +53,6 @@ class _InbodyChartState extends State<InbodyChart> {
         List<num> musclemassData = [];
         List<num> bodyfatData = [];
 
-        List<String> dateData = [];
-
         List<FlSpot> weightList;
         List<FlSpot> musclemassList;
         List<FlSpot> bodyfatList;
@@ -79,83 +78,73 @@ class _InbodyChartState extends State<InbodyChart> {
         }
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "체중",
-              style: TextStyle(fontSize: 20),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: inbodyLineChart(weightList, dateData),
-            ),
-            Text(
-              "골격근량",
-              style: TextStyle(fontSize: 20),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: inbodyLineChart(musclemassList, dateData),
-            ),
-            Text(
-              "체지방률",
-              style: TextStyle(fontSize: 20),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: inbodyLineChart(bodyfatList, dateData),
-            ),
+            inbodyLineChart(weightList, 0),
+            inbodyLineChart(musclemassList, 1),
+            inbodyLineChart(bodyfatList, 2),
           ],
         );
       },
     );
   }
-}
 
-Widget inbodyLineChart(List<FlSpot> list, List<String> dateList) {
-  return SizedBox(
-      height: 200,
-      child: LineChart(LineChartData(
-          borderData: FlBorderData(show: false),
-          gridData: const FlGridData(
-              show: true, drawVerticalLine: false, drawHorizontalLine: false),
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-              showTitles: true,
-              interval: 1,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Transform.rotate(
-                    angle: -pi / 15,
-                    child: Text("\n" +
-                        (dateList.isEmpty
-                            ? value.toInt().toString()
-                            : dateList[value.toInt()].substring(5))));
-              },
-            )),
-            leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-              showTitles: true,
-              interval: 10,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(value.toInt().toString());
-              },
-            )),
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          lineBarsData: [
-            LineChartBarData(
-                isCurved: true,
-                spots: list,
-                color: Colors.green,
-                dotData: FlDotData(show: false))
-          ])));
+  Widget inbodyLineChart(List<FlSpot> list, int index) {
+    List currentIndex = ["체중", "골격근량", "체지방률"];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(currentIndex[index], style: TextStyle(fontSize: 20)),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: SizedBox(
+              height: 200,
+              child: LineChart(LineChartData(
+                  borderData: FlBorderData(show: false),
+                  gridData: const FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      drawHorizontalLine: false),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 1,
+                      reservedSize: 40,
+                      getTitlesWidget: (value, meta) {
+                        return Transform.rotate(
+                            angle: -pi / 15,
+                            child: Text("\n" +
+                                (dateData.isEmpty
+                                    ? value.toInt().toString()
+                                    : dateData[value.toInt()].substring(5))));
+                      },
+                    )),
+                    leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 10,
+                      reservedSize: 40,
+                      getTitlesWidget: (value, meta) {
+                        return Text(value.toInt().toString());
+                      },
+                    )),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                        isCurved: true,
+                        spots: list,
+                        color: Colors.green,
+                        dotData: FlDotData(show: false))
+                  ]))),
+        ),
+      ],
+    );
+  }
 }
 
 List<FlSpot> makeFlSpotList(List<num> list) {

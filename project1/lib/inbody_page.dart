@@ -63,7 +63,7 @@ class _InbodyPageState extends State<InbodyPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.all(30),
         child: Column(
           children: [
             Row(
@@ -102,47 +102,60 @@ class _InbodyPageState extends State<InbodyPage> {
                     )),
               ],
             ),
+            Container(height: 10),
             InbodyTable(dateString),
-            FilledButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Form(
-                              key: _form,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text("체성분 등록/편집"),
-                                  Container(height: 10),
-                                  weightInput(),
-                                  Container(height: 10),
-                                  musclemassInput(),
-                                  Container(height: 10),
-                                  bodyfatInput(),
-                                  Container(height: 10),
-                                  inbodySubmitButton()
-                                ],
-                              )),
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: const Text("편집/등록")),
+            Container(height: 10),
+            inbodyAddButton(),
             inbodyDeleteButton(),
+            Container(height: 10),
             InbodyChart(),
           ],
         ),
       ),
     );
+  }
+
+  Widget inbodyAddButton() {
+    return FilledButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) {
+              return Container(
+                width: double.infinity,
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Form(
+                      key: _form,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("체성분 등록/편집", style: TextStyle(fontSize: 15)),
+                              Text("※ 정보가 없을 시 0 입력")
+                            ],
+                          ),
+                          Container(height: 10),
+                          weightInput(),
+                          Container(height: 10),
+                          musclemassInput(),
+                          Container(height: 10),
+                          bodyfatInput(),
+                          Container(height: 10),
+                          inbodySubmitButton()
+                        ],
+                      )),
+                ),
+              );
+            },
+          );
+        },
+        child: const Text("등록/수정"));
   }
 
   Widget weightInput() {
@@ -215,7 +228,7 @@ class _InbodyPageState extends State<InbodyPage> {
   }
 
   Widget inbodySubmitButton() {
-    return ElevatedButton(
+    return FilledButton(
         onPressed: () {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
@@ -228,7 +241,7 @@ class _InbodyPageState extends State<InbodyPage> {
             Navigator.of(context).pop();
           }
         },
-        child: Text("편집/등록"));
+        child: Text("등록/수정"));
   }
 
   Widget inbodyDeleteButton() {

@@ -72,64 +72,111 @@ class _DietListBuilderState extends State<DietListBuilder> {
   }
 
   Widget DietListContainer(Map<String, dynamic> mapData) {
-    return GestureDetector(
-      onLongPress: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(mapData["name"].toString()),
-              content: const Text("위 식단을 삭제하시겠습니까?"),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          FirebaseFirestore.instance
-                              .collection(kUsersCollectionText)
-                              .doc(uid)
-                              .collection(kDietCollectionText)
-                              .doc(widget.mealDate)
-                              .update({
-                            widget.mealType: FieldValue.arrayRemove([mapData])
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            child: Text("삭제",
-                                style: TextStyle(color: Colors.red)))),
-                    InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            child: Text("취소")))
-                  ],
-                )
-              ],
-            );
-          },
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            border: Border.all(
-                color: Colors.black, style: BorderStyle.solid, width: 1)),
-        margin: EdgeInsets.only(bottom: 20),
-        padding: EdgeInsets.all(10),
+    return Card(
+      margin: EdgeInsets.only(bottom: 20),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
         child: Column(children: [
-          Text(mapData["name"].toString()),
-          Text(mapData["carbo"].toString()),
-          Text(mapData["protein"].toString()),
-          Text(mapData["fat"].toString()),
-          Text(mapData["kcal"].toString()),
-          Text(mapData["amount"].toString()),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "${mapData["name"]}",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "${mapData["amount"]}개",
+                style: TextStyle(fontSize: 20),
+              ),
+              InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(mapData["name"].toString()),
+                          content: const Text("위 식단을 삭제하시겠습니까?"),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                FilledButton(
+                                    onPressed: () {
+                                      FirebaseFirestore.instance
+                                          .collection(kUsersCollectionText)
+                                          .doc(uid)
+                                          .collection(kDietCollectionText)
+                                          .doc(widget.mealDate)
+                                          .update({
+                                        widget.mealType:
+                                            FieldValue.arrayRemove([mapData])
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("삭제")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("취소"))
+                              ],
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Icon(Icons.close))
+            ],
+          ),
+          Container(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 20),
+                child: Text(
+                  "${mapData["carbo"]}\n탄수화물",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
+                  child: Text(
+                    "${mapData["protein"]}\n단백질",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
+                  child: Text(
+                    "${mapData["fat"]}\n지방",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
+                  child: Text(
+                    "${mapData["kcal"]}\n칼로리",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ]),
       ),
     );
