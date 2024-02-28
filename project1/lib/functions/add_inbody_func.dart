@@ -5,11 +5,11 @@ import 'uid_info_controller.dart';
 addInbodyFunc(String bodyDate, Map<String, dynamic> bodyMap) async {
   // Firebase 경로 설정
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final inbodyRef = firestore
-      .collection(kUsersCollectionText)
-      .doc(await getUid())
-      .collection(kInbodyCollectionText)
-      .doc(bodyDate);
+
+  final userRef =
+      firestore.collection(kUsersCollectionText).doc(await getUid());
+
+  final inbodyRef = userRef.collection(kInbodyCollectionText).doc(bodyDate);
 
   dynamic stor;
 
@@ -18,6 +18,8 @@ addInbodyFunc(String bodyDate, Map<String, dynamic> bodyMap) async {
   });
 
   inbodyRef.set(bodyMap, SetOptions(merge: true));
+
+  userRef.set({"currentWeight": bodyMap["weight"]}, SetOptions(merge: true));
 
   if (stor == null ? true : stor["docdate"] == null) {
     inbodyRef.set({"docdate": bodyDate}, SetOptions(merge: true));

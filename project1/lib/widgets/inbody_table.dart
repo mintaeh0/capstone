@@ -38,6 +38,9 @@ class _InbodyTableState extends State<InbodyTable> {
           .doc(widget.bodyDate)
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }

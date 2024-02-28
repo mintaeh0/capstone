@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:project1/constants.dart';
 import 'functions/uid_info_controller.dart';
 import 'proflie_set_page.dart';
-
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
 
 class ProfilePage extends StatefulWidget {
@@ -14,7 +14,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late String _age, _height;
+  late num _age, _currentWeight, _height, _bmiNum;
+  late String _bmiString;
   dynamic uid;
 
   @override
@@ -45,16 +46,38 @@ class _ProfilePageState extends State<ProfilePage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          _age = snapshot.data!.get("age");
-          _height = snapshot.data!.get("height");
+          _age = num.parse(snapshot.data!.get("age"));
+          _height = num.parse(snapshot.data!.get("height"));
+
+          if (snapshot.data!.data()!.containsKey("currentWeight")) {
+            _currentWeight = snapshot.data!.get("currentWeight");
+          } else {
+            _currentWeight = 0;
+          }
+
+          _bmiNum = _currentWeight / ((_height * 0.01) * (_height * 0.01));
+
+          if (_bmiNum < 18.5) {
+            _bmiString = "저체중";
+          } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+            _bmiString = "정상";
+          } else if (_bmiNum >= 23 && _bmiNum < 25) {
+            _bmiString = "비만전단계";
+          } else if (_bmiNum >= 25 && _bmiNum < 30) {
+            _bmiString = "1단계 비만";
+          } else if (_bmiNum >= 30 && _bmiNum < 35) {
+            _bmiString = "2단계 비만";
+          } else {
+            _bmiString = "3단계 비만";
+          }
 
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Column(children: [
               profileCard(),
-              Container(
-                height: 10,
-              ),
+              Container(height: 20),
+              bmiCard(),
+              Container(height: 20),
               settingButton(),
             ]),
           );
@@ -82,13 +105,100 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget bmiCard() {
+    return Card(
+        child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("BMI", style: TextStyle(fontSize: 20)),
+              Text("* 대한비만학회 비만 진료지침 2022(8판)")
+            ],
+          ),
+          Text(_bmiString, style: TextStyle(fontSize: 20)),
+          bmiGauge(),
+          Text("${_bmiNum.toStringAsFixed(1)}", style: TextStyle(fontSize: 30))
+        ],
+      ),
+    ));
+  }
+
+  Widget bmiGauge() {
+    return SfLinearGauge(
+      minimum: 15,
+      maximum: 38,
+      ranges: [
+        LinearGaugeRange(
+          startValue: 15,
+          endValue: 18.5,
+          color: Colors.lightBlue,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+        LinearGaugeRange(
+          startValue: 18.5,
+          endValue: 23,
+          color: Colors.greenAccent,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+        LinearGaugeRange(
+          startValue: 23,
+          endValue: 25,
+          color: Colors.yellow,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+        LinearGaugeRange(
+          startValue: 25,
+          endValue: 30,
+          color: Colors.amber,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+        LinearGaugeRange(
+          startValue: 30,
+          endValue: 35,
+          color: Colors.redAccent,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+        LinearGaugeRange(
+          startValue: 35,
+          endValue: 38,
+          color: Colors.deepPurpleAccent,
+          startWidth: 10,
+          endWidth: 10,
+        ),
+      ],
+      markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
+      showAxisTrack: false,
+      onGenerateLabels: () {
+        return [
+          LinearAxisLabel(text: "", value: 15),
+          LinearAxisLabel(text: "18.5", value: 18.5),
+          LinearAxisLabel(text: "23", value: 23),
+          LinearAxisLabel(text: "25", value: 25),
+          LinearAxisLabel(text: "30", value: 30),
+          LinearAxisLabel(text: "35", value: 35),
+          LinearAxisLabel(text: "", value: 38),
+        ];
+      },
+      minorTicksPerInterval: 0,
+    );
+  }
+
   Widget settingButton() {
     return Column(
       children: [
         IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProflieSetPage(_age, _height),
+                builder: (context) =>
+                    ProflieSetPage(_age.toString(), _height.toString()),
               ));
             },
             icon: Icon(
