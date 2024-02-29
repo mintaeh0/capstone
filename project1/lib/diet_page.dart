@@ -59,42 +59,7 @@ class _DietPageState extends State<DietPage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        decDate();
-                      },
-                      icon: Icon(
-                        Icons.keyboard_arrow_left,
-                        size: 40,
-                      )),
-                  Text(dateString, style: TextStyle(fontSize: 20)),
-                  IconButton(
-                      onPressed: () async {
-                        DateTime? datetime = await showDatePicker(
-                            context: context,
-                            initialDate: stringToDate(dateString),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now());
-                        if (datetime != null) {
-                          changeDate(datetime);
-                        }
-                      },
-                      icon: Icon(Icons.calendar_today)),
-                  IconButton(
-                      onPressed: () {
-                        if (dateString != getTodayString()) {
-                          incDate();
-                        }
-                      },
-                      icon: Icon(
-                        Icons.keyboard_arrow_right,
-                        size: 40,
-                      )),
-                ],
-              ),
+              dateRemoteBar(),
               Container(height: 10),
               DietChart(dateString, "breakfast"),
               Container(height: 10),
@@ -163,5 +128,45 @@ class _DietPageState extends State<DietPage> {
             ],
           ),
         ));
+  }
+
+  Widget dateRemoteBar() {
+    return Card(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+            onPressed: () {
+              decDate();
+            },
+            icon: Icon(
+              Icons.keyboard_arrow_left,
+              size: 40,
+            )),
+        Text(dateString, style: TextStyle(fontSize: 20)),
+        IconButton(
+            onPressed: () async {
+              DateTime? datetime = await showDatePicker(
+                  context: context,
+                  initialDate: stringToDate(dateString),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime.now());
+              if (datetime != null) {
+                changeDate(datetime);
+              }
+            },
+            icon: Icon(Icons.calendar_today)),
+        IconButton(
+            onPressed: () {
+              if (dateString != getTodayString()) {
+                incDate();
+              }
+            },
+            icon: Icon(
+              Icons.keyboard_arrow_right,
+              size: 40,
+            )),
+      ],
+    ));
   }
 }

@@ -1,7 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'inbody_page.dart';
 import 'diet_page.dart';
 import 'profile_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // 메인 페이지
 
@@ -13,6 +20,44 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  StreamSubscription? _subscription;
+
+  bool _isConnected = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _subscription = Connectivity().onConnectivityChanged.listen((event) {
+      setState(() {
+        if (event == ConnectivityResult.wifi ||
+            event == ConnectivityResult.ethernet ||
+            event == ConnectivityResult.mobile) {
+          _isConnected = true;
+          Fluttertoast.showToast(
+              msg: "${_isConnected}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM);
+        } else if (event == ConnectivityResult.none) {
+          _isConnected = false;
+          Fluttertoast.showToast(
+              msg: "${_isConnected}",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM);
+          SchedulerBinding.instance.addPostFrameCallback((_) async {
+            await disconnectedDialog();
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   int _currentIndex = 0;
   final List<Widget> _body = const [
     DietPage(),
@@ -55,6 +100,40 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
+    );
+  }
+
+  disconnectedDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("네트워크 에러"),
+          content: const Text("인터넷 연결을 확인해주세요."),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FilledButton(
+                    onPressed: () {
+                      Platform.isIOS ? exit(0) : SystemNavigator.pop();
+                    },
+                    child: Text("종료")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("재시도"))
+              ],
+            )
+          ],
+        );
+      },
+    ).then(
+      (_) {
+        _isConnected ? () : disconnectedDialog();
+      },
     );
   }
 }
