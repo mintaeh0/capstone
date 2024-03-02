@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'inbody_page.dart';
 import 'diet_page.dart';
 import 'profile_page.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 // 메인 페이지
 
@@ -28,27 +27,23 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
 
+    checkConnection();
+
     _subscription = Connectivity().onConnectivityChanged.listen((event) {
-      setState(() {
-        if (event == ConnectivityResult.wifi ||
-            event == ConnectivityResult.ethernet ||
-            event == ConnectivityResult.mobile) {
+      if (event == ConnectivityResult.wifi ||
+          event == ConnectivityResult.ethernet ||
+          event == ConnectivityResult.mobile) {
+        setState(() {
           _isConnected = true;
-          Fluttertoast.showToast(
-              msg: "${_isConnected}",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM);
-        } else if (event == ConnectivityResult.none) {
+        });
+      } else if (event == ConnectivityResult.none) {
+        setState(() {
           _isConnected = false;
-          Fluttertoast.showToast(
-              msg: "${_isConnected}",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM);
-          SchedulerBinding.instance.addPostFrameCallback((_) async {
-            await disconnectedDialog();
-          });
-        }
-      });
+        });
+        SchedulerBinding.instance.addPostFrameCallback((_) async {
+          await disconnectedDialog();
+        });
+      }
     });
   }
 
@@ -56,6 +51,18 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     _subscription?.cancel();
     super.dispose();
+  }
+
+  checkConnection() async {
+    if (await Connectivity().checkConnectivity() == ConnectivityResult.none) {
+      setState(() {
+        _isConnected = false;
+      });
+
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        await disconnectedDialog();
+      });
+    }
   }
 
   int _currentIndex = 0;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:project1/constants.dart';
 import 'package:project1/widgets/diet_chart.dart';
 import 'add_diet_page.dart';
-import 'functions/date_controller.dart';
-import 'functions/uid_info_controller.dart';
+import '../functions/date_controller.dart';
+import '../functions/uid_info_controller.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});

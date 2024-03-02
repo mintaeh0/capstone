@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project1/widgets/inbody_chart.dart';
-import 'functions/add_inbody_func.dart';
-import 'functions/date_controller.dart';
-import 'functions/uid_info_controller.dart';
-import 'widgets/inbody_table.dart';
-import 'constants.dart';
+import '../functions/add_inbody_func.dart';
+import '../functions/date_controller.dart';
+import '../functions/uid_info_controller.dart';
+import '../widgets/inbody_table.dart';
+import '../constants.dart';
 
 // 체성분 페이지
 

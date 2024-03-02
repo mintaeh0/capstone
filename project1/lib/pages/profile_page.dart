@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/constants.dart';
-import 'functions/uid_info_controller.dart';
+import '../functions/uid_info_controller.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지

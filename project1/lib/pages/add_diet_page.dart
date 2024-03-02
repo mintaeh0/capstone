@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project1/constants.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
-import 'functions/add_diet_func.dart';
-import 'functions/uid_info_controller.dart';
+import '../functions/add_diet_func.dart';
+import '../functions/uid_info_controller.dart';
 
 // 식단 추가 페이지
 

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:project1/login_page.dart';
-import 'package:project1/main_page.dart';
-import 'firebase_options.dart';
-import 'functions/login_state_controller.dart';
+import 'package:project1/pages/login_page.dart';
+import 'package:project1/pages/main_page.dart';
+import '../firebase_options.dart';
+import '../functions/login_state_controller.dart';
 
 // 시작
 
