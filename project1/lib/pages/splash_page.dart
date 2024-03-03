@@ -35,6 +35,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Widget splashWidget() {
+    setLoginState("false");
     Timer(
       const Duration(seconds: 3),
       () {

@@ -132,8 +132,11 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                             await storage.delete(key: "uid");
                             await storage.write(
                                 key: "loginState", value: "false");
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => LoginPage()));
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                              (route) => false,
+                            );
                           },
                           child: Text("확인")),
                       TextButton(
