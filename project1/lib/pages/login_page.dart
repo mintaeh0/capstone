@@ -22,52 +22,55 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              _uid = "abc123";
-
-              FirebaseFirestore.instance
-                  .collection(kUsersCollectionText)
-                  .doc(_uid)
-                  .get()
-                  .then((DocumentSnapshot doc) {
-                setState(() {
-                  _initialValue = doc.data() != null;
-                });
-
-                if (_initialValue) {
-                  setLoginState("true");
-                  setUid(_uid);
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const MainPage()),
-                    (route) => false,
-                  );
-                } else {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => InitialValuePage(_uid)),
-                    (route) => false,
-                  );
-                }
-              });
-            },
-            child: Text("로그인"),
-          ),
-          ElevatedButton(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+          body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
               onPressed: () async {
-                Fluttertoast.showToast(
-                    msg: await getLoginState() ?? "false",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM);
+                _uid = "abc123";
+
+                FirebaseFirestore.instance
+                    .collection(kUsersCollectionText)
+                    .doc(_uid)
+                    .get()
+                    .then((DocumentSnapshot doc) {
+                  setState(() {
+                    _initialValue = doc.data() != null;
+                  });
+
+                  if (_initialValue) {
+                    setLoginState("true");
+                    setUid(_uid);
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => const MainPage()),
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => InitialValuePage(_uid)),
+                      (route) => false,
+                    );
+                  }
+                });
               },
-              child: Text("LoginState Toast"))
-        ],
-      ),
-    ));
+              child: Text("로그인"),
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                      msg: await getLoginState() ?? "false",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM);
+                },
+                child: Text("LoginState Toast"))
+          ],
+        ),
+      )),
+    );
   }
 }

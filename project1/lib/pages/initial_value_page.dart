@@ -20,21 +20,24 @@ class _InitialValuePageState extends State<InitialValuePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-            child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Form(
-        key: _form,
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          ageInput(),
-          Container(height: 10),
-          heightInput(),
-          Container(height: 20),
-          initialSubmitButton(),
-        ]),
-      ),
-    )));
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+          body: Center(
+              child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _form,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ageInput(),
+            Container(height: 10),
+            heightInput(),
+            Container(height: 20),
+            initialSubmitButton(),
+          ]),
+        ),
+      ))),
+    );
   }
 
   Widget ageInput() {
