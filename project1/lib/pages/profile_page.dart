@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -88,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton.filled(
+        const IconButton.filled(
             onPressed: null,
             icon: Icon(
               Icons.person,
@@ -98,8 +98,8 @@ class _ProfilePageState extends State<ProfilePage> {
           width: 10,
         ),
         Text(
-          "민태호 ${_age}세\n${_height}cm",
-          style: TextStyle(fontSize: 20),
+          "민태호 $_age세\n${_height}cm",
+          style: const TextStyle(fontSize: 20),
         )
       ],
     );
@@ -111,16 +111,16 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("BMI", style: TextStyle(fontSize: 20)),
-              Text("* 대한비만학회 비만 진료지침 2022(8판)")
+              Text("* 대한비만학회 비만 진료지침 2022(8판)"),
             ],
           ),
-          Text(_bmiString, style: TextStyle(fontSize: 20)),
+          Text(_bmiString, style: const TextStyle(fontSize: 20)),
           bmiGauge(),
-          Text("${_bmiNum.toStringAsFixed(1)}", style: TextStyle(fontSize: 30))
+          Text(_bmiNum.toStringAsFixed(1), style: const TextStyle(fontSize: 30))
         ],
       ),
     ));
@@ -130,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return SfLinearGauge(
       minimum: 15,
       maximum: 38,
-      ranges: [
+      ranges: const [
         LinearGaugeRange(
           startValue: 15,
           endValue: 18.5,
@@ -177,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
       markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
       showAxisTrack: false,
       onGenerateLabels: () {
-        return [
+        return const [
           LinearAxisLabel(text: "", value: 15),
           LinearAxisLabel(text: "18.5", value: 18.5),
           LinearAxisLabel(text: "23", value: 23),
@@ -201,11 +201,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     ProflieSetPage(_age.toString(), _height.toString()),
               ));
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.settings,
               size: 50,
             )),
-        Text("설정")
+        const Text("설정")
       ],
     );
   }

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:project1/constants.dart';
 import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/internet_controller.dart';
 import 'package:project1/pages/initial_value_page.dart';
 import 'package:project1/pages/main_page.dart';
 import '../functions/login_state_controller.dart';
@@ -19,6 +21,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   dynamic _uid;
   late bool _initialValue;
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(InternetController()).checkConnection();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                     .doc(_uid)
                     .get()
                     .then((DocumentSnapshot doc) {
-                  setState(() {
-                    _initialValue = doc.data() != null;
-                  });
+                  _initialValue = doc.data() != null;
 
                   if (_initialValue) {
                     setLoginState("true");

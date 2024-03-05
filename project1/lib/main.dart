@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
+import 'package:project1/dependency_injection.dart';
 import 'package:project1/pages/splash_page.dart';
 import 'firebase_options.dart';
 
@@ -13,6 +15,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
+  DependencyInjection.init();
 }
 
 class MyApp extends StatefulWidget {
@@ -25,7 +28,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorSchemeSeed: Colors.green,
@@ -33,7 +37,6 @@ class _MyAppState extends State<MyApp> {
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.light,
-      // home: (loginState == "true") ? MainPage() : LoginPage(),
       home: const SplashPage(),
     );
   }

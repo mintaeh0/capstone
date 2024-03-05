@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:project1/internet_controller.dart';
 import 'package:project1/pages/main_page.dart';
 
 import '../functions/add_profile_func.dart';
@@ -17,6 +19,12 @@ class InitialValuePage extends StatefulWidget {
 class _InitialValuePageState extends State<InitialValuePage> {
   final _form = GlobalKey<FormState>();
   late String _age, _height;
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(InternetController()).checkConnection();
+  }
 
   @override
   Widget build(BuildContext context) {
