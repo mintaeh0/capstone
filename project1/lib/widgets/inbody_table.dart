@@ -59,26 +59,36 @@ class _InbodyTableState extends State<InbodyTable> {
           array = [0, 0, 0];
         }
 
-        return BodyTable(array);
+        return Card(
+            child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: BodyTable(array),
+        ));
       },
     );
   }
 }
 
 Widget BodyTable(List bodylist) {
-  return DataTable(headingRowHeight: 0, columns: const [
-    DataColumn(label: Text("항목항목항목")),
-    DataColumn(label: Text("수치수치"))
-  ], rows: [
-    DataRow(
-        cells: [DataCell(Text("체중")), DataCell(Text(bodylist[0].toString()))]),
-    DataRow(cells: [
-      DataCell(Text("골격근량")),
-      DataCell(Text(bodylist[1].toString()))
+  return Container(
+    decoration: BoxDecoration(
+        border: Border.symmetric(horizontal: BorderSide(color: Colors.black))),
+    child: DataTable(headingRowHeight: 0, columns: const [
+      DataColumn(label: Text("항목항목항목")),
+      DataColumn(label: Text("수치수치"))
+    ], rows: [
+      DataRow(cells: [
+        DataCell(Text("체중")),
+        DataCell(Text(bodylist[0].toString()))
+      ]),
+      DataRow(cells: [
+        DataCell(Text("골격근량")),
+        DataCell(Text(bodylist[1].toString()))
+      ]),
+      DataRow(cells: [
+        DataCell(Text("체지방률")),
+        DataCell(Text(bodylist[2].toString()))
+      ]),
     ]),
-    DataRow(cells: [
-      DataCell(Text("체지방률")),
-      DataCell(Text(bodylist[2].toString()))
-    ]),
-  ]);
+  );
 }

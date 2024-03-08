@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:project1/widgets/inbody_chart.dart';
 import '../functions/add_inbody_func.dart';
 import '../functions/date_controller.dart';
@@ -66,42 +67,7 @@ class _InbodyPageState extends State<InbodyPage> {
         padding: const EdgeInsets.all(30),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      decDate();
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_left,
-                      size: 40,
-                    )),
-                Text(dateString, style: TextStyle(fontSize: 20)),
-                IconButton(
-                    onPressed: () async {
-                      DateTime? datetime = await showDatePicker(
-                          context: context,
-                          initialDate: stringToDate(dateString),
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime.now());
-                      if (datetime != null) {
-                        changeDate(datetime);
-                      }
-                    },
-                    icon: Icon(Icons.calendar_today)),
-                IconButton(
-                    onPressed: () {
-                      if (dateString != getTodayString()) {
-                        incDate();
-                      }
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_right,
-                      size: 40,
-                    )),
-              ],
-            ),
+            dateRemoteBar(),
             Container(height: 10),
             InbodyTable(dateString),
             Container(height: 10),
@@ -111,6 +77,47 @@ class _InbodyPageState extends State<InbodyPage> {
             InbodyChart(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget dateRemoteBar() {
+    return Card(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+              onPressed: () {
+                decDate();
+              },
+              icon: Icon(
+                Icons.keyboard_arrow_left,
+                size: 40,
+              )),
+          Text(dateString, style: TextStyle(fontSize: 20)),
+          IconButton(
+              onPressed: () async {
+                DateTime? datetime = await showDatePicker(
+                    context: context,
+                    initialDate: stringToDate(dateString),
+                    firstDate: DateTime(2024),
+                    lastDate: DateTime.now());
+                if (datetime != null) {
+                  changeDate(datetime);
+                }
+              },
+              icon: Icon(Icons.calendar_today)),
+          IconButton(
+              onPressed: () {
+                if (dateString != getTodayString()) {
+                  incDate();
+                }
+              },
+              icon: Icon(
+                Icons.keyboard_arrow_right,
+                size: 40,
+              )),
+        ],
       ),
     );
   }

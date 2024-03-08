@@ -61,7 +61,7 @@ class _DietPageState extends State<DietPage> {
             children: [
               dateRemoteBar(),
               Container(height: 10),
-              DietChart(dateString, "breakfast"),
+              DietChart(dateString),
               Container(height: 10),
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 FilledButton(

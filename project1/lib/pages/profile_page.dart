@@ -85,23 +85,27 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget profileCard() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const IconButton.filled(
-            onPressed: null,
-            icon: Icon(
-              Icons.person,
-              size: 70,
-            )),
-        Container(
-          width: 10,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            const IconButton.filled(
+                onPressed: null,
+                icon: Icon(
+                  Icons.person,
+                  size: 70,
+                )),
+            Container(
+              width: 10,
+            ),
+            Text(
+              "민태호 $_age세\n${_height}cm",
+              style: const TextStyle(fontSize: 20),
+            )
+          ],
         ),
-        Text(
-          "민태호 $_age세\n${_height}cm",
-          style: const TextStyle(fontSize: 20),
-        )
-      ],
+      ),
     );
   }
 

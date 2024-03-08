@@ -126,10 +126,10 @@ class _AddDietPageState extends State<AddDietPage> {
                           children: [
                             nameInput(),
                             amountInput(),
-                            carboInput(),
-                            proteinInput(),
-                            fatInput(),
-                            kcalInput(),
+                            nutriInput(0),
+                            nutriInput(1),
+                            nutriInput(2),
+                            nutriInput(3)
                           ],
                         ),
                         Container(height: 10),
@@ -179,7 +179,10 @@ class _AddDietPageState extends State<AddDietPage> {
       onSaved: (newValue) {
         _amount = newValue as String;
       },
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        FilteringTextInputFormatter.allow(RegExp("^[^0][0-9]*"))
+      ],
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
           border: OutlineInputBorder(),
@@ -190,95 +193,50 @@ class _AddDietPageState extends State<AddDietPage> {
     );
   }
 
-  Widget carboInput() {
+  Widget nutriInput(int typeNum) {
+    List type = [
+      ["탄수화물", "g"],
+      ["단백질", "g"],
+      ["지방", "g"],
+      ["칼로리", "kcal"]
+    ];
     return TextFormField(
       validator: (value) {
-        if (value!.isEmpty) {
-          return "탄수화물을 입력해주세요";
+        if (value!.isEmpty ||
+            (int.tryParse(value) == null && double.tryParse(value) == null) ||
+            value[value.length - 1] == ".") {
+          return "값을 입력해주세요";
         } else {
           return null;
         }
       },
       onSaved: (newValue) {
-        _carbo = newValue as String;
-      },
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "탄수화물",
-          errorStyle: TextStyle(fontSize: 0),
-          contentPadding: EdgeInsets.all(10),
-          suffixText: "g"),
-    );
-  }
-
-  Widget proteinInput() {
-    return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "단백질을 입력해주세요";
-        } else {
-          return null;
+        switch (typeNum) {
+          case 0:
+            _carbo = newValue as String;
+            break;
+          case 1:
+            _protein = newValue as String;
+            break;
+          case 2:
+            _fat = newValue as String;
+            break;
+          case 3:
+            _kcal = newValue as String;
+            break;
         }
       },
-      onSaved: (newValue) {
-        _protein = newValue as String;
-      },
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(
+            typeNum == 3 ? r'^\d{1,4}(\.\d{0,1})?' : r'^\d{1,3}(\.\d{0,1})?'))
+      ],
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
           border: OutlineInputBorder(),
-          labelText: "단백질",
+          labelText: type[typeNum][0],
           errorStyle: TextStyle(fontSize: 0),
           contentPadding: EdgeInsets.all(10),
-          suffixText: "g"),
-    );
-  }
-
-  Widget fatInput() {
-    return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "지방을 입력해주세요";
-        } else {
-          return null;
-        }
-      },
-      onSaved: (newValue) {
-        _fat = newValue as String;
-      },
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "지방",
-          errorStyle: TextStyle(fontSize: 0),
-          contentPadding: EdgeInsets.all(10),
-          suffixText: "g"),
-    );
-  }
-
-  Widget kcalInput() {
-    return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "칼로리를 입력해주세요";
-        } else {
-          return null;
-        }
-      },
-      onSaved: (newValue) {
-        _kcal = newValue as String;
-      },
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "칼로리",
-          errorStyle: TextStyle(fontSize: 0),
-          contentPadding: EdgeInsets.all(10),
-          suffixText: "kcal"),
+          suffixText: type[typeNum][1]),
     );
   }
 
@@ -289,10 +247,10 @@ class _AddDietPageState extends State<AddDietPage> {
             _form.currentState!.save();
             Map<String, dynamic> foodMap = {
               "name": _name,
-              "carbo": int.parse(_carbo),
-              "protein": int.parse(_protein),
-              "fat": int.parse(_fat),
-              "kcal": int.parse(_kcal),
+              "carbo": int.tryParse(_carbo) ?? double.parse(_carbo),
+              "protein": int.tryParse(_protein) ?? double.parse(_protein),
+              "fat": int.tryParse(_fat) ?? double.parse(_fat),
+              "kcal": int.tryParse(_kcal) ?? double.parse(_kcal),
               "amount": int.parse(_amount),
             };
             addDietFunc(widget.mealDate, mealType[widget.mealIndex], foodMap);

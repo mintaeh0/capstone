@@ -6,9 +6,8 @@ import '../functions/uid_info_controller.dart';
 
 class DietChart extends StatefulWidget {
   final String mealDate;
-  final String mealType;
 
-  const DietChart(this.mealDate, this.mealType, {super.key});
+  const DietChart(this.mealDate, {super.key});
 
   @override
   State<DietChart> createState() => _DietChartState();
@@ -46,9 +45,8 @@ class _DietChartState extends State<DietChart> {
           if (snapshot.hasData &&
               snapshot.data!.exists &&
               snapshotData != null) {
-            snapshotData.remove("inbody");
             snapshotData.remove("docdate");
-            num carbo = 0;
+            double carbo = 0;
             num protein = 0;
             num fat = 0;
             num kcal = 0;
@@ -62,17 +60,27 @@ class _DietChartState extends State<DietChart> {
               }
             });
 
+            carbo = double.parse(carbo.toStringAsFixed(1));
+            protein = double.parse(protein.toStringAsFixed(1));
+            fat = double.parse(fat.toStringAsFixed(1));
+            kcal = double.parse(kcal.toStringAsFixed(1));
+
             array = [carbo, protein, fat, kcal];
           } else {
             array = [0, 0, 0, 0];
           }
 
-          return Column(
-            children: [
-              DietPieChart(array),
-              Container(height: 10),
-              DietTable(array),
-            ],
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                children: [
+                  DietPieChart(array),
+                  Container(height: 10),
+                  DietTable(array),
+                ],
+              ),
+            ),
           );
         });
   }
