@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
 import 'package:project1/constants.dart';
 import '../functions/uid_info_controller.dart';
 import 'dart:math';
@@ -12,9 +13,12 @@ class InbodyChart extends StatefulWidget {
   State<InbodyChart> createState() => _InbodyChartState();
 }
 
-class _InbodyChartState extends State<InbodyChart> {
+class _InbodyChartState extends State<InbodyChart>
+    with SingleTickerProviderStateMixin {
   dynamic uid;
   List<String> dateData = [];
+  late TabController _chartTabController =
+      TabController(length: 3, vsync: this);
 
   @override
   void initState() {
@@ -27,6 +31,12 @@ class _InbodyChartState extends State<InbodyChart> {
     setState(() {
       uid = val;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _chartTabController.dispose();
   }
 
   @override
@@ -77,72 +87,77 @@ class _InbodyChartState extends State<InbodyChart> {
           bodyfatList = [];
         }
 
-        return Column(
-          children: [
-            inbodyLineChart(weightList, 0),
-            inbodyLineChart(musclemassList, 1),
-            inbodyLineChart(bodyfatList, 2),
-          ],
-        );
+        return Column(children: [
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+                border: Border.all(color: Colors.black26)),
+            child: TabBar(
+                splashBorderRadius: BorderRadius.circular(50),
+                dividerHeight: 0,
+                controller: _chartTabController,
+                tabs: [Tab(text: "체중"), Tab(text: "골격근량"), Tab(text: "체지방률")]),
+          ),
+          SizedBox(
+              height: 300,
+              child: TabBarView(
+                  clipBehavior: Clip.none,
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _chartTabController,
+                  children: [
+                    inbodyLineChart(weightList),
+                    inbodyLineChart(musclemassList),
+                    inbodyLineChart(bodyfatList),
+                  ])),
+        ]);
       },
     );
   }
 
-  Widget inbodyLineChart(List<FlSpot> list, int index) {
-    List currentIndex = ["체중", "골격근량", "체지방률"];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(currentIndex[index], style: TextStyle(fontSize: 20)),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: SizedBox(
-              height: 200,
-              child: LineChart(LineChartData(
-                  borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      drawHorizontalLine: false),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Transform.rotate(
-                            angle: -pi / 15,
-                            child: Text("\n" +
-                                (dateData.isEmpty
-                                    ? value.toInt().toString()
-                                    : dateData[value.toInt()].substring(5))));
-                      },
-                    )),
-                    leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 10,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(value.toInt().toString());
-                      },
-                    )),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  lineBarsData: [
-                    LineChartBarData(
-                        isCurved: true,
-                        spots: list,
-                        color: Colors.green,
-                        dotData: FlDotData(show: false))
-                  ]))),
-        ),
-      ],
+  Widget inbodyLineChart(List<FlSpot> list) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      child: LineChart(LineChartData(
+          borderData: FlBorderData(show: false),
+          gridData: const FlGridData(
+              show: true, drawVerticalLine: false, drawHorizontalLine: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Transform.rotate(
+                    angle: -pi / 15,
+                    child: Text("\n" +
+                        (dateData.isEmpty
+                            ? value.toInt().toString()
+                            : dateData[value.toInt()].substring(5))));
+              },
+            )),
+            leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+              showTitles: true,
+              interval: 10,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(value.toInt().toString());
+              },
+            )),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          lineBarsData: [
+            LineChartBarData(
+                isCurved: true,
+                spots: list,
+                color: Colors.green,
+                dotData: FlDotData(show: false))
+          ])),
     );
   }
 }

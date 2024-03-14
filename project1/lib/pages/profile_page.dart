@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("BMI", style: TextStyle(fontSize: 20)),
@@ -134,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return SfLinearGauge(
       minimum: 15,
       maximum: 38,
-      ranges: const [
+      ranges: [
         LinearGaugeRange(
           startValue: 15,
           endValue: 18.5,
@@ -181,7 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
       markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
       showAxisTrack: false,
       onGenerateLabels: () {
-        return const [
+        return [
           LinearAxisLabel(text: "", value: 15),
           LinearAxisLabel(text: "18.5", value: 18.5),
           LinearAxisLabel(text: "23", value: 23),

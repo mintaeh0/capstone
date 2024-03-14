@@ -54,26 +54,48 @@ class _DietListBuilderState extends State<DietListBuilder> {
             dynamic dataArray = snapshot.data?.get(widget.mealType);
 
             return Padding(
-              padding: const EdgeInsets.all(20),
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemCount: dataArray.length,
-                itemBuilder: (context, index) {
-                  var mapData = dataArray[index] as Map<String, dynamic>;
-                  return DietListContainer(mapData);
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await Future.delayed(const Duration(seconds: 1));
+                  setState(() {});
                 },
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: dataArray.length,
+                  itemBuilder: (context, index) {
+                    var mapData = dataArray[index] as Map<String, dynamic>;
+                    return DietListContainer(mapData);
+                  },
+                ),
               ),
             );
           } else {
-            return Center(child: Text("식단을 추가해보세요!"));
+            return RefreshIndicator(
+              onRefresh: () async {
+                await Future.delayed(const Duration(seconds: 1));
+                setState(() {});
+              },
+              child: const SizedBox(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 200),
+                    child: Center(child: Text("식단을 추가해보세요!")),
+                  ),
+                ),
+              ),
+            );
           }
         });
   }
 
   Widget DietListContainer(Map<String, dynamic> mapData) {
     return Card(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.symmetric(vertical: 10),
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(children: [
