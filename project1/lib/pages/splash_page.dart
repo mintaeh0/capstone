@@ -41,16 +41,23 @@ class _SplashPageState extends State<SplashPage> {
       },
     );
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.anchor,
-          size: 70,
-        ),
-        Container(height: 30),
-        const Text("Simple Sketch Studio")
-      ],
+    return Container(
+      color: Color(0xff38DA87),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.anchor,
+            size: 70,
+            color: Colors.white,
+          ),
+          Container(height: 30),
+          const Text(
+            "Simple Sketch Studio",
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      ),
     );
   }
 }
