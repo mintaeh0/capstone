@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,7 @@ import 'package:project1/internet_controller.dart';
 import 'package:project1/pages/initial_value_page.dart';
 import 'package:project1/pages/main_page.dart';
 import '../functions/login_state_controller.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // 로그인 페이지
 
@@ -20,7 +22,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   dynamic _uid;
-  late bool _initialValue;
+  late bool _existInitialValue;
 
   @override
   void initState() {
@@ -46,9 +48,9 @@ class _LoginPageState extends State<LoginPage> {
                     .doc(_uid)
                     .get()
                     .then((DocumentSnapshot doc) {
-                  _initialValue = doc.data() != null;
+                  _existInitialValue = doc.data() != null;
 
-                  if (_initialValue) {
+                  if (_existInitialValue) {
                     setLoginState("true");
                     setUid(_uid);
                     Navigator.of(context).pushAndRemoveUntil(
@@ -64,8 +66,19 @@ class _LoginPageState extends State<LoginPage> {
                   }
                 });
               },
-              child: Text("로그인"),
+              child: Text("테스트 UID 로그인"),
             ),
+            ElevatedButton(
+                onPressed: () {
+                  signInWithGoogle();
+                },
+                child: Text("구글 로그인")),
+            ElevatedButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  await GoogleSignIn().signOut();
+                },
+                child: Text("구글 로그아웃")),
             ElevatedButton(
                 onPressed: () async {
                   Fluttertoast.showToast(
@@ -78,5 +91,28 @@ class _LoginPageState extends State<LoginPage> {
         ),
       )),
     );
+  }
+
+  void signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+      Fluttertoast.showToast(
+          msg: value.user?.uid ?? "error",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM);
+    });
   }
 }
