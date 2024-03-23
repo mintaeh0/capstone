@@ -25,9 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   fetchData() async {
-    dynamic val = await getUid();
+    dynamic stor = await getUid();
     setState(() {
-      uid = val;
+      uid = stor;
     });
   }
 
@@ -44,43 +44,59 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          _age = num.parse(snapshot.data!.get("age"));
-          _height = num.parse(snapshot.data!.get("height"));
-
-          if (snapshot.data!.data()!.containsKey("currentWeight")) {
-            _currentWeight = snapshot.data!.get("currentWeight");
           } else {
-            _currentWeight = 0;
+            _age = num.parse(snapshot.data!.get("age"));
+            _height = num.parse(snapshot.data!.get("height"));
+
+            return FutureBuilder(
+                future: FirebaseFirestore.instance
+                    .collection(kUsersCollectionText)
+                    .doc(uid)
+                    .collection(kInbodyCollectionText)
+                    .where("docdate", isNull: false)
+                    .orderBy("docdate", descending: true)
+                    .limit(1)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData == false) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.data!.docs.isNotEmpty) {
+                    for (var element in snapshot.data!.docs) {
+                      _currentWeight = element.get("weight");
+                    }
+                  } else {
+                    _currentWeight = 0;
+                  }
+                  _bmiNum =
+                      _currentWeight / ((_height * 0.01) * (_height * 0.01));
+
+                  if (_bmiNum < 18.5) {
+                    _bmiString = "저체중";
+                  } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+                    _bmiString = "정상";
+                  } else if (_bmiNum >= 23 && _bmiNum < 25) {
+                    _bmiString = "비만전단계";
+                  } else if (_bmiNum >= 25 && _bmiNum < 30) {
+                    _bmiString = "1단계 비만";
+                  } else if (_bmiNum >= 30 && _bmiNum < 35) {
+                    _bmiString = "2단계 비만";
+                  } else {
+                    _bmiString = "3단계 비만";
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(children: [
+                      profileCard(),
+                      Container(height: 20),
+                      bmiCard(),
+                      Container(height: 20),
+                      settingButton(),
+                    ]),
+                  );
+                });
           }
-
-          _bmiNum = _currentWeight / ((_height * 0.01) * (_height * 0.01));
-
-          if (_bmiNum < 18.5) {
-            _bmiString = "저체중";
-          } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-            _bmiString = "정상";
-          } else if (_bmiNum >= 23 && _bmiNum < 25) {
-            _bmiString = "비만전단계";
-          } else if (_bmiNum >= 25 && _bmiNum < 30) {
-            _bmiString = "1단계 비만";
-          } else if (_bmiNum >= 30 && _bmiNum < 35) {
-            _bmiString = "2단계 비만";
-          } else {
-            _bmiString = "3단계 비만";
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              profileCard(),
-              Container(height: 20),
-              bmiCard(),
-              Container(height: 20),
-              settingButton(),
-            ]),
-          );
         });
   }
 

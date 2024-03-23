@@ -39,6 +39,19 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.ramen_dining,
+              size: 100,
+              color: Color(0xff38DA87),
+            ),
+            Text(
+              "O2Eat",
+              style: TextStyle(
+                  color: Color(0xff38DA87),
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold),
+            ),
+            Container(height: 50),
             ElevatedButton(
               onPressed: () async {
                 _uid = "abc123";
@@ -68,15 +81,22 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: Text("테스트 UID 로그인"),
             ),
-            ElevatedButton(
-                onPressed: () {
+            GestureDetector(
+                onTap: () {
                   signInWithGoogle();
                 },
-                child: Text("구글 로그인")),
+                child: Image.asset(
+                  "images/google_login_light.png",
+                  width: 200,
+                )),
             ElevatedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
                   await GoogleSignIn().signOut();
+                  Fluttertoast.showToast(
+                      msg: "구글 로그아웃",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM);
                 },
                 child: Text("구글 로그아웃")),
             ElevatedButton(
@@ -97,20 +117,33 @@ class _LoginPageState extends State<LoginPage> {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
+    if (googleUser == null) {
+      Fluttertoast.showToast(
+          msg: "로그인 취소됨",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM);
+      return;
+    }
+
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       Fluttertoast.showToast(
           msg: value.user?.uid ?? "error",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM);
+    }).onError((error, stackTrace) {
+      Fluttertoast.showToast(
+          msg: "Error:Login Failed",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM);
     });

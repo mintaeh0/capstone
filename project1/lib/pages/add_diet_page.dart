@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import '../functions/add_diet_func.dart';
@@ -62,15 +63,41 @@ class _AddDietPageState extends State<AddDietPage> {
                         children: [
                           FilledButton(
                               onPressed: () {
-                                FirebaseFirestore.instance
+                                dynamic stor;
+                                DocumentReference sampleRef = FirebaseFirestore
+                                    .instance
                                     .collection(kUsersCollectionText)
                                     .doc(uid)
                                     .collection(kDietCollectionText)
-                                    .doc(widget.mealDate)
-                                    .update({
-                                  mealType[widget.mealIndex]:
-                                      FieldValue.delete()
+                                    .doc(widget.mealDate);
+
+                                sampleRef.get().then((value) {
+                                  stor = value.data();
+
+                                  if (stor == null) {
+                                    Fluttertoast.showToast(
+                                        msg: "목록이 이미 비어있습니다!");
+                                  } else if (stor[mealType[widget.mealIndex]] ==
+                                      null) {
+                                    Fluttertoast.showToast(
+                                        msg: "목록이 이미 비어있습니다!");
+                                  } else {
+                                    sampleRef.update({
+                                      mealType[widget.mealIndex]:
+                                          FieldValue.delete()
+                                    }).then((_) {
+                                      sampleRef.get().then((value) {
+                                        stor = value.data();
+                                        stor.remove("docdate");
+
+                                        stor.length < 1
+                                            ? sampleRef.delete()
+                                            : ();
+                                      });
+                                    });
+                                  }
                                 });
+
                                 Navigator.pop(context);
                               },
                               child: Text("삭제")),

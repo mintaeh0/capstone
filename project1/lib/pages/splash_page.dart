@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/pages/login_page.dart';
 import 'package:project1/pages/main_page.dart';
 
@@ -14,9 +15,11 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   late bool loginState;
 
-  getLogin() async {
-    dynamic stor = await const FlutterSecureStorage().read(key: "loginState");
-    loginState = bool.parse(stor);
+  void getLogin() {
+    FlutterSecureStorage().read(key: "loginState").then((value) {
+      Fluttertoast.showToast(msg: value ?? "null");
+      loginState = bool.parse(value ?? "false");
+    });
     // loginState = false;
   }
 
@@ -30,7 +33,7 @@ class _SplashPageState extends State<SplashPage> {
 
   Widget splashWidget() {
     Timer(
-      const Duration(seconds: 5),
+      Duration(seconds: 5),
       () {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
