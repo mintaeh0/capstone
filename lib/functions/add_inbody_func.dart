@@ -19,8 +19,6 @@ addInbodyFunc(String bodyDate, Map<String, dynamic> bodyMap) async {
 
   inbodyRef.set(bodyMap, SetOptions(merge: true));
 
-  userRef.set({"currentWeight": bodyMap["weight"]}, SetOptions(merge: true));
-
   if (stor == null ? true : stor["docdate"] == null) {
     inbodyRef.set({"docdate": bodyDate}, SetOptions(merge: true));
   }

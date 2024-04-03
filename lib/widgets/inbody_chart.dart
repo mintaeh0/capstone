@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants.dart';
 import '../functions/uid_info_controller.dart';
 import 'dart:math';
@@ -63,28 +64,30 @@ class _InbodyChartState extends State<InbodyChart>
         List<num> musclemassData = [];
         List<num> bodyfatData = [];
 
-        List<FlSpot> weightList;
-        List<FlSpot> musclemassList;
-        List<FlSpot> bodyfatList;
+        List<FlSpot> weightList = [];
+        List<FlSpot> musclemassList = [];
+        List<FlSpot> bodyfatList = [];
 
-        if (snapshot.hasData &&
-            snapshotData != null &&
-            snapshotData.isNotEmpty) {
-          snapshotData.forEach((data) {
-            weightData.add(data.get("weight"));
-            musclemassData.add(data.get("musclemass"));
-            bodyfatData.add(data.get("bodyfat"));
-            dateData.add(data.get("docdate"));
-          });
-          weightList = makeFlSpotList(List.from(weightData.reversed));
-          musclemassList = makeFlSpotList(List.from(musclemassData.reversed));
-          bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
+        try {
+          if (snapshot.hasData &&
+              snapshotData != null &&
+              snapshotData.isNotEmpty) {
+            snapshotData.forEach((data) {
+              weightData.add(data.get("weight"));
+              musclemassData.add(data.get("musclemass"));
+              bodyfatData.add(data.get("bodyfat"));
+              dateData.add(data.get("docdate"));
+            });
+            weightList = makeFlSpotList(List.from(weightData.reversed));
+            musclemassList = makeFlSpotList(List.from(musclemassData.reversed));
+            bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
 
-          dateData = List.from(dateData.reversed);
-        } else {
-          weightList = [];
-          musclemassList = [];
-          bodyfatList = [];
+            dateData = List.from(dateData.reversed);
+          }
+        } on Exception catch (e) {
+          Fluttertoast.showToast(
+            msg: "에러 : $e",
+          );
         }
 
         return Column(children: [
