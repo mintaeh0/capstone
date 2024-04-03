@@ -33,7 +33,7 @@ class _SplashPageState extends State<SplashPage> {
 
   Widget splashWidget() {
     Timer(
-      Duration(seconds: 5),
+      Duration(seconds: 3),
       () {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
