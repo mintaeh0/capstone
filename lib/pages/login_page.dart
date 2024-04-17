@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                   signInWithGoogle();
                 },
                 child: Image.asset(
-                  "images/google_login_light.png",
+                  "assets/images/google_login_light.png",
                   width: 200,
                 )),
             ElevatedButton(

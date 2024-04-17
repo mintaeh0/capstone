@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants.dart';
+import 'package:project1/pages/food_search_page.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import '../functions/add_diet_func.dart';
 import '../functions/uid_info_controller.dart';
@@ -48,6 +49,14 @@ class _AddDietPageState extends State<AddDietPage> {
         title: Text(widget.mealDate + " " + mealTypeKor[widget.mealIndex]),
         actions: [
           IconButton(
+            icon: Icon(Icons.manage_search),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => FoodSearchPage(),
+              ));
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
               showDialog(
@@ -71,32 +80,37 @@ class _AddDietPageState extends State<AddDietPage> {
                                     .collection(kDietCollectionText)
                                     .doc(widget.mealDate);
 
-                                sampleRef.get().then((value) {
-                                  stor = value.data();
+                                try {
+                                  sampleRef.get().then((value) {
+                                    stor = value.data();
 
-                                  if (stor == null) {
-                                    Fluttertoast.showToast(
-                                        msg: "목록이 이미 비어있습니다!");
-                                  } else if (stor[mealType[widget.mealIndex]] ==
-                                      null) {
-                                    Fluttertoast.showToast(
-                                        msg: "목록이 이미 비어있습니다!");
-                                  } else {
-                                    sampleRef.update({
-                                      mealType[widget.mealIndex]:
-                                          FieldValue.delete()
-                                    }).then((_) {
-                                      sampleRef.get().then((value) {
-                                        stor = value.data();
-                                        stor.remove("docdate");
+                                    if (stor == null) {
+                                      Fluttertoast.showToast(
+                                          msg: "목록이 이미 비어있습니다!");
+                                    } else if (stor[
+                                            mealType[widget.mealIndex]] ==
+                                        null) {
+                                      Fluttertoast.showToast(
+                                          msg: "목록이 이미 비어있습니다!");
+                                    } else {
+                                      sampleRef.update({
+                                        mealType[widget.mealIndex]:
+                                            FieldValue.delete()
+                                      }).then((_) {
+                                        sampleRef.get().then((value) {
+                                          stor = value.data();
+                                          stor.remove("docdate");
 
-                                        stor.length < 1
-                                            ? sampleRef.delete()
-                                            : ();
+                                          stor.length < 1
+                                              ? sampleRef.delete()
+                                              : ();
+                                        });
                                       });
-                                    });
-                                  }
-                                });
+                                    }
+                                  });
+                                } catch (e) {
+                                  Fluttertoast.showToast(msg: "$e");
+                                }
 
                                 Navigator.pop(context);
                               },
@@ -113,7 +127,7 @@ class _AddDietPageState extends State<AddDietPage> {
                 },
               );
             },
-          )
+          ),
         ],
       ),
       body: DietListBuilder(widget.mealDate, mealType[widget.mealIndex]),
@@ -280,10 +294,16 @@ class _AddDietPageState extends State<AddDietPage> {
               "kcal": int.tryParse(_kcal) ?? double.parse(_kcal),
               "amount": int.parse(_amount),
             };
-            addDietFunc(widget.mealDate, mealType[widget.mealIndex], foodMap);
+
+            try {
+              addDietFunc(widget.mealDate, mealType[widget.mealIndex], foodMap);
+            } catch (e) {
+              Fluttertoast.showToast(msg: "$e");
+            }
+
             Navigator.of(context).pop();
           }
         },
-        child: Text("저장"));
+        child: const Text("저장"));
   }
 }
