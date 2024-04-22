@@ -53,10 +53,10 @@ class _DietChartState extends State<DietChart> {
 
             snapshotData.forEach((key, value) {
               for (Map ch in value) {
-                carbo += ch["carbo"] * ch["amount"];
-                protein += ch["protein"] * ch["amount"];
-                fat += ch["fat"] * ch["amount"];
-                kcal += ch["kcal"] * ch["amount"];
+                carbo += ch[kCarboText] * ch["amount"];
+                protein += ch[kProteinText] * ch["amount"];
+                fat += ch[kFatText] * ch["amount"];
+                kcal += ch[kKcalText] * ch["amount"];
               }
             });
 

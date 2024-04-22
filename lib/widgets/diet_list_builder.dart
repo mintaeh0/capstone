@@ -103,7 +103,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${mapData["name"]}",
+                "${mapData[kFoodNameText]}",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Text(
@@ -116,7 +116,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text(mapData["name"].toString()),
+                          title: Text(mapData[kFoodNameText].toString()),
                           content: const Text("위 식단을 삭제하시겠습니까?"),
                           actions: [
                             Row(
@@ -124,14 +124,30 @@ class _DietListBuilderState extends State<DietListBuilder> {
                               children: [
                                 FilledButton(
                                     onPressed: () {
-                                      FirebaseFirestore.instance
-                                          .collection(kUsersCollectionText)
-                                          .doc(uid)
-                                          .collection(kDietCollectionText)
-                                          .doc(widget.mealDate)
-                                          .update({
+                                      DocumentReference sampleRef =
+                                          FirebaseFirestore.instance
+                                              .collection(kUsersCollectionText)
+                                              .doc(uid)
+                                              .collection(kDietCollectionText)
+                                              .doc(widget.mealDate);
+
+                                      sampleRef.update({
                                         widget.mealType:
                                             FieldValue.arrayRemove([mapData])
+                                      }).then((_) {
+                                        sampleRef.get().then((value) {
+                                          dynamic stor = value.data();
+                                          stor.remove("docdate");
+
+                                          if (stor[widget.mealType].length <
+                                              1) {
+                                            stor.remove(widget.mealType);
+                                          }
+
+                                          if (stor.length < 1) {
+                                            sampleRef.delete();
+                                          }
+                                        });
                                       });
                                       Navigator.pop(context);
                                     },
@@ -160,7 +176,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 10, top: 20),
                 child: Text(
-                  "${mapData["carbo"]}\n탄수화물",
+                  "${mapData[kCarboText]}\n탄수화물",
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -170,7 +186,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData["protein"]}\n단백질",
+                    "${mapData[kProteinText]}\n단백질",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
@@ -181,7 +197,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData["fat"]}\n지방",
+                    "${mapData[kFatText]}\n지방",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
@@ -192,7 +208,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData["kcal"]}\n칼로리",
+                    "${mapData[kKcalText]}\n칼로리",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

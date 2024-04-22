@@ -6,13 +6,13 @@ addDietFunc(
     String mealDate, String mealType, Map<String, dynamic> foodMap) async {
   // Firebase 경로 설정
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  dynamic stor;
+
   final mealRef = firestore
       .collection(kUsersCollectionText)
       .doc(await getUid())
       .collection(kDietCollectionText)
       .doc(mealDate);
-
-  dynamic stor;
 
   // 데이터 읽기
   await mealRef.get().then((DocumentSnapshot doc) {

@@ -52,8 +52,8 @@ class _AddDietPageState extends State<AddDietPage> {
             icon: Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => FoodSearchPage(),
-              ));
+                  builder: (context) => FoodSearchPage(
+                      widget.mealDate, mealType[widget.mealIndex])));
             },
           ),
           IconButton(
@@ -287,11 +287,11 @@ class _AddDietPageState extends State<AddDietPage> {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
             Map<String, dynamic> foodMap = {
-              "name": _name,
-              "carbo": int.tryParse(_carbo) ?? double.parse(_carbo),
-              "protein": int.tryParse(_protein) ?? double.parse(_protein),
-              "fat": int.tryParse(_fat) ?? double.parse(_fat),
-              "kcal": int.tryParse(_kcal) ?? double.parse(_kcal),
+              kFoodNameText: _name,
+              kCarboText: int.tryParse(_carbo) ?? double.parse(_carbo),
+              kProteinText: int.tryParse(_protein) ?? double.parse(_protein),
+              kFatText: int.tryParse(_fat) ?? double.parse(_fat),
+              kKcalText: int.tryParse(_kcal) ?? double.parse(_kcal),
               "amount": int.parse(_amount),
             };
 
