@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../functions/add_diet_func.dart';
 
 class FoodSearchPage extends StatefulWidget {
   final String mealDate;
@@ -73,7 +76,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                       itemBuilder: (context, index) {
                         String foodNm = snapshot.data?[index]["foodNm"];
                         String companyNm = snapshot.data?[index]["companyNm"];
-                        String upDate = snapshot.data?[index]["upDate"];
+                        // String upDate = snapshot.data?[index]["upDate"];
                         num carbo = snapshot.data?[index]["carbo"];
                         num dietFib = snapshot.data?[index]["dietFib"];
                         num sugar = snapshot.data?[index]["sugar"];
@@ -82,6 +85,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                         num satFat = snapshot.data?[index]["satFat"];
                         num transFat = snapshot.data?[index]["transFat"];
                         num kcal = snapshot.data?[index]["kcal"];
+                        num foodSize = snapshot.data?[index]["foodSize"];
 
                         carbo == 0 ? carbo = dietFib + sugar : ();
                         fat == 0 ? fat = satFat + transFat : ();
@@ -113,50 +117,303 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  return AlertDialog(
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(foodNm),
-                                        Text(companyNm),
-                                        const Divider(),
-                                        Text("탄수화물 : $carbo"),
-                                        Text("식이섬유 : $dietFib"),
-                                        Text("당 : $sugar"),
-                                        const Divider(),
-                                        Text("단백질 : $prot"),
-                                        const Divider(),
-                                        Text("지방 : $fat"),
-                                        Text("포화지방 : $satFat"),
-                                        Text("트랜스지방 : $transFat"),
-                                        const Divider(),
-                                        Text("칼로리 : $kcal"),
-                                        const Divider(),
-                                        Text("update : $upDate")
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text("닫기")),
-                                      FilledButton(
-                                          onPressed: () {
-                                            // try {
-                                            //   addDietFunc(widget.mealDate,
-                                            //       widget.mealType, {foodmap});
-                                            // } catch (e) {
-                                            //   Fluttertoast.showToast(msg: "$e");
-                                            // }
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text("추가"))
-                                    ],
-                                    actionsAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  num foodAmount = 1;
+
+                                  List<DropdownMenuItem> dropdownItems = const [
+                                    DropdownMenuItem(
+                                        value: 1, child: Text("총량")),
+                                    DropdownMenuItem(
+                                        value: 0.5, child: Text("절반")),
+                                    DropdownMenuItem(
+                                        value: 0.25, child: Text("1/4"))
+                                  ];
+
+                                  num dropdownValue = dropdownItems[0].value;
+
+                                  bool checkBoxValue = false;
+
+                                  String sizeText = "100";
+
+                                  TextEditingController gramController =
+                                      TextEditingController(text: "100");
+
+                                  TextEditingController foodNmController =
+                                      TextEditingController();
+                                  TextEditingController carboController =
+                                      TextEditingController();
+                                  TextEditingController protController =
+                                      TextEditingController();
+                                  TextEditingController fatController =
+                                      TextEditingController();
+                                  TextEditingController kcalController =
+                                      TextEditingController();
+                                  TextEditingController amountController =
+                                      TextEditingController();
+
+                                  return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      foodNmController.text = foodNm;
+                                      carboController.text = (checkBoxValue
+                                              ? carbo *
+                                                  (int.tryParse(sizeText) ??
+                                                      0) /
+                                                  100
+                                              : carbo /
+                                                  100 *
+                                                  foodSize *
+                                                  dropdownValue)
+                                          .toStringAsFixed(1);
+                                      protController.text = (checkBoxValue
+                                              ? prot *
+                                                  (int.tryParse(sizeText) ??
+                                                      0) /
+                                                  100
+                                              : prot /
+                                                  100 *
+                                                  foodSize *
+                                                  dropdownValue)
+                                          .toStringAsFixed(1);
+                                      fatController.text = (checkBoxValue
+                                              ? fat *
+                                                  (int.tryParse(sizeText) ??
+                                                      0) /
+                                                  100
+                                              : fat /
+                                                  100 *
+                                                  foodSize *
+                                                  dropdownValue)
+                                          .toStringAsFixed(1);
+                                      kcalController.text = (checkBoxValue
+                                              ? kcal *
+                                                  (int.tryParse(sizeText) ??
+                                                      0) /
+                                                  100
+                                              : kcal /
+                                                  100 *
+                                                  foodSize *
+                                                  dropdownValue)
+                                          .toStringAsFixed(0);
+                                      amountController.text =
+                                          foodAmount.toString();
+
+                                      return AlertDialog(
+                                        scrollable: true,
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(foodNm),
+                                            Text(companyNm),
+                                            const Divider(),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                nutriText("탄수화물 : ",
+                                                    carboController, ""),
+                                                const Text(":",
+                                                    style: TextStyle(
+                                                        fontSize: 30)),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        "식이섬유 : ${(checkBoxValue ? dietFib * (int.tryParse(sizeText) ?? 0) / 100 : dietFib / 100 * foodSize * dropdownValue).toStringAsFixed(1)}"),
+                                                    Text(
+                                                        "당 : ${(checkBoxValue ? sugar * (int.tryParse(sizeText) ?? 0) / 100 : sugar / 100 * foodSize * dropdownValue).toStringAsFixed(1)}"),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(),
+                                            nutriText(
+                                                "단백질 : ", protController, ""),
+                                            const Divider(),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                nutriText(
+                                                    "지방 : ", fatController, ""),
+                                                const Text(":",
+                                                    style: TextStyle(
+                                                        fontSize: 30)),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        "포화지방 : ${(checkBoxValue ? satFat * (int.tryParse(sizeText) ?? 0) / 100 : satFat / 100 * foodSize * dropdownValue).toStringAsFixed(1)}"),
+                                                    Text(
+                                                        "트랜스지방 : ${(checkBoxValue ? transFat * (int.tryParse(sizeText) ?? 0) / 100 : transFat / 100 * foodSize * dropdownValue).toStringAsFixed(1)}"),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                nutriText("", kcalController,
+                                                    " kcal"),
+                                                Text("${foodSize} g/ml")
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        checkBoxValue
+                                                            ? Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 60,
+                                                                    child:
+                                                                        TextField(
+                                                                      controller:
+                                                                          gramController,
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                              counterText: ""),
+                                                                      maxLength:
+                                                                          5,
+                                                                      keyboardType:
+                                                                          TextInputType
+                                                                              .number,
+                                                                      inputFormatters: [
+                                                                        FilteringTextInputFormatter
+                                                                            .digitsOnly
+                                                                      ],
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        setState(
+                                                                            () {
+                                                                          sizeText =
+                                                                              value;
+                                                                        });
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                  const Text(
+                                                                      "g/ml ")
+                                                                ],
+                                                              )
+                                                            : DropdownButton(
+                                                                items:
+                                                                    dropdownItems,
+                                                                value:
+                                                                    dropdownValue,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  setState(() {
+                                                                    dropdownValue =
+                                                                        value;
+                                                                  });
+                                                                },
+                                                              ),
+                                                        const Text("씩")
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Checkbox(
+                                                          value: checkBoxValue,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              checkBoxValue =
+                                                                  value!;
+                                                            });
+                                                          },
+                                                        ),
+                                                        const Text("직접입력")
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            if (foodAmount >
+                                                                1) {
+                                                              foodAmount--;
+                                                            }
+                                                          });
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.remove)),
+                                                    nutriText("",
+                                                        amountController, ""),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            if (foodAmount <
+                                                                20) {
+                                                              foodAmount++;
+                                                            }
+                                                          });
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.add)),
+                                                    const Text("개 섭취")
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("닫기")),
+                                          FilledButton(
+                                              onPressed: () {
+                                                Map<String, dynamic> foodMap = {
+                                                  "foodNm":
+                                                      foodNmController.text,
+                                                  "carbo": num.parse(
+                                                      carboController.text),
+                                                  "prot": num.parse(
+                                                      protController.text),
+                                                  "fat": num.parse(
+                                                      fatController.text),
+                                                  "kcal": num.parse(
+                                                      kcalController.text),
+                                                  "amount": num.parse(
+                                                      amountController.text),
+                                                };
+                                                try {
+                                                  addDietFunc(widget.mealDate,
+                                                      widget.mealType, foodMap);
+                                                  Fluttertoast.showToast(
+                                                      msg: "목록에 추가되었습니다!");
+                                                } catch (e) {
+                                                  Fluttertoast.showToast(
+                                                      msg: "$e");
+                                                }
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("추가"))
+                                        ],
+                                        actionsAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                      );
+                                    },
                                   );
                                 },
                               );
@@ -170,6 +427,28 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget nutriText(
+      String frontLabel, TextEditingController controller, String backLabel) {
+    return Row(
+      children: [
+        Text(frontLabel),
+        IntrinsicWidth(
+          child: TextFormField(
+            readOnly: true,
+            controller: controller,
+            textAlign: TextAlign.center,
+            decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.all(0),
+                border: OutlineInputBorder(borderSide: BorderSide.none)),
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+        Text(backLabel)
+      ],
     );
   }
 
