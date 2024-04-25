@@ -14,8 +14,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late num _age, _currentWeight, _height, _bmiNum;
-  late String _bmiString;
+  late num _currentWeight = 1, _height, _bmiNum = 0;
+  String _bmiString = "신장(cm) 입력 필요";
   dynamic uid;
 
   @override
@@ -40,13 +40,13 @@ class _ProfilePageState extends State<ProfilePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
+
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            _age = num.parse(snapshot.data!.get("age"));
-            _height = num.parse(snapshot.data!.get("height"));
+            _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
 
             return FutureBuilder(
                 future: FirebaseFirestore.instance
@@ -59,32 +59,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     .get(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData == false) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (snapshot.data!.docs.isNotEmpty) {
                     for (var element in snapshot.data!.docs) {
                       _currentWeight = element.get("weight");
                     }
-                  } else {
-                    _currentWeight = 0;
                   }
-                  _bmiNum =
-                      _currentWeight / ((_height * 0.01) * (_height * 0.01));
 
-                  if (_bmiNum < 18.5) {
-                    _bmiString = "저체중";
-                  } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                    _bmiString = "정상";
-                  } else if (_bmiNum >= 23 && _bmiNum < 25) {
-                    _bmiString = "비만전단계";
-                  } else if (_bmiNum >= 25 && _bmiNum < 30) {
-                    _bmiString = "1단계 비만";
-                  } else if (_bmiNum >= 30 && _bmiNum < 35) {
-                    _bmiString = "2단계 비만";
-                  } else {
-                    _bmiString = "3단계 비만";
+                  if (_height != 0) {
+                    _bmiNum =
+                        _currentWeight / ((_height * 0.01) * (_height * 0.01));
+
+                    if (_bmiNum < 18.5) {
+                      _bmiString = "저체중";
+                    } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+                      _bmiString = "정상";
+                    } else if (_bmiNum >= 23 && _bmiNum < 25) {
+                      _bmiString = "비만전단계";
+                    } else if (_bmiNum >= 25 && _bmiNum < 30) {
+                      _bmiString = "1단계 비만";
+                    } else if (_bmiNum >= 30 && _bmiNum < 35) {
+                      _bmiString = "2단계 비만";
+                    } else {
+                      _bmiString = "3단계 비만";
+                    }
                   }
+
                   return Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(children: [
@@ -112,11 +114,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   Icons.person,
                   size: 70,
                 )),
-            Container(
-              width: 10,
-            ),
+            const SizedBox(width: 20),
             Text(
-              "민태호 $_age세\n${_height}cm",
+              "민태호\n${_height}cm",
               style: const TextStyle(fontSize: 20),
             )
           ],
@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("BMI", style: TextStyle(fontSize: 20)),
@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return SfLinearGauge(
       minimum: 15,
       maximum: 38,
-      ranges: [
+      ranges: const [
         LinearGaugeRange(
           startValue: 15,
           endValue: 18.5,
@@ -197,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
       markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
       showAxisTrack: false,
       onGenerateLabels: () {
-        return [
+        return const [
           LinearAxisLabel(text: "", value: 15),
           LinearAxisLabel(text: "18.5", value: 18.5),
           LinearAxisLabel(text: "23", value: 23),
@@ -217,8 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
         IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    ProflieSetPage(_age.toString(), _height.toString()),
+                builder: (context) => ProflieSetPage(_height.toString()),
               ));
             },
             icon: const Icon(

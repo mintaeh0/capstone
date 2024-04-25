@@ -37,10 +37,15 @@ class _InitialValuePageState extends State<InitialValuePage> {
         child: Form(
           key: _form,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Text(
+              "간단한 정보를 입력해주세요!",
+              style: TextStyle(fontSize: 25),
+            ),
+            const SizedBox(height: 10),
             ageInput(),
-            Container(height: 10),
+            const SizedBox(height: 10),
             heightInput(),
-            Container(height: 20),
+            const SizedBox(height: 20),
             initialSubmitButton(),
           ]),
         ),
@@ -60,7 +65,7 @@ class _InitialValuePageState extends State<InitialValuePage> {
       onSaved: (newValue) {
         _age = newValue as String;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "나이",
           suffixText: "세",
@@ -82,7 +87,7 @@ class _InitialValuePageState extends State<InitialValuePage> {
       onSaved: (newValue) {
         _height = newValue as String;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "신장",
           suffixText: "cm",

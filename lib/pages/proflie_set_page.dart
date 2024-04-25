@@ -1,23 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/pages/login_page.dart';
 
 // 프로필 설정 페이지
 
 class ProflieSetPage extends StatefulWidget {
-  final String age, height;
-  ProflieSetPage(this.age, this.height, {super.key});
+  final String height;
+  const ProflieSetPage(this.height, {super.key});
 
   @override
   State<ProflieSetPage> createState() => _ProflieSetPageState();
 }
 
 class _ProflieSetPageState extends State<ProflieSetPage> {
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   final _form = GlobalKey<FormState>();
-  late String _age, _height;
+  late String _height;
 
   @override
   void initState() {
@@ -40,8 +43,6 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                 children: [
                   Row(
                     children: [
-                      Flexible(child: ageInput()),
-                      Container(width: 10),
                       Flexible(child: heightInput()),
                     ],
                   ),
@@ -55,28 +56,28 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
         ));
   }
 
-  Widget ageInput() {
-    return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "";
-        } else {
-          return null;
-        }
-      },
-      onSaved: (newValue) {
-        _age = newValue as String;
-      },
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "나이",
-          suffixText: "세",
-          errorStyle: TextStyle(fontSize: 0)),
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      initialValue: widget.age,
-    );
-  }
+  // Widget ageInput() {
+  //   return TextFormField(
+  //     validator: (value) {
+  //       if (value!.isEmpty) {
+  //         return "";
+  //       } else {
+  //         return null;
+  //       }
+  //     },
+  //     onSaved: (newValue) {
+  //       _age = newValue as String;
+  //     },
+  //     decoration: InputDecoration(
+  //         border: OutlineInputBorder(),
+  //         labelText: "나이",
+  //         suffixText: "세",
+  //         errorStyle: TextStyle(fontSize: 0)),
+  //     keyboardType: TextInputType.number,
+  //     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+  //     initialValue: widget.age,
+  //   );
+  // }
 
   Widget heightInput() {
     return TextFormField(
@@ -90,7 +91,7 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
       onSaved: (newValue) {
         _height = newValue as String;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "신장",
           suffixText: "cm",
@@ -106,12 +107,12 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
         onPressed: () {
           if (_form.currentState!.validate()) {
             _form.currentState!.save();
-            Map<String, dynamic> profileMap = {"age": _age, "height": _height};
+            Map<String, dynamic> profileMap = {"height": _height};
             addProfileFunc(profileMap);
             Navigator.of(context).pop();
           }
         },
-        child: Text("적용"));
+        child: const Text("적용"));
   }
 
   Widget logoutButton() {
@@ -121,7 +122,7 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text("Logout"),
+                title: const Text("Logout"),
                 content: const Text("로그아웃 하시겠습니까?"),
                 actions: [
                   Row(
@@ -129,21 +130,27 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                     children: [
                       FilledButton(
                           onPressed: () async {
-                            await storage.delete(key: "uid");
-                            await storage.write(
-                                key: "loginState", value: "false");
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => LoginPage()),
-                              (route) => false,
-                            );
+                            try {
+                              await FirebaseAuth.instance.signOut();
+                              await GoogleSignIn().signOut();
+                              await storage.delete(key: "uid");
+                              await storage.write(
+                                  key: "loginState", value: "false");
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()),
+                                (route) => false,
+                              );
+                            } catch (e) {
+                              Fluttertoast.showToast(msg: "$e");
+                            }
                           },
-                          child: Text("확인")),
+                          child: const Text("확인")),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text("취소"))
+                          child: const Text("취소"))
                     ],
                   )
                 ],
@@ -151,6 +158,6 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
             },
           );
         },
-        child: Text("로그아웃"));
+        child: const Text("로그아웃"));
   }
 }

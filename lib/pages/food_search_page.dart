@@ -51,6 +51,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
             ),
           ],
         ),
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.info_outline))],
       ),
       body: SizedBox(
         height: double.maxFinite,
@@ -98,6 +99,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                                 child: Column(
                                   children: [
                                     Text(foodNm),
+                                    Text(companyNm),
                                     const Divider(),
                                     Row(
                                       mainAxisAlignment:

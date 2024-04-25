@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:project1/constants.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 import 'package:project1/internet_controller.dart';
-import 'package:project1/pages/initial_value_page.dart';
 import 'package:project1/pages/main_page.dart';
 import '../functions/login_state_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,8 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  dynamic _uid;
-  late bool _existInitialValue;
+  String? _uid;
 
   @override
   void initState() {
@@ -39,12 +35,12 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.ramen_dining,
               size: 100,
               color: Color(0xff38DA87),
             ),
-            Text(
+            const Text(
               "O2Eat",
               style: TextStyle(
                   color: Color(0xff38DA87),
@@ -52,68 +48,43 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold),
             ),
             Container(height: 50),
-            ElevatedButton(
-              onPressed: () async {
-                _uid = "abc123";
-
-                FirebaseFirestore.instance
-                    .collection(kUsersCollectionText)
-                    .doc(_uid)
-                    .get()
-                    .then((DocumentSnapshot doc) {
-                  _existInitialValue = doc.data() != null;
-
-                  if (_existInitialValue) {
+            GestureDetector(
+                onTap: () async {
+                  try {
+                    _uid = await signInWithGoogle();
+                    // _uid = "abc123";
                     setLoginState("true");
-                    setUid(_uid);
+                    setUid(_uid!);
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const MainPage()),
                       (route) => false,
                     );
-                  } else {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => InitialValuePage(_uid)),
-                      (route) => false,
-                    );
+                  } catch (e) {
+                    Fluttertoast.showToast(msg: "$e");
                   }
-                });
-              },
-              child: Text("테스트 UID 로그인"),
-            ),
-            GestureDetector(
-                onTap: () {
-                  signInWithGoogle();
                 },
                 child: Image.asset(
                   "assets/images/google_login_light.png",
                   width: 200,
                 )),
-            ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  await GoogleSignIn().signOut();
-                  Fluttertoast.showToast(
-                      msg: "구글 로그아웃",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM);
-                },
-                child: Text("구글 로그아웃")),
-            ElevatedButton(
-                onPressed: () async {
-                  Fluttertoast.showToast(
-                      msg: await getLoginState() ?? "false",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM);
-                },
-                child: Text("LoginState Toast"))
+            // ElevatedButton(
+            //     onPressed: () async {
+            //       await FirebaseAuth.instance.signOut();
+            //       await GoogleSignIn().signOut();
+            //       Fluttertoast.showToast(
+            //           msg: "구글 로그아웃",
+            //           toastLength: Toast.LENGTH_SHORT,
+            //           gravity: ToastGravity.BOTTOM);
+            //     },
+            //     child: const Text("구글 로그아웃")),
           ],
         ),
       )),
     );
   }
 
-  void signInWithGoogle() async {
+  Future<String?> signInWithGoogle() async {
+    String? uid;
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -122,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           msg: "로그인 취소됨",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM);
-      return;
+      return uid;
     }
 
     // Obtain the auth details from the request
@@ -136,16 +107,11 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     // Once signed in, return the UserCredential
-    await FirebaseAuth.instance.signInWithCredential(credential).then((value) {
-      Fluttertoast.showToast(
-          msg: value.user?.uid ?? "error",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM);
-    }).onError((error, stackTrace) {
-      Fluttertoast.showToast(
-          msg: "Error:Login Failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM);
-    });
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    uid = userCredential.user!.uid;
+
+    return uid;
   }
 }
