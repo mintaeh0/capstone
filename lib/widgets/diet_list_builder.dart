@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 class DietListBuilder extends StatefulWidget {

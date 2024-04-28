@@ -40,10 +40,37 @@ class _MyAppState extends State<MyApp> {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xff38DA87), brightness: Brightness.light),
+            seedColor: Color(0xff38DA87),
+            brightness: Brightness.light,
+            // primary: Color(0xff38DA87),
+            primary: Color(0xff1CA673),
+            surface: Colors.white),
+        appBarTheme: const AppBarTheme(
+            // backgroundColor: Color(0xff38DA87),
+            // surfaceTintColor: Color(0xff38DA87),
+            backgroundColor: Color(0xff1CA673),
+            surfaceTintColor: Color(0xff1CA673),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20))),
+            centerTitle: true,
+            toolbarHeight: 70,
+            scrolledUnderElevation: 5,
+            shadowColor: Colors.black87),
+        filledButtonTheme: const FilledButtonThemeData(
+            style: ButtonStyle(
+                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)))))),
+        // primarySwatch: Colors.green,
         useMaterial3: true,
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(0xff38DA87), brightness: Brightness.dark),
+        // primarySwatch: Colors.green,
+        useMaterial3: true,
+      ),
       themeMode: ThemeMode.light,
       home: const SplashPage(),
     );

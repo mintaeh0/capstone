@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/pages/login_page.dart';
@@ -45,19 +46,21 @@ class _SplashPageState extends State<SplashPage> {
     );
 
     return Container(
-      color: Color(0xff38DA87),
-      child: Column(
+      width: double.maxFinite,
+      height: double.maxFinite,
+      color: Theme.of(context).colorScheme.primary,
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.anchor,
+          Icon(
+            Icons.ramen_dining_rounded,
             size: 70,
             color: Colors.white,
           ),
-          Container(height: 30),
-          const Text(
-            "Simple Sketch Studio",
-            style: TextStyle(color: Colors.white),
+          SizedBox(height: 10),
+          Text(
+            "WriEATe",
+            style: TextStyle(color: Colors.white, fontSize: 30),
           )
         ],
       ),

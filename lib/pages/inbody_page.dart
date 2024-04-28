@@ -7,7 +7,7 @@ import '../functions/add_inbody_func.dart';
 import '../functions/date_controller.dart';
 import '../functions/uid_info_controller.dart';
 import '../widgets/inbody_table.dart';
-import '../constants.dart';
+import '../constants/strings.dart';
 
 // 체성분 페이지
 
@@ -124,45 +124,46 @@ class _InbodyPageState extends State<InbodyPage> {
 
   Widget inbodyAddButton() {
     return FilledButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) {
-              return Container(
-                width: double.infinity,
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Form(
-                      key: _form,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("체성분 등록/편집", style: TextStyle(fontSize: 15)),
-                              Text("※ 정보가 없을 시 0 입력")
-                            ],
-                          ),
-                          Container(height: 10),
-                          weightInput(),
-                          Container(height: 10),
-                          musclemassInput(),
-                          Container(height: 10),
-                          bodyfatInput(),
-                          Container(height: 10),
-                          inbodySubmitButton()
-                        ],
-                      )),
-                ),
-              );
-            },
-          );
-        },
-        child: const Text("등록/수정"));
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) {
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                    key: _form,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("체성분 등록/편집", style: TextStyle(fontSize: 15)),
+                            Text("※ 정보가 없을 시 0 입력")
+                          ],
+                        ),
+                        Container(height: 10),
+                        weightInput(),
+                        Container(height: 10),
+                        musclemassInput(),
+                        Container(height: 10),
+                        bodyfatInput(),
+                        Container(height: 10),
+                        inbodySubmitButton()
+                      ],
+                    )),
+              ),
+            );
+          },
+        );
+      },
+      child: const Text("등록/수정"),
+    );
   }
 
   Widget weightInput() {

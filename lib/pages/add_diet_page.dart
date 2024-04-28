@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/food_search_page.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import '../functions/add_diet_func.dart';

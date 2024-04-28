@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import 'package:project1/widgets/diet_chart.dart';
-import 'add_diet_page.dart';
+import '../widgets/diet_buttons.dart';
 import '../functions/date_controller.dart';
 import '../functions/uid_info_controller.dart';
 
@@ -60,35 +60,11 @@ class _DietPageState extends State<DietPage> {
           child: Column(
             children: [
               dateRemoteBar(),
-              Container(height: 10),
+              const SizedBox(height: 10),
               DietChart(dateString),
-              Container(height: 10),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddDietPage(dateString, 0)));
-                    },
-                    child: Text("아침")),
-                FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddDietPage(dateString, 1)));
-                    },
-                    child: Text("점심")),
-                FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddDietPage(dateString, 2)));
-                    },
-                    child: Text("저녁")),
-                FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddDietPage(dateString, 3)));
-                    },
-                    child: Text("간식")),
-              ]),
+              const SizedBox(height: 10),
+              DietButtons(dateString),
+              const SizedBox(height: 20),
               FilledButton.tonal(
                   onPressed: () {
                     showDialog(

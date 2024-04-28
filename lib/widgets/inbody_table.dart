@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 class InbodyTable extends StatefulWidget {
@@ -38,9 +38,6 @@ class _InbodyTableState extends State<InbodyTable> {
           .doc(widget.bodyDate)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
@@ -59,11 +56,10 @@ class _InbodyTableState extends State<InbodyTable> {
           array = [0, 0, 0];
         }
 
-        return Card(
-            child: Padding(
+        return Padding(
           padding: const EdgeInsets.all(20),
           child: BodyTable(array),
-        ));
+        );
       },
     );
   }
@@ -71,7 +67,7 @@ class _InbodyTableState extends State<InbodyTable> {
 
 Widget BodyTable(List bodylist) {
   return Container(
-    decoration: BoxDecoration(
+    decoration: const BoxDecoration(
         border: Border.symmetric(horizontal: BorderSide(color: Colors.black))),
     child: DataTable(headingRowHeight: 0, columns: const [
       DataColumn(label: Text("항목항목항목")),

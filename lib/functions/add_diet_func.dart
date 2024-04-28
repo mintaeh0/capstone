@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import 'uid_info_controller.dart';
 
 addDietFunc(

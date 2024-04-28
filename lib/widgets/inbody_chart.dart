@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import '../functions/uid_info_controller.dart';
 import 'dart:math';
 
@@ -52,9 +52,6 @@ class _InbodyChartState extends State<InbodyChart>
           .limit(7)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         }

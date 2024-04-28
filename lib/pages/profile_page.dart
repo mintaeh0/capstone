@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import '../functions/uid_info_controller.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -14,8 +14,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late num _currentWeight = 1, _height, _bmiNum = 0;
-  String _bmiString = "신장(cm) 입력 필요";
+  late num _currentWeight = 0, _height, _bmiNum = 0;
+  String _bmiString = "체중(kg), 신장(cm) 입력 필요";
   dynamic uid;
 
   @override
@@ -33,77 +33,77 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection(kUsersCollectionText)
-            .doc(uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return SingleChildScrollView(
+      child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(kUsersCollectionText)
+              .doc(uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
 
-            return FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection(kUsersCollectionText)
-                    .doc(uid)
-                    .collection(kInbodyCollectionText)
-                    .where("docdate", isNull: false)
-                    .orderBy("docdate", descending: true)
-                    .limit(1)
-                    .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData == false) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              return FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .collection(kUsersCollectionText)
+                      .doc(uid)
+                      .collection(kInbodyCollectionText)
+                      .where("docdate", isNull: false)
+                      .orderBy("docdate", descending: true)
+                      .limit(1)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData == false) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (snapshot.data!.docs.isNotEmpty) {
                     for (var element in snapshot.data!.docs) {
-                      _currentWeight = element.get("weight");
+                      _currentWeight = element["weight"];
                     }
-                  }
 
-                  if (_height != 0) {
-                    _bmiNum =
-                        _currentWeight / ((_height * 0.01) * (_height * 0.01));
+                    if (_height != 0 && _currentWeight != 0) {
+                      _bmiNum = _currentWeight /
+                          ((_height * 0.01) * (_height * 0.01));
 
-                    if (_bmiNum < 18.5) {
-                      _bmiString = "저체중";
-                    } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                      _bmiString = "정상";
-                    } else if (_bmiNum >= 23 && _bmiNum < 25) {
-                      _bmiString = "비만전단계";
-                    } else if (_bmiNum >= 25 && _bmiNum < 30) {
-                      _bmiString = "1단계 비만";
-                    } else if (_bmiNum >= 30 && _bmiNum < 35) {
-                      _bmiString = "2단계 비만";
-                    } else {
-                      _bmiString = "3단계 비만";
+                      if (_bmiNum < 18.5) {
+                        _bmiString = "저체중";
+                      } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+                        _bmiString = "정상";
+                      } else if (_bmiNum >= 23 && _bmiNum < 25) {
+                        _bmiString = "비만전단계";
+                      } else if (_bmiNum >= 25 && _bmiNum < 30) {
+                        _bmiString = "1단계 비만";
+                      } else if (_bmiNum >= 30 && _bmiNum < 35) {
+                        _bmiString = "2단계 비만";
+                      } else {
+                        _bmiString = "3단계 비만";
+                      }
                     }
-                  }
 
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(children: [
-                      profileCard(),
-                      Container(height: 20),
-                      bmiCard(),
-                      Container(height: 20),
-                      settingButton(),
-                    ]),
-                  );
-                });
-          }
-        });
+                    return Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(children: [
+                        profileCard(),
+                        Container(height: 20),
+                        bmiCard(),
+                        Container(height: 20),
+                        settingButton(),
+                      ]),
+                    );
+                  });
+            }
+          }),
+    );
   }
 
   Widget profileCard() {
-    return Card(
+    return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -126,24 +126,26 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget bmiCard() {
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("BMI", style: TextStyle(fontSize: 20)),
-              Text("* 대한비만학회 비만 진료지침 2022(8판)"),
-            ],
-          ),
-          Text(_bmiString, style: const TextStyle(fontSize: 20)),
-          bmiGauge(),
-          Text(_bmiNum.toStringAsFixed(1), style: const TextStyle(fontSize: 30))
-        ],
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("BMI", style: TextStyle(fontSize: 20)),
+                Text("* 대한비만학회 비만 진료지침 2022(8판)"),
+              ],
+            ),
+            Text(_bmiString, style: const TextStyle(fontSize: 20)),
+            bmiGauge(),
+            Text(_bmiNum.toStringAsFixed(1),
+                style: const TextStyle(fontSize: 30))
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget bmiGauge() {
@@ -197,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
       markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
       showAxisTrack: false,
       onGenerateLabels: () {
-        return const [
+        return [
           LinearAxisLabel(text: "", value: 15),
           LinearAxisLabel(text: "18.5", value: 18.5),
           LinearAxisLabel(text: "23", value: 23),

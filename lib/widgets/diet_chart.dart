@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:project1/constants.dart';
+import 'package:project1/constants/strings.dart';
 import '../functions/uid_info_controller.dart';
 
 class DietChart extends StatefulWidget {
@@ -70,23 +70,21 @@ class _DietChartState extends State<DietChart> {
             array = [0, 0, 0, 0];
           }
 
-          return Card(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                children: [
-                  DietPieChart(array),
-                  Container(height: 10),
-                  DietTable(array),
-                ],
-              ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
+                dietPieChart(array),
+                const SizedBox(height: 20),
+                dietTable(array),
+              ],
             ),
           );
         });
   }
 }
 
-Widget DietPieChart(List list) {
+Widget dietPieChart(List list) {
   List<PieChartSectionData> chartSectionList;
   if (list[0] == 0 && list[1] == 0 && list[2] == 0) {
     chartSectionList = [
@@ -104,7 +102,7 @@ Widget DietPieChart(List list) {
           showTitle: true,
           value: list[0].toDouble(),
           radius: 50,
-          color: Colors.lightBlue.shade200),
+          color: Colors.cyan.shade200),
       PieChartSectionData(
           title: "단백질",
           showTitle: true,
@@ -121,32 +119,36 @@ Widget DietPieChart(List list) {
   }
 
   return Stack(alignment: Alignment.center, children: [
-    Text(list[3].toString() + " kcal"),
-    Container(
+    Text("${list[3]} kcal"),
+    SizedBox(
         height: 200, child: PieChart(PieChartData(sections: chartSectionList)))
   ]);
 }
 
-Widget DietTable(List list) {
-  return DataTable(headingRowHeight: 0, columns: const [
-    DataColumn(label: Text("성분성분성분")),
-    DataColumn(label: Text("수치수치수치"))
-  ], rows: [
-    DataRow(cells: [
-      DataCell(Text("탄수화물")),
-      DataCell(Text(list[0].toString() + " g"))
+Widget dietTable(List list) {
+  return Container(
+    decoration: const BoxDecoration(
+        border: Border.symmetric(horizontal: BorderSide(color: Colors.black))),
+    child: DataTable(headingRowHeight: 0, columns: const [
+      DataColumn(label: Text("성분성분성분")),
+      DataColumn(label: Text("수치수치수치"))
+    ], rows: [
+      DataRow(cells: [
+        DataCell(Text("탄수화물")),
+        DataCell(Text(list[0].toString() + " g"))
+      ]),
+      DataRow(cells: [
+        DataCell(Text("단백질")),
+        DataCell(Text(list[1].toString() + " g"))
+      ]),
+      DataRow(cells: [
+        DataCell(Text("지방")),
+        DataCell(Text(list[2].toString() + " g"))
+      ]),
+      DataRow(cells: [
+        DataCell(Text("칼로리")),
+        DataCell(Text(list[3].toString() + " kcal"))
+      ]),
     ]),
-    DataRow(cells: [
-      DataCell(Text("단백질")),
-      DataCell(Text(list[1].toString() + " g"))
-    ]),
-    DataRow(cells: [
-      DataCell(Text("지방")),
-      DataCell(Text(list[2].toString() + " g"))
-    ]),
-    DataRow(cells: [
-      DataCell(Text("칼로리")),
-      DataCell(Text(list[3].toString() + " kcal"))
-    ]),
-  ]);
+  );
 }
