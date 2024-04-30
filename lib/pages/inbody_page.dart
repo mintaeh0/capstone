@@ -23,20 +23,11 @@ class _InbodyPageState extends State<InbodyPage> {
   late String _weight, _musclemass, _bodyfat;
 
   String dateString = getTodayString();
-  dynamic uid;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
     dateString = getTodayString();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
   }
 
   void changeDate(DateTime datetime) {
@@ -90,11 +81,11 @@ class _InbodyPageState extends State<InbodyPage> {
               onPressed: () {
                 decDate();
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.keyboard_arrow_left,
                 size: 40,
               )),
-          Text(dateString, style: TextStyle(fontSize: 20)),
+          Text(dateString, style: const TextStyle(fontSize: 20)),
           IconButton(
               onPressed: () async {
                 DateTime? datetime = await showDatePicker(
@@ -106,14 +97,14 @@ class _InbodyPageState extends State<InbodyPage> {
                   changeDate(datetime);
                 }
               },
-              icon: Icon(Icons.calendar_today)),
+              icon: const Icon(Icons.calendar_today)),
           IconButton(
               onPressed: () {
                 if (dateString != getTodayString()) {
                   incDate();
                 }
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.keyboard_arrow_right,
                 size: 40,
               )),
@@ -140,7 +131,7 @@ class _InbodyPageState extends State<InbodyPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("체성분 등록/편집", style: TextStyle(fontSize: 15)),
@@ -180,7 +171,7 @@ class _InbodyPageState extends State<InbodyPage> {
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           label: Text("체중"),
           border: OutlineInputBorder(),
           errorStyle: TextStyle(fontSize: 0),
@@ -203,7 +194,7 @@ class _InbodyPageState extends State<InbodyPage> {
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           label: Text("골격근량"),
           border: OutlineInputBorder(),
           errorStyle: TextStyle(fontSize: 0),
@@ -226,7 +217,7 @@ class _InbodyPageState extends State<InbodyPage> {
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           label: Text("체지방률"),
           border: OutlineInputBorder(),
           errorStyle: TextStyle(fontSize: 0),
@@ -249,7 +240,7 @@ class _InbodyPageState extends State<InbodyPage> {
             Navigator.of(context).pop();
           }
         },
-        child: Text("등록/수정"));
+        child: const Text("등록/수정"));
   }
 
   Widget inbodyDeleteButton() {
@@ -266,21 +257,21 @@ class _InbodyPageState extends State<InbodyPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       FilledButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FirebaseFirestore.instance
                                 .collection(kUsersCollectionText)
-                                .doc(uid)
+                                .doc(await getUid())
                                 .collection(kInbodyCollectionText)
                                 .doc(dateString)
                                 .delete();
                             Navigator.pop(context);
                           },
-                          child: Text("삭제")),
+                          child: const Text("삭제")),
                       TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text("취소"))
+                          child: const Text("취소"))
                     ],
                   )
                 ],
@@ -288,6 +279,6 @@ class _InbodyPageState extends State<InbodyPage> {
             },
           );
         },
-        child: Text("삭제"));
+        child: const Text("삭제"));
   }
 }

@@ -29,13 +29,16 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
           children: [
             Expanded(
               child: TextField(
+                autofocus: true,
+                cursorColor: Colors.white,
                 onTapOutside: (event) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 decoration: const InputDecoration(
-                  border: UnderlineInputBorder(borderSide: BorderSide.none),
-                  hintText: "음식을 검색하세요",
-                ),
+                    border: UnderlineInputBorder(borderSide: BorderSide.none),
+                    hintText: "음식을 검색하세요",
+                    hintStyle: TextStyle(color: Colors.white60),
+                    labelStyle: TextStyle(color: Colors.white)),
                 onChanged: (value) {
                   if (_timer != null && _timer!.isActive) {
                     _timer!.cancel();
@@ -92,7 +95,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                         fat == 0 ? fat = satFat + transFat : ();
 
                         return GestureDetector(
-                            child: Card(
+                            child: Card.outlined(
                               margin: const EdgeInsets.symmetric(vertical: 10),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
@@ -325,7 +328,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                                                                   });
                                                                 },
                                                               ),
-                                                        const Text("씩")
+                                                        const Text(" 씩")
                                                       ],
                                                     ),
                                                     Row(

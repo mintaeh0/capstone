@@ -46,6 +46,8 @@ class _MainPageState extends State<MainPage> {
       body: _body[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        // showSelectedLabels: false,
+        // showUnselectedLabels: false,
         onTap: (int newIndex) {
           setState(() {
             _currentIndex = newIndex;

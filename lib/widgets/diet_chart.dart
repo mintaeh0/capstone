@@ -14,73 +14,64 @@ class DietChart extends StatefulWidget {
 }
 
 class _DietChartState extends State<DietChart> {
-  dynamic uid;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection(kUsersCollectionText)
-            .doc(uid)
-            .collection(kDietCollectionText)
-            .doc(widget.mealDate)
-            .snapshots(),
-        builder: (context, snapshot) {
-          dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
-          List array;
+    return FutureBuilder(
+      future: getUid(),
+      builder: (context, uidSnapshot) {
+        return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection(kUsersCollectionText)
+                .doc(uidSnapshot.data)
+                .collection(kDietCollectionText)
+                .doc(widget.mealDate)
+                .snapshots(),
+            builder: (context, snapshot) {
+              dynamic snapshotData =
+                  snapshot.data?.data() as Map<String, dynamic>?;
+              List array;
 
-          if (snapshot.hasData &&
-              snapshot.data!.exists &&
-              snapshotData != null) {
-            snapshotData.remove("docdate");
-            double carbo = 0;
-            num protein = 0;
-            num fat = 0;
-            num kcal = 0;
+              if (snapshot.hasData &&
+                  snapshot.data!.exists &&
+                  snapshotData != null) {
+                snapshotData.remove("docdate");
+                double carbo = 0;
+                num protein = 0;
+                num fat = 0;
+                num kcal = 0;
 
-            snapshotData.forEach((key, value) {
-              for (Map ch in value) {
-                carbo += ch[kCarboText] * ch["amount"];
-                protein += ch[kProteinText] * ch["amount"];
-                fat += ch[kFatText] * ch["amount"];
-                kcal += ch[kKcalText] * ch["amount"];
+                snapshotData.forEach((key, value) {
+                  for (Map ch in value) {
+                    carbo += ch[kCarboText] * ch["amount"];
+                    protein += ch[kProteinText] * ch["amount"];
+                    fat += ch[kFatText] * ch["amount"];
+                    kcal += ch[kKcalText] * ch["amount"];
+                  }
+                });
+
+                carbo = double.parse(carbo.toStringAsFixed(1));
+                protein = double.parse(protein.toStringAsFixed(1));
+                fat = double.parse(fat.toStringAsFixed(1));
+                kcal = double.parse(kcal.toStringAsFixed(1));
+
+                array = [carbo, protein, fat, kcal];
+              } else {
+                array = [0, 0, 0, 0];
               }
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  children: [
+                    dietPieChart(array),
+                    const SizedBox(height: 20),
+                    dietTable(array),
+                  ],
+                ),
+              );
             });
-
-            carbo = double.parse(carbo.toStringAsFixed(1));
-            protein = double.parse(protein.toStringAsFixed(1));
-            fat = double.parse(fat.toStringAsFixed(1));
-            kcal = double.parse(kcal.toStringAsFixed(1));
-
-            array = [carbo, protein, fat, kcal];
-          } else {
-            array = [0, 0, 0, 0];
-          }
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              children: [
-                dietPieChart(array),
-                const SizedBox(height: 20),
-                dietTable(array),
-              ],
-            ),
-          );
-        });
+      },
+    );
   }
 }
 

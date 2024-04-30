@@ -16,89 +16,81 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late num _currentWeight = 0, _height, _bmiNum = 0;
   String _bmiString = "체중(kg), 신장(cm) 입력 필요";
-  dynamic uid;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic stor = await getUid();
-    setState(() {
-      uid = stor;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection(kUsersCollectionText)
-              .doc(uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return FutureBuilder(
+      future: getUid(),
+      builder: (context, uidSnapshot) {
+        return SingleChildScrollView(
+          child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection(kUsersCollectionText)
+                  .doc(uidSnapshot.data)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
 
-              return FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection(kUsersCollectionText)
-                      .doc(uid)
-                      .collection(kInbodyCollectionText)
-                      .where("docdate", isNull: false)
-                      .orderBy("docdate", descending: true)
-                      .limit(1)
-                      .get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData == false) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                  return FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection(kUsersCollectionText)
+                          .doc(uidSnapshot.data)
+                          .collection(kInbodyCollectionText)
+                          .where("docdate", isNull: false)
+                          .orderBy("docdate", descending: true)
+                          .limit(1)
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData == false) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
 
-                    for (var element in snapshot.data!.docs) {
-                      _currentWeight = element["weight"];
-                    }
+                        for (var element in snapshot.data!.docs) {
+                          _currentWeight = element["weight"];
+                        }
 
-                    if (_height != 0 && _currentWeight != 0) {
-                      _bmiNum = _currentWeight /
-                          ((_height * 0.01) * (_height * 0.01));
+                        if (_height != 0 && _currentWeight != 0) {
+                          _bmiNum = _currentWeight /
+                              ((_height * 0.01) * (_height * 0.01));
 
-                      if (_bmiNum < 18.5) {
-                        _bmiString = "저체중";
-                      } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                        _bmiString = "정상";
-                      } else if (_bmiNum >= 23 && _bmiNum < 25) {
-                        _bmiString = "비만전단계";
-                      } else if (_bmiNum >= 25 && _bmiNum < 30) {
-                        _bmiString = "1단계 비만";
-                      } else if (_bmiNum >= 30 && _bmiNum < 35) {
-                        _bmiString = "2단계 비만";
-                      } else {
-                        _bmiString = "3단계 비만";
-                      }
-                    }
+                          if (_bmiNum < 18.5) {
+                            _bmiString = "저체중";
+                          } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+                            _bmiString = "정상";
+                          } else if (_bmiNum >= 23 && _bmiNum < 25) {
+                            _bmiString = "비만전단계";
+                          } else if (_bmiNum >= 25 && _bmiNum < 30) {
+                            _bmiString = "1단계 비만";
+                          } else if (_bmiNum >= 30 && _bmiNum < 35) {
+                            _bmiString = "2단계 비만";
+                          } else {
+                            _bmiString = "3단계 비만";
+                          }
+                        }
 
-                    return Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(children: [
-                        profileCard(),
-                        Container(height: 20),
-                        bmiCard(),
-                        Container(height: 20),
-                        settingButton(),
-                      ]),
-                    );
-                  });
-            }
-          }),
+                        return Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(children: [
+                            profileCard(),
+                            Container(height: 20),
+                            bmiCard(),
+                            Container(height: 20),
+                            settingButton(),
+                          ]),
+                        );
+                      });
+                }
+              }),
+        );
+      },
     );
   }
 

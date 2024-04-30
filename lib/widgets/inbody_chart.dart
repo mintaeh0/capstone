@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
 import '../functions/uid_info_controller.dart';
@@ -16,23 +15,9 @@ class InbodyChart extends StatefulWidget {
 
 class _InbodyChartState extends State<InbodyChart>
     with SingleTickerProviderStateMixin {
-  dynamic uid;
   List<String> dateData = [];
-  late TabController _chartTabController =
+  late final TabController _chartTabController =
       TabController(length: 3, vsync: this);
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
-  }
 
   @override
   void dispose() {
@@ -42,74 +27,85 @@ class _InbodyChartState extends State<InbodyChart>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection(kUsersCollectionText)
-          .doc(uid)
-          .collection(kInbodyCollectionText)
-          .where("docdate", isNull: false)
-          .orderBy("docdate", descending: true)
-          .limit(7)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        dynamic snapshotData = snapshot.data?.docs;
+    return FutureBuilder(
+      future: getUid(),
+      builder: (context, uidSnapshot) {
+        return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(kUsersCollectionText)
+              .doc(uidSnapshot.data)
+              .collection(kInbodyCollectionText)
+              .where("docdate", isNull: false)
+              .orderBy("docdate", descending: true)
+              .limit(7)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            List<QueryDocumentSnapshot<Map<String, dynamic>>>? snapshotData =
+                snapshot.data?.docs;
 
-        List<num> weightData = [];
-        List<num> musclemassData = [];
-        List<num> bodyfatData = [];
+            List<num> weightData = [];
+            List<num> musclemassData = [];
+            List<num> bodyfatData = [];
 
-        List<FlSpot> weightList = [];
-        List<FlSpot> musclemassList = [];
-        List<FlSpot> bodyfatList = [];
+            List<FlSpot> weightList = [];
+            List<FlSpot> musclemassList = [];
+            List<FlSpot> bodyfatList = [];
 
-        try {
-          if (snapshot.hasData &&
-              snapshotData != null &&
-              snapshotData.isNotEmpty) {
-            snapshotData.forEach((data) {
-              weightData.add(data.get("weight"));
-              musclemassData.add(data.get("musclemass"));
-              bodyfatData.add(data.get("bodyfat"));
-              dateData.add(data.get("docdate"));
-            });
-            weightList = makeFlSpotList(List.from(weightData.reversed));
-            musclemassList = makeFlSpotList(List.from(musclemassData.reversed));
-            bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
+            try {
+              if (snapshot.hasData &&
+                  snapshotData != null &&
+                  snapshotData.isNotEmpty) {
+                snapshotData.forEach((data) {
+                  weightData.add(data.data()["weight"]);
+                  musclemassData.add(data.data()["musclemass"]);
+                  bodyfatData.add(data.data()["bodyfat"]);
+                  dateData.add(data.data()["docdate"]);
+                });
+                weightList = makeFlSpotList(List.from(weightData.reversed));
+                musclemassList =
+                    makeFlSpotList(List.from(musclemassData.reversed));
+                bodyfatList = makeFlSpotList(List.from(bodyfatData.reversed));
 
-            dateData = List.from(dateData.reversed);
-          }
-        } on Exception catch (e) {
-          Fluttertoast.showToast(
-            msg: "에러 : $e",
-          );
-        }
+                dateData = List.from(dateData.reversed);
+              }
+            } catch (e) {
+              Fluttertoast.showToast(
+                msg: "에러 : $e",
+              );
+            }
 
-        return Column(children: [
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(50)),
-                border: Border.all(color: Colors.black26)),
-            child: TabBar(
-                splashBorderRadius: BorderRadius.circular(50),
-                dividerHeight: 0,
-                controller: _chartTabController,
-                tabs: [Tab(text: "체중"), Tab(text: "골격근량"), Tab(text: "체지방률")]),
-          ),
-          SizedBox(
-              height: 300,
-              child: TabBarView(
-                  clipBehavior: Clip.none,
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: _chartTabController,
-                  children: [
-                    inbodyLineChart(weightList),
-                    inbodyLineChart(musclemassList),
-                    inbodyLineChart(bodyfatList),
-                  ])),
-        ]);
+            return Column(children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                    border: Border.all(color: Colors.black26)),
+                child: TabBar(
+                    splashBorderRadius: BorderRadius.circular(50),
+                    dividerHeight: 0,
+                    controller: _chartTabController,
+                    tabs: [
+                      Tab(text: "체중"),
+                      Tab(text: "골격근량"),
+                      Tab(text: "체지방률")
+                    ]),
+              ),
+              SizedBox(
+                  height: 300,
+                  child: TabBarView(
+                      clipBehavior: Clip.none,
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _chartTabController,
+                      children: [
+                        inbodyLineChart(weightList),
+                        inbodyLineChart(musclemassList),
+                        inbodyLineChart(bodyfatList),
+                      ])),
+            ]);
+          },
+        );
       },
     );
   }

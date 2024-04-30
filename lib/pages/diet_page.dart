@@ -15,20 +15,11 @@ class DietPage extends StatefulWidget {
 
 class _DietPageState extends State<DietPage> {
   late String dateString;
-  dynamic uid;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
     dateString = getTodayString();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
   }
 
   void changeDate(DateTime datetime) {
@@ -78,21 +69,21 @@ class _DietPageState extends State<DietPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 FilledButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       FirebaseFirestore.instance
                                           .collection(kUsersCollectionText)
-                                          .doc(uid)
+                                          .doc(await getUid())
                                           .collection(kDietCollectionText)
                                           .doc(dateString)
                                           .delete();
                                       Navigator.pop(context);
                                     },
-                                    child: Text("삭제")),
+                                    child: const Text("삭제")),
                                 TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text("취소"))
+                                    child: const Text("취소"))
                               ],
                             )
                           ],
@@ -100,7 +91,7 @@ class _DietPageState extends State<DietPage> {
                       },
                     );
                   },
-                  child: Text("일일 식단 삭제"))
+                  child: const Text("일일 식단 삭제"))
             ],
           ),
         ));
@@ -115,11 +106,11 @@ class _DietPageState extends State<DietPage> {
             onPressed: () {
               decDate();
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_arrow_left,
               size: 40,
             )),
-        Text(dateString, style: TextStyle(fontSize: 20)),
+        Text(dateString, style: const TextStyle(fontSize: 20)),
         IconButton(
             onPressed: () async {
               DateTime? datetime = await showDatePicker(
@@ -131,14 +122,14 @@ class _DietPageState extends State<DietPage> {
                 changeDate(datetime);
               }
             },
-            icon: Icon(Icons.calendar_today)),
+            icon: const Icon(Icons.calendar_today)),
         IconButton(
             onPressed: () {
               if (dateString != getTodayString()) {
                 incDate();
               }
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_arrow_right,
               size: 40,
             )),

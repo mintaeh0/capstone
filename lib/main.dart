@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:project1/constants/colors.dart';
 import 'package:project1/dependency_injection.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project1/pages/splash_page.dart';
@@ -39,37 +40,40 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xff38DA87),
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
             brightness: Brightness.light,
+            seedColor: primaryColor,
+            primary: primaryColor,
             // primary: Color(0xff38DA87),
-            primary: Color(0xff1CA673),
-            surface: Colors.white),
-        appBarTheme: const AppBarTheme(
-            // backgroundColor: Color(0xff38DA87),
-            // surfaceTintColor: Color(0xff38DA87),
-            backgroundColor: Color(0xff1CA673),
-            surfaceTintColor: Color(0xff1CA673),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20))),
-            centerTitle: true,
-            toolbarHeight: 70,
-            scrolledUnderElevation: 5,
-            shadowColor: Colors.black87),
-        filledButtonTheme: const FilledButtonThemeData(
-            style: ButtonStyle(
-                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)))))),
-        // primarySwatch: Colors.green,
-        useMaterial3: true,
-      ),
+            surfaceTint: Colors.white,
+          ),
+          appBarTheme: const AppBarTheme(
+              // backgroundColor: Color(0xff38DA87),
+              // surfaceTintColor: Color(0xff38DA87),
+              backgroundColor: primaryColor,
+              surfaceTintColor: primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(20))),
+              centerTitle: true,
+              toolbarHeight: 70,
+              scrolledUnderElevation: 5,
+              shadowColor: Colors.black87),
+          filledButtonTheme: const FilledButtonThemeData(
+              style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)))))),
+          // primarySwatch: Colors.green,
+          fontFamily: "NanumGothic"),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xff38DA87), brightness: Brightness.dark),
-        // primarySwatch: Colors.green,
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.dark,
+            seedColor: primaryColor,
+            primary: primaryColor,
+            surfaceTint: Colors.white),
       ),
       themeMode: ThemeMode.light,
       home: const SplashPage(),

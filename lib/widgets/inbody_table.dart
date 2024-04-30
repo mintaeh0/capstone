@@ -13,52 +13,45 @@ class InbodyTable extends StatefulWidget {
 }
 
 class _InbodyTableState extends State<InbodyTable> {
-  dynamic uid;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection(kUsersCollectionText)
-          .doc(uid)
-          .collection(kInbodyCollectionText)
-          .doc(widget.bodyDate)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
-        List array;
+    return FutureBuilder(
+      future: getUid(),
+      builder: (context, uidSnapshot) {
+        return StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection(kUsersCollectionText)
+              .doc(uidSnapshot.data)
+              .collection(kInbodyCollectionText)
+              .doc(widget.bodyDate)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            dynamic snapshotData =
+                snapshot.data?.data() as Map<String, dynamic>?;
+            List array;
 
-        if (snapshot.hasData && snapshot.data!.exists && snapshotData != null) {
-          dynamic bodyData = snapshot.data!.data();
+            if (snapshot.hasData &&
+                snapshot.data!.exists &&
+                snapshotData != null) {
+              dynamic bodyData = snapshot.data!.data();
 
-          array = [
-            bodyData["weight"],
-            bodyData["musclemass"],
-            bodyData["bodyfat"]
-          ];
-        } else {
-          array = [0, 0, 0];
-        }
+              array = [
+                bodyData["weight"],
+                bodyData["musclemass"],
+                bodyData["bodyfat"]
+              ];
+            } else {
+              array = [0, 0, 0];
+            }
 
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: BodyTable(array),
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: BodyTable(array),
+            );
+          },
         );
       },
     );

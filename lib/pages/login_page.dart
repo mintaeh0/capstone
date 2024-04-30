@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
               color: Color(0xff38DA87),
             ),
             const Text(
-              "O2Eat",
+              "DO-EAT",
               style: TextStyle(
                   color: Color(0xff38DA87),
                   fontSize: 30,

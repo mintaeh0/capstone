@@ -26,30 +26,15 @@ class _AddDietPageState extends State<AddDietPage> {
   List mealType = ["breakfast", "lunch", "dinner", "snack"];
   List mealTypeKor = ["아침", "점심", "저녁", "간식"];
 
-  dynamic uid;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.mealDate + " " + mealTypeKor[widget.mealIndex]),
+        title: Text("${widget.mealDate}  ${mealTypeKor[widget.mealIndex]}"),
         actions: [
           IconButton(
-            icon: Icon(Icons.manage_search),
+            icon: const Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => FoodSearchPage(
@@ -57,26 +42,26 @@ class _AddDietPageState extends State<AddDietPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
                     title: Text(
-                        widget.mealDate + " " + mealTypeKor[widget.mealIndex]),
+                        "${widget.mealDate} ${mealTypeKor[widget.mealIndex]}"),
                     content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
                     actions: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           FilledButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 dynamic stor;
                                 DocumentReference sampleRef = FirebaseFirestore
                                     .instance
                                     .collection(kUsersCollectionText)
-                                    .doc(uid)
+                                    .doc(await getUid())
                                     .collection(kDietCollectionText)
                                     .doc(widget.mealDate);
 
@@ -114,12 +99,12 @@ class _AddDietPageState extends State<AddDietPage> {
 
                                 Navigator.pop(context);
                               },
-                              child: Text("삭제")),
+                              child: const Text("삭제")),
                           TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text("취소"))
+                              child: const Text("취소"))
                         ],
                       )
                     ],
@@ -132,7 +117,7 @@ class _AddDietPageState extends State<AddDietPage> {
       ),
       body: DietListBuilder(widget.mealDate, mealType[widget.mealIndex]),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           showModalBottomSheet(
             context: context,
@@ -148,7 +133,7 @@ class _AddDietPageState extends State<AddDietPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("식단 추가", style: TextStyle(fontSize: 15)),
@@ -158,7 +143,7 @@ class _AddDietPageState extends State<AddDietPage> {
                         Container(height: 10),
                         GridView(
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   childAspectRatio: 4 / 1.2,
                                   mainAxisSpacing: 10,
@@ -200,7 +185,7 @@ class _AddDietPageState extends State<AddDietPage> {
         _name = newValue as String;
       },
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "이름",
           errorStyle: TextStyle(fontSize: 0),
@@ -225,7 +210,7 @@ class _AddDietPageState extends State<AddDietPage> {
         FilteringTextInputFormatter.allow(RegExp("^[^0][0-9]*"))
       ],
       keyboardType: TextInputType.number,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "수량",
           errorStyle: TextStyle(fontSize: 0),
@@ -273,10 +258,10 @@ class _AddDietPageState extends State<AddDietPage> {
       ],
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           labelText: type[typeNum][0],
-          errorStyle: TextStyle(fontSize: 0),
-          contentPadding: EdgeInsets.all(10),
+          errorStyle: const TextStyle(fontSize: 0),
+          contentPadding: const EdgeInsets.all(10),
           suffixText: type[typeNum][1]),
     );
   }

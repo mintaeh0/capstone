@@ -14,88 +14,79 @@ class DietListBuilder extends StatefulWidget {
 }
 
 class _DietListBuilderState extends State<DietListBuilder> {
-  dynamic uid;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  fetchData() async {
-    dynamic val = await getUid();
-    setState(() {
-      uid = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection(kUsersCollectionText)
-            .doc(uid)
-            .collection(kDietCollectionText)
-            .doc(widget.mealDate)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
+    return FutureBuilder(
+      future: getUid(),
+      builder: (context, uidSnapshot) {
+        return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection(kUsersCollectionText)
+                .doc(uidSnapshot.data)
+                .collection(kDietCollectionText)
+                .doc(widget.mealDate)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              dynamic snapshotData =
+                  snapshot.data?.data() as Map<String, dynamic>?;
 
-          if (snapshot.hasData &&
-              snapshot.data!.exists &&
-              snapshotData != null &&
-              snapshotData.containsKey(widget.mealType)) {
-            dynamic dataArray = snapshot.data?.get(widget.mealType);
+              if (snapshot.hasData &&
+                  snapshot.data!.exists &&
+                  snapshotData != null &&
+                  snapshotData.containsKey(widget.mealType)) {
+                dynamic dataArray = snapshot.data?.get(widget.mealType);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  await Future.delayed(const Duration(seconds: 1));
-                  setState(() {});
-                },
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: dataArray.length,
-                  itemBuilder: (context, index) {
-                    var mapData = dataArray[index] as Map<String, dynamic>;
-                    return DietListContainer(mapData);
-                  },
-                ),
-              ),
-            );
-          } else {
-            return RefreshIndicator(
-              onRefresh: () async {
-                await Future.delayed(const Duration(seconds: 1));
-                setState(() {});
-              },
-              child: const SizedBox(
-                height: double.maxFinite,
-                width: double.maxFinite,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 200),
-                    child: Center(child: Text("식단을 추가해보세요!")),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await Future.delayed(const Duration(seconds: 1));
+                      setState(() {});
+                    },
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: dataArray.length,
+                      itemBuilder: (context, index) {
+                        var mapData = dataArray[index] as Map<String, dynamic>;
+                        return dietListContainer(mapData);
+                      },
+                    ),
                   ),
-                ),
-              ),
-            );
-          }
-        });
+                );
+              } else {
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await Future.delayed(const Duration(seconds: 1));
+                    setState(() {});
+                  },
+                  child: const SizedBox(
+                    height: double.maxFinite,
+                    width: double.maxFinite,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 200),
+                        child: Center(child: Text("식단을 추가해보세요!")),
+                      ),
+                    ),
+                  ),
+                );
+              }
+            });
+      },
+    );
   }
 
-  Widget DietListContainer(Map<String, dynamic> mapData) {
+  Widget dietListContainer(Map<String, dynamic> mapData) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(children: [
@@ -104,11 +95,12 @@ class _DietListBuilderState extends State<DietListBuilder> {
             children: [
               Text(
                 "${mapData[kFoodNameText]}",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Text(
                 "${mapData["amount"]}개",
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
               InkWell(
                   onTap: () {
@@ -123,11 +115,11 @@ class _DietListBuilderState extends State<DietListBuilder> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 FilledButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       DocumentReference sampleRef =
                                           FirebaseFirestore.instance
                                               .collection(kUsersCollectionText)
-                                              .doc(uid)
+                                              .doc(await getUid())
                                               .collection(kDietCollectionText)
                                               .doc(widget.mealDate);
 
@@ -151,12 +143,12 @@ class _DietListBuilderState extends State<DietListBuilder> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text("삭제")),
+                                    child: const Text("삭제")),
                                 TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text("취소"))
+                                    child: const Text("취소"))
                               ],
                             )
                           ],
@@ -164,7 +156,7 @@ class _DietListBuilderState extends State<DietListBuilder> {
                       },
                     );
                   },
-                  child: Icon(Icons.close))
+                  child: const Icon(Icons.close))
             ],
           ),
           Container(
@@ -177,39 +169,39 @@ class _DietListBuilderState extends State<DietListBuilder> {
                 padding: const EdgeInsets.only(bottom: 10, top: 20),
                 child: Text(
                   "${mapData[kCarboText]}\n탄수화물",
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
               Container(
-                decoration:
-                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                decoration: const BoxDecoration(
+                    border: Border(left: BorderSide(width: 0.3))),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
                     "${mapData[kProteinText]}\n단백질",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
               Container(
-                decoration:
-                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                decoration: const BoxDecoration(
+                    border: Border(left: BorderSide(width: 0.3))),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
                     "${mapData[kFatText]}\n지방",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
               Container(
-                decoration:
-                    BoxDecoration(border: Border(left: BorderSide(width: 0.3))),
+                decoration: const BoxDecoration(
+                    border: Border(left: BorderSide(width: 0.3))),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
                     "${mapData[kKcalText]}\n칼로리",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),

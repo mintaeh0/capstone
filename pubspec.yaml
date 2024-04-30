@@ -63,6 +63,18 @@ flutter:
   assets:
     - assets/json/
     - assets/images/
+  fonts:
+    - family: Gyeonggi
+      fonts:
+        - asset: assets/fonts/Gyeonggi-Bold.ttf
+        - asset: assets/fonts/Gyeonggi-Light.ttf
+        - asset: assets/fonts/Gyeonggi-Medium.ttf
+    - family: NanumGothic
+      fonts:
+        # - asset: assets/fonts/NanumGothic.ttf
+        - asset: assets/fonts/NanumGothic-Bold.ttf
+        # - asset: assets/fonts/NanumGothic-Light.ttf
+        - asset: assets/fonts/NanumGothic-ExtraBold.ttf
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
