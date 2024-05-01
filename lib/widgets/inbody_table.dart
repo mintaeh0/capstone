@@ -47,9 +47,11 @@ class _InbodyTableState extends State<InbodyTable> {
               array = [0, 0, 0];
             }
 
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: BodyTable(array),
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: BodyTable(array),
+              ),
             );
           },
         );

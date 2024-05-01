@@ -45,14 +45,17 @@ class _MyAppState extends State<MyApp> {
             brightness: Brightness.light,
             seedColor: primaryColor,
             primary: primaryColor,
+            primaryContainer: primaryColor,
+            onPrimaryContainer: Colors.white,
             // primary: Color(0xff38DA87),
             surfaceTint: Colors.white,
+            surface: Colors.white,
           ),
           appBarTheme: const AppBarTheme(
               // backgroundColor: Color(0xff38DA87),
               // surfaceTintColor: Color(0xff38DA87),
               backgroundColor: primaryColor,
-              surfaceTintColor: primaryColor,
+              surfaceTintColor: Colors.white,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius:
@@ -65,6 +68,12 @@ class _MyAppState extends State<MyApp> {
               style: ButtonStyle(
                   shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)))))),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+            backgroundColor: Colors.white,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+          ),
+          scaffoldBackgroundColor: Color(0xf9ffffff),
           // primarySwatch: Colors.green,
           fontFamily: "NanumGothic"),
       darkTheme: ThemeData(

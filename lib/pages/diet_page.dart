@@ -51,7 +51,7 @@ class _DietPageState extends State<DietPage> {
           child: Column(
             children: [
               dateRemoteBar(),
-              const SizedBox(height: 10),
+              // const SizedBox(height: 10),
               DietChart(dateString),
               const SizedBox(height: 10),
               DietButtons(dateString),

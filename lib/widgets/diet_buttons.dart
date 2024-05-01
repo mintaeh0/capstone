@@ -127,11 +127,11 @@ class DietButtons extends StatelessWidget {
     return InkWell(
       radius: 20,
       borderRadius: BorderRadius.circular(20),
-      customBorder: Border.all(color: primaryColor, width: 2),
       onTap: onPressed,
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
+          color: Colors.white,
           border: Border.all(color: primaryColor, width: 2),
           borderRadius: BorderRadius.circular(20),
         ),

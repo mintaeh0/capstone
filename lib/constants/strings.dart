@@ -1,6 +1,7 @@
 String kDietCollectionText = "diet";
 String kInbodyCollectionText = "inbody";
 String kUsersCollectionText = "users";
+String kFavsText = "favs";
 
 String kBreakfastText = "breakfast";
 String kLunchText = "lunch";

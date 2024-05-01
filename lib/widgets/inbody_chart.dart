@@ -58,12 +58,12 @@ class _InbodyChartState extends State<InbodyChart>
               if (snapshot.hasData &&
                   snapshotData != null &&
                   snapshotData.isNotEmpty) {
-                snapshotData.forEach((data) {
+                for (var data in snapshotData) {
                   weightData.add(data.data()["weight"]);
                   musclemassData.add(data.data()["musclemass"]);
                   bodyfatData.add(data.data()["bodyfat"]);
                   dateData.add(data.data()["docdate"]);
-                });
+                }
                 weightList = makeFlSpotList(List.from(weightData.reversed));
                 musclemassList =
                     makeFlSpotList(List.from(musclemassData.reversed));
@@ -81,28 +81,36 @@ class _InbodyChartState extends State<InbodyChart>
               Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
-                    border: Border.all(color: Colors.black26)),
+                    border: Border.all(color: Colors.black26),
+                    color: Colors.white),
                 child: TabBar(
                     splashBorderRadius: BorderRadius.circular(50),
                     dividerHeight: 0,
                     controller: _chartTabController,
-                    tabs: [
+                    tabs: const [
                       Tab(text: "체중"),
                       Tab(text: "골격근량"),
                       Tab(text: "체지방률")
                     ]),
               ),
-              SizedBox(
-                  height: 300,
-                  child: TabBarView(
-                      clipBehavior: Clip.none,
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _chartTabController,
-                      children: [
-                        inbodyLineChart(weightList),
-                        inbodyLineChart(musclemassList),
-                        inbodyLineChart(bodyfatList),
-                      ])),
+              const SizedBox(height: 10),
+              Card(
+                clipBehavior: Clip.hardEdge,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: SizedBox(
+                      height: 300,
+                      child: TabBarView(
+                          clipBehavior: Clip.none,
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: _chartTabController,
+                          children: [
+                            inbodyLineChart(weightList),
+                            inbodyLineChart(musclemassList),
+                            inbodyLineChart(bodyfatList),
+                          ])),
+                ),
+              ),
             ]);
           },
         );

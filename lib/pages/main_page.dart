@@ -56,15 +56,18 @@ class _MainPageState extends State<MainPage> {
         items: const [
           BottomNavigationBarItem(
             label: '식단',
-            icon: Icon(Icons.restaurant),
+            icon: Icon(Icons.lunch_dining_outlined),
+            activeIcon: Icon(Icons.lunch_dining),
           ),
           BottomNavigationBarItem(
             label: '체성분',
-            icon: Icon(Icons.monitor_weight),
+            icon: Icon(Icons.scale_outlined),
+            activeIcon: Icon(Icons.scale),
           ),
           BottomNavigationBarItem(
             label: '내 정보',
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person_outlined),
+            activeIcon: Icon(Icons.person),
           ),
         ],
       ),

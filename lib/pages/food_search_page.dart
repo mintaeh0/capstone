@@ -34,6 +34,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                 onTapOutside: (event) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
+                style: TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(borderSide: BorderSide.none),
                     hintText: "음식을 검색하세요",

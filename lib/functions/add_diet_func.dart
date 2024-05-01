@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project1/constants/strings.dart';
 import 'uid_info_controller.dart';
 
-addDietFunc(
+Future<void> addDietFunc(
     String mealDate, String mealType, Map<String, dynamic> foodMap) async {
   // Firebase 경로 설정
   FirebaseFirestore firestore = FirebaseFirestore.instance;

@@ -61,12 +61,17 @@ class _DietChartState extends State<DietChart> {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  children: [
-                    dietPieChart(array),
-                    const SizedBox(height: 20),
-                    dietTable(array),
-                  ],
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        dietPieChart(array),
+                        const SizedBox(height: 20),
+                        dietTable(array),
+                      ],
+                    ),
+                  ),
                 ),
               );
             });
@@ -77,35 +82,41 @@ class _DietChartState extends State<DietChart> {
 
 Widget dietPieChart(List list) {
   List<PieChartSectionData> chartSectionList;
+  const double chartRadius = 50;
+  const double chartTitlePosition = 0.5;
+
   if (list[0] == 0 && list[1] == 0 && list[2] == 0) {
     chartSectionList = [
       PieChartSectionData(
           title: "none",
           showTitle: false,
           value: 1,
-          radius: 50,
-          color: Colors.grey.shade300),
+          radius: chartRadius,
+          color: Colors.grey.shade200),
     ];
   } else {
     chartSectionList = [
       PieChartSectionData(
-          title: "탄수화물",
+          title: "탄",
           showTitle: true,
           value: list[0].toDouble(),
-          radius: 50,
-          color: Colors.cyan.shade200),
+          radius: chartRadius,
+          color: Colors.cyan.shade200,
+          titlePositionPercentageOffset: chartTitlePosition),
       PieChartSectionData(
-          title: "단백질",
+          title: "단",
           showTitle: true,
           value: list[1].toDouble(),
-          radius: 50,
-          color: Colors.indigo.shade200),
+          radius: chartRadius,
+          color: Colors.indigo.shade200,
+          titlePositionPercentageOffset: chartTitlePosition),
       PieChartSectionData(
-          title: "지방",
+          title: "지",
           showTitle: true,
           value: list[2].toDouble(),
-          radius: 50,
-          color: Colors.teal.shade200),
+          radius: chartRadius,
+          color: Colors.teal.shade200,
+          titlePositionPercentageOffset: chartTitlePosition),
     ];
   }
 

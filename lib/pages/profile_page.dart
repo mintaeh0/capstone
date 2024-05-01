@@ -99,17 +99,30 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const IconButton.filled(
-                onPressed: null,
-                icon: Icon(
-                  Icons.person,
-                  size: 70,
-                )),
-            const SizedBox(width: 20),
-            Text(
-              "민태호\n${_height}cm",
-              style: const TextStyle(fontSize: 20),
+            Row(
+              children: [
+                const IconButton.filled(
+                    onPressed: null,
+                    icon: Icon(
+                      Icons.person,
+                      size: 40,
+                    )),
+                const SizedBox(width: 20),
+                Text(
+                  "민태호\n${_height}cm",
+                  style: const TextStyle(fontSize: 20),
+                )
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text("탄수화물"),
+                Text("단백질"),
+                Text("지방"),
+              ],
             )
           ],
         ),
@@ -206,19 +219,46 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget settingButton() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ProflieSetPage(_height.toString()),
-              ));
-            },
-            icon: const Icon(
-              Icons.settings,
-              size: 50,
-            )),
-        const Text("설정")
+        Column(
+          children: [
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.star_rounded,
+                  size: 50,
+                )),
+            const Text("즐겨찾기 관리")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.monitor_weight,
+                  size: 50,
+                )),
+            const Text("권장 섭취량")
+          ],
+        ),
+        Column(
+          children: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ProflieSetPage(_height.toString()),
+                  ));
+                },
+                icon: const Icon(
+                  Icons.settings,
+                  size: 50,
+                )),
+            const Text("내 정보")
+          ],
+        ),
       ],
     );
   }
