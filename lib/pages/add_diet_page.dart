@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/add_favorite_food_func.dart';
+import 'package:project1/pages/favorite_food_drawer_page.dart';
 import 'package:project1/pages/food_search_page.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import '../functions/add_diet_func.dart';
@@ -26,14 +27,15 @@ class AddDietPage extends StatefulWidget {
 class _AddDietPageState extends State<AddDietPage> {
   final _form = GlobalKey<FormState>();
   late String _name, _carbo, _protein, _fat, _kcal, _amount;
-  List mealType = ["breakfast", "lunch", "dinner", "snack"];
+  List mealType = [kBreakfastText, kLunchText, kDinnerText, kSnackText];
   List mealTypeKor = ["아침", "점심", "저녁", "간식"];
-  bool favCheck = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Drawer(child: favoriteFoodDrawer()),
+      endDrawer: Drawer(
+          child: FavoriteFoodDrawerPage(
+              widget.mealDate, mealType[widget.mealIndex])),
       appBar: AppBar(
         centerTitle: true,
         title: Text("${widget.mealDate}  ${mealTypeKor[widget.mealIndex]}"),
@@ -121,192 +123,115 @@ class _AddDietPageState extends State<AddDietPage> {
         ],
       ),
       body: DietListBuilder(widget.mealDate, mealType[widget.mealIndex]),
-      floatingActionButton: Builder(builder: (context) {
-        return IntrinsicHeight(
-          child: Column(
-            children: [
-              FloatingActionButton(
-                heroTag: "favorite",
-                child: const Icon(Icons.star),
-                onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //   builder: (context) => FavoriteFoodPage(),
-                  // ));
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
-              const SizedBox(height: 10),
-              FloatingActionButton(
-                heroTag: "add",
-                child: const Icon(Icons.edit),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return StatefulBuilder(
-                        builder: (context, setState) {
-                          return SingleChildScrollView(
-                            child: Form(
-                              key: _form,
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text("식단 추가",
-                                                style: TextStyle(fontSize: 15)),
-                                            Text("※ 정보가 없을 시 0 입력"),
-                                          ],
-                                        ),
-                                        Container(height: 10),
-                                        GridView(
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 2,
-                                                  childAspectRatio: 4 / 1.2,
-                                                  mainAxisSpacing: 10,
-                                                  crossAxisSpacing: 10),
-                                          shrinkWrap: true,
-                                          children: [
-                                            nameInput(),
-                                            amountInput(),
-                                            nutriInput(0),
-                                            nutriInput(1),
-                                            nutriInput(2),
-                                            nutriInput(3)
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              flex: 1,
-                                              child: Row(
-                                                children: [
-                                                  const Text("즐겨찾기에도 추가"),
-                                                  Checkbox(
-                                                    value: favCheck,
-                                                    onChanged: (value) {
-                                                      setState(
-                                                        () {
-                                                          favCheck = value!;
-                                                        },
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Expanded(
+      floatingActionButton: Visibility(
+        visible: true,
+        child: Builder(builder: (context) {
+          return IntrinsicHeight(
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  heroTag: "favorite",
+                  child: const Icon(Icons.star),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  heroTag: "add",
+                  child: const Icon(Icons.edit),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        bool favCheck = false;
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return SingleChildScrollView(
+                              child: Form(
+                                key: _form,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("식단 추가",
+                                                  style:
+                                                      TextStyle(fontSize: 15)),
+                                              Text("※ 정보가 없을 시 0 입력"),
+                                            ],
+                                          ),
+                                          Container(height: 10),
+                                          GridView(
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    childAspectRatio: 4 / 1.2,
+                                                    mainAxisSpacing: 10,
+                                                    crossAxisSpacing: 10),
+                                            shrinkWrap: true,
+                                            children: [
+                                              nameInput(),
+                                              amountInput(),
+                                              nutriInput(0),
+                                              nutriInput(1),
+                                              nutriInput(2),
+                                              nutriInput(3)
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              Flexible(
                                                 flex: 1,
-                                                child: dietSubmitButton()),
-                                          ],
-                                        )
-                                      ]),
+                                                child: Row(
+                                                  children: [
+                                                    const Text("즐겨찾기에도 추가"),
+                                                    Checkbox(
+                                                      value: favCheck,
+                                                      onChanged: (value) {
+                                                        setState(
+                                                          () {
+                                                            favCheck = value!;
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: dietSubmitButton(
+                                                      favCheck)),
+                                            ],
+                                          )
+                                        ]),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget favoriteFoodDrawer() {
-    return Scaffold(
-      appBar: AppBar(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        title: const Text("즐겨찾기"),
-        automaticallyImplyLeading: false,
-      ),
-      body: FutureBuilder(
-          future: getUid(),
-          builder: (context, uidSnapshot) {
-            return StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection(kUsersCollectionText)
-                    .doc(uidSnapshot.data)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.none) {
-                    return const Center(child: Text("snapshot error!"));
-                  }
-
-                  dynamic snapshotData = snapshot.data?.data();
-                  List favFoods = snapshot.data!.data()![kFavsText];
-
-                  if (snapshotData == null ||
-                      snapshotData[kFavsText] == null ||
-                      !snapshot.hasData ||
-                      !snapshot.data!.exists ||
-                      favFoods.isEmpty) {
-                    return const Center(child: Text("즐겨찾기에 음식을 등록하세요!"));
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(10),
-                    itemCount: favFoods.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: Column(
-                          children: [
-                            Text("${favFoods[index][kFoodNameText]}"),
-                            Text("${favFoods[index][kCarboText]}"),
-                            Text("${favFoods[index][kProteinText]}"),
-                            Text("${favFoods[index][kFatText]}"),
-                            Text("${favFoods[index][kKcalText]}"),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                });
-          }),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
-                  child: Text("닫기")),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 3,
-              child: FilledButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("추가")),
-            ),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -405,7 +330,7 @@ class _AddDietPageState extends State<AddDietPage> {
     );
   }
 
-  Widget dietSubmitButton() {
+  Widget dietSubmitButton(bool favCheck) {
     return FilledButton(
         onPressed: () async {
           if (_form.currentState!.validate()) {

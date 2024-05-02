@@ -39,22 +39,22 @@ class DietButtons extends StatelessWidget {
                 stor.forEach((key, value) {
                   if (key == kBreakfastText) {
                     for (var e in value) {
-                      breakfastKcal += e["kcal"];
+                      breakfastKcal += e[kKcalText] * e[kAmountText];
                     }
                   }
                   if (key == kLunchText) {
                     for (var e in value) {
-                      lunchKcal += e["kcal"];
+                      lunchKcal += e[kKcalText] * e[kAmountText];
                     }
                   }
                   if (key == kDinnerText) {
                     for (var e in value) {
-                      dinnerKcal += e["kcal"];
+                      dinnerKcal += e[kKcalText] * e[kAmountText];
                     }
                   }
                   if (key == kSnackText) {
                     for (var e in value) {
-                      snackKcal += e["kcal"];
+                      snackKcal += e[kKcalText] * e[kAmountText];
                     }
                   }
                 });

@@ -22,3 +22,4 @@ String kFoodNameText = "foodNm";
 String kNutriSizeText = "nutriSize";
 String kFoodCodeText = "foodCd";
 String kUpdateDateText = "upDate";
+String kAmountText = "amount";
