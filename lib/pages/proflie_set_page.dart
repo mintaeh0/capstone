@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/functions/uid_info_controller.dart';
-import 'package:project1/pages/login_page.dart';
 
 // 프로필 설정 페이지
 
@@ -24,11 +20,6 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
   final storage = const FlutterSecureStorage();
   final _form = GlobalKey<FormState>();
   late String _height;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +42,7 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                   ),
                   const SizedBox(height: 10),
                   profileSubmitButton(),
-                  logoutButton(),
+                  const SizedBox(height: 50),
                   FilledButton(
                     onPressed: () {
                       showDialog(
@@ -179,55 +170,5 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
           }
         },
         child: const Text("적용"));
-  }
-
-  Widget logoutButton() {
-    return FilledButton.tonal(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text("Logout"),
-              content: const Text("로그아웃 하시겠습니까?"),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    FilledButton(
-                        onPressed: () async {
-                          try {
-                            await FirebaseAuth.instance.signOut();
-                            await GoogleSignIn().signOut();
-                            await storage.delete(key: "uid");
-                            await storage.write(
-                                key: "loginState", value: "false");
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()),
-                              (route) => false,
-                            );
-                          } catch (e) {
-                            Fluttertoast.showToast(msg: "$e");
-                          }
-                        },
-                        child: const Text("확인")),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text("취소"))
-                  ],
-                )
-              ],
-            );
-          },
-        );
-      },
-      style: ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(
-              Theme.of(context).colorScheme.errorContainer)),
-      child: const Text("로그아웃"),
-    );
   }
 }

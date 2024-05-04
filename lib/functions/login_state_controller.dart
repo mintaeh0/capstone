@@ -9,6 +9,6 @@ setLoginState(String loginState) async {
 
 Future<String?> getLoginState() async {
   var storage = FlutterSecureStorage();
-  var str = await storage.read(key: "loginState");
+  String? str = await storage.read(key: "loginState");
   return str;
 }

@@ -1,19 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 class DietListBuilder extends StatefulWidget {
   final String mealDate;
   final String mealType;
+  final Function showFAB;
+  final Function hideFAB;
 
-  const DietListBuilder(this.mealDate, this.mealType, {super.key});
+  const DietListBuilder(
+      this.mealDate, this.mealType, this.showFAB, this.hideFAB,
+      {super.key});
 
   @override
   State<DietListBuilder> createState() => _DietListBuilderState();
 }
 
 class _DietListBuilderState extends State<DietListBuilder> {
+  ScrollController dietListController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    dietListController.addListener(() {
+      if (dietListController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        widget.hideFAB();
+      } else {
+        widget.showFAB();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    dietListController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -44,37 +70,27 @@ class _DietListBuilderState extends State<DietListBuilder> {
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      await Future.delayed(const Duration(seconds: 1));
-                      setState(() {});
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    controller: dietListController,
+                    scrollDirection: Axis.vertical,
+                    itemCount: dataArray.length,
+                    itemBuilder: (context, index) {
+                      var mapData = dataArray[index] as Map<String, dynamic>;
+                      return dietListContainer(mapData);
                     },
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: dataArray.length,
-                      itemBuilder: (context, index) {
-                        var mapData = dataArray[index] as Map<String, dynamic>;
-                        return dietListContainer(mapData);
-                      },
-                    ),
                   ),
                 );
               } else {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await Future.delayed(const Duration(seconds: 1));
-                    setState(() {});
-                  },
-                  child: const SizedBox(
-                    height: double.maxFinite,
-                    width: double.maxFinite,
-                    child: SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 200),
-                        child: Center(child: Text("식단을 추가해보세요!")),
-                      ),
+                return const SizedBox(
+                  height: double.maxFinite,
+                  width: double.maxFinite,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 200),
+                      child: Center(child: Text("식단을 추가해보세요!")),
                     ),
                   ),
                 );

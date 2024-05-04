@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/functions/login_state_controller.dart';
 import 'package:project1/pages/login_page.dart';
 import 'package:project1/pages/main_page.dart';
 
@@ -14,27 +12,33 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  late bool loginState;
-
-  void getLogin() {
-    FlutterSecureStorage().read(key: "loginState").then((value) {
-      Fluttertoast.showToast(msg: value ?? "null");
-      loginState = bool.parse(value ?? "false");
-    });
-    // loginState = false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    getLogin();
-
-    return PopScope(canPop: false, child: Scaffold(body: splashWidget()));
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+            body: FutureBuilder(
+          future: getLoginState(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return normalScreen();
+            }
+            return splashWidget(bool.parse(snapshot.data ?? "false"));
+          },
+        )));
     // return Scaffold(body: splashWidget());
   }
 
-  Widget splashWidget() {
+  Widget normalScreen() {
+    return Container(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        color: Theme.of(context).colorScheme.primary);
+  }
+
+  Widget splashWidget(bool loginState) {
     Timer(
-      Duration(seconds: 3),
+      const Duration(seconds: 3),
       () {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(

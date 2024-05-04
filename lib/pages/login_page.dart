@@ -19,6 +19,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   String? _uid;
+  bool isLoading = false;
+  GlobalKey buttonsKey = GlobalKey();
 
   @override
   void initState() {
@@ -48,35 +50,47 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold),
             ),
             Container(height: 50),
-            GestureDetector(
-                onTap: () async {
-                  try {
-                    _uid = await signInWithGoogle();
-                    // _uid = "abc123";
-                    setLoginState("true");
-                    setUid(_uid!);
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const MainPage()),
-                      (route) => false,
-                    );
-                  } catch (e) {
-                    Fluttertoast.showToast(msg: "$e");
-                  }
-                },
-                child: Image.asset(
-                  "assets/images/google_login_light.png",
-                  width: 200,
-                )),
-            // ElevatedButton(
-            //     onPressed: () async {
-            //       await FirebaseAuth.instance.signOut();
-            //       await GoogleSignIn().signOut();
-            //       Fluttertoast.showToast(
-            //           msg: "구글 로그아웃",
-            //           toastLength: Toast.LENGTH_SHORT,
-            //           gravity: ToastGravity.BOTTOM);
-            //     },
-            //     child: const Text("구글 로그아웃")),
+            StatefulBuilder(
+                key: buttonsKey,
+                builder: (context, setState) {
+                  return Column(
+                    children: [
+                      Visibility(
+                          visible: isLoading,
+                          child: const CircularProgressIndicator()),
+                      Visibility(
+                        visible: !isLoading,
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                                onTap: () async {
+                                  try {
+                                    _uid = await signInWithGoogle();
+
+                                    if (_uid != null) {
+                                      setLoginState("true");
+                                      setUid(_uid!);
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MainPage()),
+                                        (route) => false,
+                                      );
+                                    }
+                                  } catch (e) {
+                                    Fluttertoast.showToast(msg: "$e");
+                                  }
+                                },
+                                child: Image.asset(
+                                  "assets/images/google_login_light.png",
+                                  width: 200,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
           ],
         ),
       )),
@@ -95,6 +109,10 @@ class _LoginPageState extends State<LoginPage> {
           gravity: ToastGravity.BOTTOM);
       return uid;
     }
+
+    buttonsKey.currentState!.setState(() {
+      isLoading = true;
+    });
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
