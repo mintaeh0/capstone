@@ -34,64 +34,68 @@ class _LoginPageState extends State<LoginPage> {
       canPop: false,
       child: Scaffold(
           body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.ramen_dining,
-              size: 100,
-              color: Color(0xff38DA87),
-            ),
-            const Text(
-              "DO-EAT",
-              style: TextStyle(
-                  color: Color(0xff38DA87),
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold),
-            ),
-            Container(height: 50),
-            StatefulBuilder(
-                key: buttonsKey,
-                builder: (context, setState) {
-                  return Column(
-                    children: [
-                      Visibility(
-                          visible: isLoading,
-                          child: const CircularProgressIndicator()),
-                      Visibility(
-                        visible: !isLoading,
-                        child: Column(
-                          children: [
-                            GestureDetector(
-                                onTap: () async {
-                                  try {
-                                    _uid = await signInWithGoogle();
+        child: Padding(
+          padding: const EdgeInsets.all(80),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.ramen_dining,
+                size: 100,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              Text(
+                "WriEATe",
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+              Container(height: 50),
+              StatefulBuilder(
+                  key: buttonsKey,
+                  builder: (context, setState) {
+                    return Column(
+                      children: [
+                        Visibility(
+                            visible: isLoading,
+                            child: const CircularProgressIndicator()),
+                        Visibility(
+                          visible: !isLoading,
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                  onTap: () async {
+                                    try {
+                                      _uid = await signInWithGoogle();
 
-                                    if (_uid != null) {
-                                      setLoginState("true");
-                                      setUid(_uid!);
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const MainPage()),
-                                        (route) => false,
-                                      );
+                                      if (_uid != null) {
+                                        setLoginState("true");
+                                        setUid(_uid!);
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MainPage()),
+                                          (route) => false,
+                                        );
+                                      }
+                                    } catch (e) {
+                                      Fluttertoast.showToast(msg: "$e");
                                     }
-                                  } catch (e) {
-                                    Fluttertoast.showToast(msg: "$e");
-                                  }
-                                },
-                                child: Image.asset(
-                                  "assets/images/google_login_light.png",
-                                  width: 200,
-                                )),
-                          ],
+                                  },
+                                  child: Image.asset(
+                                    "assets/images/google_sign_in_light.png",
+                                    width: 200,
+                                  )),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
-          ],
+                      ],
+                    );
+                  }),
+            ],
+          ),
         ),
       )),
     );

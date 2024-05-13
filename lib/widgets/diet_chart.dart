@@ -59,20 +59,11 @@ class _DietChartState extends State<DietChart> {
                 array = [0, 0, 0, 0];
               }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        dietPieChart(array),
-                        const SizedBox(height: 20),
-                        dietTable(array),
-                      ],
-                    ),
-                  ),
-                ),
+              return Column(
+                children: [
+                  dietPieChartCard(array),
+                  nutriCard(array),
+                ],
               );
             });
       },
@@ -80,7 +71,7 @@ class _DietChartState extends State<DietChart> {
   }
 }
 
-Widget dietPieChart(List list) {
+Widget dietPieChartCard(List list) {
   List<PieChartSectionData> chartSectionList;
   const double chartRadius = 50;
   const double chartTitlePosition = 0.5;
@@ -119,12 +110,61 @@ Widget dietPieChart(List list) {
           titlePositionPercentageOffset: chartTitlePosition),
     ];
   }
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Card(
+      child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Stack(alignment: Alignment.center, children: [
+            Text("${list[3]} kcal"),
+            SizedBox(
+                height: 200,
+                child: PieChart(PieChartData(sections: chartSectionList)))
+          ])),
+    ),
+  );
+}
 
-  return Stack(alignment: Alignment.center, children: [
-    Text("${list[3]} kcal"),
-    SizedBox(
-        height: 200, child: PieChart(PieChartData(sections: chartSectionList)))
-  ]);
+Widget nutriCard(List list) {
+  return Card(
+      child: Padding(
+    padding: const EdgeInsets.all(20),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("탄수화물", style: TextStyle(fontSize: 20)),
+            Text("${list[0]} g", style: const TextStyle(fontSize: 15))
+          ],
+        ),
+        const Divider(height: 35),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("단백질", style: TextStyle(fontSize: 20)),
+            Text("${list[1]} g", style: const TextStyle(fontSize: 15))
+          ],
+        ),
+        const Divider(height: 35),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("지방", style: TextStyle(fontSize: 20)),
+            Text("${list[2]} g", style: const TextStyle(fontSize: 15))
+          ],
+        ),
+        const Divider(height: 35),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("칼로리", style: TextStyle(fontSize: 20)),
+            Text("${list[3]} kcal", style: const TextStyle(fontSize: 15))
+          ],
+        )
+      ],
+    ),
+  ));
 }
 
 Widget dietTable(List list) {
@@ -135,22 +175,11 @@ Widget dietTable(List list) {
       DataColumn(label: Text("성분성분성분")),
       DataColumn(label: Text("수치수치수치"))
     ], rows: [
-      DataRow(cells: [
-        DataCell(Text("탄수화물")),
-        DataCell(Text(list[0].toString() + " g"))
-      ]),
-      DataRow(cells: [
-        DataCell(Text("단백질")),
-        DataCell(Text(list[1].toString() + " g"))
-      ]),
-      DataRow(cells: [
-        DataCell(Text("지방")),
-        DataCell(Text(list[2].toString() + " g"))
-      ]),
-      DataRow(cells: [
-        DataCell(Text("칼로리")),
-        DataCell(Text(list[3].toString() + " kcal"))
-      ]),
+      DataRow(cells: [DataCell(Text("탄수화물")), DataCell(Text("${list[0]} g"))]),
+      DataRow(cells: [DataCell(Text("단백질")), DataCell(Text("${list[1]} g"))]),
+      DataRow(cells: [DataCell(Text("지방")), DataCell(Text("${list[2]} g"))]),
+      DataRow(
+          cells: [DataCell(Text("칼로리")), DataCell(Text("${list[3]} kcal"))]),
     ]),
   );
 }

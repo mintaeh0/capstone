@@ -1,14 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/functions/login_state_controller.dart';
 import 'package:project1/pages/favorite_food_page.dart';
 import '../functions/uid_info_controller.dart';
-import 'login_page.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
@@ -267,59 +261,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   size: 50,
                 )),
             const Text("설정")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Logout"),
-                        content: const Text("로그아웃 하시겠습니까?"),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              FilledButton(
-                                  onPressed: () async {
-                                    try {
-                                      await FirebaseAuth.instance.signOut();
-                                      await GoogleSignIn().signOut();
-                                      await FlutterSecureStorage()
-                                          .delete(key: "uid");
-                                      await setLoginState("false");
-
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginPage()),
-                                        (route) => false,
-                                      );
-                                    } catch (e) {
-                                      Fluttertoast.showToast(msg: "$e");
-                                    }
-                                  },
-                                  child: const Text("확인")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("취소"))
-                            ],
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(
-                  Icons.power_settings_new_rounded,
-                  size: 50,
-                )),
-            const Text("로그아웃")
           ],
         ),
       ],

@@ -142,8 +142,8 @@ class _AddDietPageState extends State<AddDietPage> {
             return Visibility(
               visible: isVisibleFAB,
               child: Builder(builder: (context) {
-                return IntrinsicWidth(
-                  child: Row(
+                return IntrinsicHeight(
+                  child: Column(
                     children: [
                       FloatingActionButton(
                         heroTag: "favorite",
@@ -152,7 +152,7 @@ class _AddDietPageState extends State<AddDietPage> {
                           Scaffold.of(context).openEndDrawer();
                         },
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(height: 10),
                       FloatingActionButton(
                         heroTag: "add",
                         child: const Icon(Icons.edit),

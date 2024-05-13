@@ -69,7 +69,11 @@ class _FavoriteFoodPageState extends State<FavoriteFoodPage> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          dietSubmitButton()
+                          Row(children: [
+                            Expanded(flex: 1, child: Container()),
+                            Expanded(flex: 2, child: dietSubmitButton()),
+                            Expanded(flex: 1, child: Container())
+                          ])
                         ]),
                       ),
                     ),
