@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/functions/goal_state_controller.dart';
 import '../functions/uid_info_controller.dart';
 
 class DietChart extends StatefulWidget {
@@ -14,6 +16,9 @@ class DietChart extends StatefulWidget {
 }
 
 class _DietChartState extends State<DietChart> {
+  var storage = const FlutterSecureStorage();
+  late List<num> nutriArray;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -29,7 +34,6 @@ class _DietChartState extends State<DietChart> {
             builder: (context, snapshot) {
               dynamic snapshotData =
                   snapshot.data?.data() as Map<String, dynamic>?;
-              List array;
 
               if (snapshot.hasData &&
                   snapshot.data!.exists &&
@@ -54,132 +58,178 @@ class _DietChartState extends State<DietChart> {
                 fat = double.parse(fat.toStringAsFixed(1));
                 kcal = double.parse(kcal.toStringAsFixed(1));
 
-                array = [carbo, protein, fat, kcal];
+                nutriArray = [carbo, protein, fat, kcal];
               } else {
-                array = [0, 0, 0, 0];
+                nutriArray = [0, 0, 0, 0];
               }
 
               return Column(
                 children: [
-                  dietPieChartCard(array),
-                  nutriCard(array),
+                  dietPieChartCard(nutriArray),
+                  nutriCard(uidSnapshot.data),
                 ],
               );
             });
       },
     );
   }
-}
 
-Widget dietPieChartCard(List list) {
-  List<PieChartSectionData> chartSectionList;
-  const double chartRadius = 50;
-  const double chartTitlePosition = 0.5;
+  Widget dietPieChartCard(List list) {
+    List<PieChartSectionData> chartSectionList;
+    const double chartRadius = 50;
+    const double chartTitlePosition = 0.5;
 
-  if (list[0] == 0 && list[1] == 0 && list[2] == 0) {
-    chartSectionList = [
-      PieChartSectionData(
-          title: "none",
-          showTitle: false,
-          value: 1,
-          radius: chartRadius,
-          color: Colors.grey.shade200),
-    ];
-  } else {
-    chartSectionList = [
-      PieChartSectionData(
-          title: "탄",
-          showTitle: true,
-          value: list[0].toDouble(),
-          radius: chartRadius,
-          color: Colors.cyan.shade200,
-          titlePositionPercentageOffset: chartTitlePosition),
-      PieChartSectionData(
-          title: "단",
-          showTitle: true,
-          value: list[1].toDouble(),
-          radius: chartRadius,
-          color: Colors.indigo.shade200,
-          titlePositionPercentageOffset: chartTitlePosition),
-      PieChartSectionData(
-          title: "지",
-          showTitle: true,
-          value: list[2].toDouble(),
-          radius: chartRadius,
-          color: Colors.teal.shade200,
-          titlePositionPercentageOffset: chartTitlePosition),
-    ];
+    if (list[0] == 0 && list[1] == 0 && list[2] == 0) {
+      chartSectionList = [
+        PieChartSectionData(
+            title: "none",
+            showTitle: false,
+            value: 1,
+            radius: chartRadius,
+            color: Colors.grey.shade200),
+      ];
+    } else {
+      chartSectionList = [
+        PieChartSectionData(
+            title: "탄",
+            showTitle: true,
+            value: list[0].toDouble(),
+            radius: chartRadius,
+            color: Colors.cyan.shade200,
+            titlePositionPercentageOffset: chartTitlePosition),
+        PieChartSectionData(
+            title: "단",
+            showTitle: true,
+            value: list[1].toDouble(),
+            radius: chartRadius,
+            color: Colors.indigo.shade200,
+            titlePositionPercentageOffset: chartTitlePosition),
+        PieChartSectionData(
+            title: "지",
+            showTitle: true,
+            value: list[2].toDouble(),
+            radius: chartRadius,
+            color: Colors.teal.shade200,
+            titlePositionPercentageOffset: chartTitlePosition),
+      ];
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Card(
+        child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Stack(alignment: Alignment.center, children: [
+              Text("${list[3]} kcal"),
+              SizedBox(
+                  height: 200,
+                  child: PieChart(PieChartData(sections: chartSectionList)))
+            ])),
+      ),
+    );
   }
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Card(
-      child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Stack(alignment: Alignment.center, children: [
-            Text("${list[3]} kcal"),
-            SizedBox(
-                height: 200,
-                child: PieChart(PieChartData(sections: chartSectionList)))
-          ])),
-    ),
-  );
-}
 
-Widget nutriCard(List list) {
-  return Card(
-      child: Padding(
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("탄수화물", style: TextStyle(fontSize: 20)),
-            Text("${list[0]} g", style: const TextStyle(fontSize: 15))
-          ],
-        ),
-        const Divider(height: 35),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("단백질", style: TextStyle(fontSize: 20)),
-            Text("${list[1]} g", style: const TextStyle(fontSize: 15))
-          ],
-        ),
-        const Divider(height: 35),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("지방", style: TextStyle(fontSize: 20)),
-            Text("${list[2]} g", style: const TextStyle(fontSize: 15))
-          ],
-        ),
-        const Divider(height: 35),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("칼로리", style: TextStyle(fontSize: 20)),
-            Text("${list[3]} kcal", style: const TextStyle(fontSize: 15))
-          ],
-        )
-      ],
-    ),
-  ));
-}
+  Widget nutriCard(String? uid) {
+    Widget nutriRow(int index) {
+      List<String> nutriText = ["탄수화물", "단백질", "지방", "칼로리"];
+      List<String> goalKey = [
+        kCarboGoalText,
+        kProtGoalText,
+        kFatGoalText,
+        kKcalGoalText
+      ];
+      List<Future> myFutures = [
+        getCarboGoalState(),
+        getProtGoalState(),
+        getFatGoalState(),
+        getKcalGoalState()
+      ];
 
-Widget dietTable(List list) {
-  return Container(
-    decoration: const BoxDecoration(
-        border: Border.symmetric(horizontal: BorderSide(color: Colors.black))),
-    child: DataTable(headingRowHeight: 0, columns: const [
-      DataColumn(label: Text("성분성분성분")),
-      DataColumn(label: Text("수치수치수치"))
-    ], rows: [
-      DataRow(cells: [DataCell(Text("탄수화물")), DataCell(Text("${list[0]} g"))]),
-      DataRow(cells: [DataCell(Text("단백질")), DataCell(Text("${list[1]} g"))]),
-      DataRow(cells: [DataCell(Text("지방")), DataCell(Text("${list[2]} g"))]),
-      DataRow(
-          cells: [DataCell(Text("칼로리")), DataCell(Text("${list[3]} kcal"))]),
-    ]),
-  );
+      return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(kUsersCollectionText)
+              .doc(uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container();
+            }
+
+            var snapshotData = snapshot.data?.data();
+            num goal = snapshotData?[goalKey[index]] ?? 0;
+            num? gap = nutriArray[index] - goal;
+
+            return FutureBuilder(
+                future: myFutures[index],
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      !bool.parse(snapshot.data ?? "false")) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(nutriText[index],
+                            style: const TextStyle(fontSize: 17)),
+                        Row(
+                          children: [
+                            Text("${nutriArray[index]}",
+                                style: const TextStyle(fontSize: 15)),
+                            const Text("g")
+                          ],
+                        )
+                      ],
+                    );
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(nutriText[index],
+                          style: const TextStyle(fontSize: 17)),
+                      Row(children: [
+                        if (gap < 0)
+                          Text(
+                            (gap * -1).toStringAsFixed(1),
+                            style: const TextStyle(color: Colors.blue),
+                          )
+                        else
+                          Text(
+                            (gap).toStringAsFixed(1),
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        if (gap < 0)
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.blue,
+                          )
+                        else
+                          const Icon(Icons.arrow_drop_up, color: Colors.red),
+                      ]),
+                      Row(
+                        children: [
+                          Text("${nutriArray[index]}",
+                              style: const TextStyle(fontSize: 15)),
+                          Text(" / $goal"),
+                          const Text("g")
+                        ],
+                      )
+                    ],
+                  );
+                });
+          });
+    }
+
+    return Card(
+        child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          nutriRow(0),
+          const Divider(height: 35),
+          nutriRow(1),
+          const Divider(height: 35),
+          nutriRow(2),
+          const Divider(height: 35),
+          nutriRow(3),
+        ],
+      ),
+    ));
+  }
 }

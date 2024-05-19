@@ -29,14 +29,14 @@ class _DietPageState extends State<DietPage> {
   }
 
   void incDate() {
-    var stor = stringToDate(dateString).add(Duration(days: 1));
+    var stor = stringToDate(dateString).add(const Duration(days: 1));
     setState(() {
       dateString = dateToString(stor);
     });
   }
 
   void decDate() {
-    var stor = stringToDate(dateString).subtract(Duration(days: 1));
+    var stor = stringToDate(dateString).subtract(const Duration(days: 1));
     setState(() {
       dateString = dateToString(stor);
     });

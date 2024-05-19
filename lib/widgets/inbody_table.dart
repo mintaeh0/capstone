@@ -47,39 +47,36 @@ class _InbodyTableState extends State<InbodyTable> {
               array = [0, 0, 0];
             }
 
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: BodyTable(array),
-              ),
-            );
+            return inbodyCard(array);
           },
         );
       },
     );
   }
-}
 
-Widget BodyTable(List bodylist) {
-  return Container(
-    decoration: const BoxDecoration(
-        border: Border.symmetric(horizontal: BorderSide(color: Colors.black))),
-    child: DataTable(headingRowHeight: 0, columns: const [
-      DataColumn(label: Text("항목항목항목")),
-      DataColumn(label: Text("수치수치"))
-    ], rows: [
-      DataRow(cells: [
-        DataCell(Text("체중")),
-        DataCell(Text(bodylist[0].toString()))
-      ]),
-      DataRow(cells: [
-        DataCell(Text("골격근량")),
-        DataCell(Text(bodylist[1].toString()))
-      ]),
-      DataRow(cells: [
-        DataCell(Text("체지방률")),
-        DataCell(Text(bodylist[2].toString()))
-      ]),
-    ]),
-  );
+  Widget inbodyCard(List bodylist) {
+    Widget inbodyRow(int index) {
+      List<String> inbodyText = ["체중", "골격근량", "체지방률"];
+      List<String> inbodyUnit = ["kg", "kg", "%"];
+
+      return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(inbodyText[index], style: const TextStyle(fontSize: 17)),
+        Text("${bodylist[index].toString()} ${inbodyUnit[index]}"),
+      ]);
+    }
+
+    return Card(
+        child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          inbodyRow(0),
+          const Divider(height: 35),
+          inbodyRow(1),
+          const Divider(height: 35),
+          inbodyRow(2),
+        ],
+      ),
+    ));
+  }
 }

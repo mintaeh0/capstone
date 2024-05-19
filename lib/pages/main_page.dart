@@ -99,32 +99,42 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       body: _body[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        // showSelectedLabels: false,
-        // showUnselectedLabels: false,
-        onTap: (int newIndex) {
-          setState(() {
-            _currentIndex = newIndex;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            label: '식단',
-            icon: Icon(Icons.lunch_dining_outlined),
-            activeIcon: Icon(Icons.lunch_dining),
-          ),
-          BottomNavigationBarItem(
-            label: '체성분',
-            icon: Icon(Icons.scale_outlined),
-            activeIcon: Icon(Icons.scale),
-          ),
-          BottomNavigationBarItem(
-            label: '내 정보',
-            icon: Icon(Icons.person_outlined),
-            activeIcon: Icon(Icons.person),
-          ),
-        ],
+      bottomNavigationBar: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black38)]),
+        child: BottomNavigationBar(
+          elevation: 2,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white,
+          currentIndex: _currentIndex,
+          // showSelectedLabels: false,
+          // showUnselectedLabels: false,
+          onTap: (int newIndex) {
+            setState(() {
+              _currentIndex = newIndex;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              label: '식단',
+              icon: Icon(Icons.lunch_dining_outlined),
+              activeIcon: Icon(Icons.lunch_dining),
+            ),
+            BottomNavigationBarItem(
+              label: '체성분',
+              icon: Icon(Icons.scale_outlined),
+              activeIcon: Icon(Icons.scale),
+            ),
+            BottomNavigationBarItem(
+              label: '내 정보',
+              icon: Icon(Icons.person_outlined),
+              activeIcon: Icon(Icons.person),
+            ),
+          ],
+        ),
       ),
     );
   }

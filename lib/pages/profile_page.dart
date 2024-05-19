@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/favorite_food_page.dart';
@@ -29,15 +30,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   .collection(kUsersCollectionText)
                   .doc(uidSnapshot.data)
                   .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                if (userSnapshot.hasError) {
+                  return Center(child: Text('Error: ${userSnapshot.error}'));
                 } else {
-                  _height = num.parse(snapshot.data?.data()?["height"] ?? "0");
+                  _height =
+                      num.parse(userSnapshot.data?.data()?["height"] ?? "0");
 
                   return FutureBuilder(
                       future: FirebaseFirestore.instance
@@ -80,11 +82,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         return Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(children: [
-                            profileCard(),
+                            profileCard(userSnapshot.data!.data()),
                             Container(height: 20),
                             bmiCard(),
                             Container(height: 20),
-                            settingButton(),
+                            settingButton(uidSnapshot.data!),
                           ]),
                         );
                       });
@@ -95,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget profileCard() {
+  Widget profileCard(Map? userdata) {
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -110,19 +112,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       Icons.person,
                       size: 40,
                     )),
-                const SizedBox(width: 20),
+                const SizedBox(width: 10),
                 Text(
-                  "민태호\n${_height}cm",
+                  "${FirebaseAuth.instance.currentUser!.displayName}\n${_height}cm",
                   style: const TextStyle(fontSize: 20),
                 )
               ],
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            Row(
               children: [
-                Text("탄수화물"),
-                Text("단백질"),
-                Text("지방"),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text("탄수화물"),
+                    Text("단백질"),
+                    Text("지방"),
+                    Text("칼로리"),
+                  ],
+                ),
+                const SizedBox(width: 10),
+                Column(children: [
+                  Text("${userdata?[kCarboGoalText] ?? 0}"),
+                  Text("${userdata?[kProtGoalText] ?? 0}"),
+                  Text("${userdata?[kFatGoalText] ?? 0}"),
+                  Text("${userdata?[kKcalGoalText] ?? 0}"),
+                ])
               ],
             )
           ],
@@ -219,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget settingButton() {
+  Widget settingButton(String uid) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -253,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
             IconButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ProflieSetPage(_height.toString()),
+                    builder: (context) => ProflieSetPage(uid),
                   ));
                 },
                 icon: const Icon(

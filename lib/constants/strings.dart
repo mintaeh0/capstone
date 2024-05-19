@@ -23,3 +23,8 @@ String kNutriSizeText = "nutriSize";
 String kFoodCodeText = "foodCd";
 String kUpdateDateText = "upDate";
 String kAmountText = "amount";
+
+String kCarboGoalText = "carboGoal";
+String kProtGoalText = "protGoal";
+String kFatGoalText = "fatGoal";
+String kKcalGoalText = "kcalGoal";
