@@ -55,7 +55,7 @@ class _InbodyPageState extends State<InbodyPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             dateRemoteBar(),
@@ -279,6 +279,6 @@ class _InbodyPageState extends State<InbodyPage> {
             },
           );
         },
-        child: const Text("삭제"));
+        child: const Text("일일 데이터 삭제"));
   }
 }

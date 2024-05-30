@@ -67,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           if (_bmiNum < 18.5) {
                             _bmiString = "저체중";
                           } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                            _bmiString = "정상";
+                            _bmiString = "표준";
                           } else if (_bmiNum >= 23 && _bmiNum < 25) {
                             _bmiString = "비만전단계";
                           } else if (_bmiNum >= 25 && _bmiNum < 30) {
@@ -87,6 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             bmiCard(),
                             Container(height: 20),
                             settingButton(uidSnapshot.data!),
+                            const SizedBox(height: 50)
                           ]),
                         );
                       });
@@ -155,7 +156,10 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("BMI", style: TextStyle(fontSize: 20)),
-                Text("* 대한비만학회 비만 진료지침 2022(8판)"),
+                Text(
+                  "* 대한비만학회 비만 진료지침 2022(8판)",
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
             Text(_bmiString, style: const TextStyle(fontSize: 20)),
@@ -234,49 +238,34 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget settingButton(String uid) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    Widget menuItem(String title, Function() tapFunc) {
+      return GestureDetector(
+        onTap: tapFunc,
+        child: Card.outlined(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(title),
+                  const Icon(Icons.keyboard_arrow_right_rounded)
+                ]),
+          ),
+        ),
+      );
+    }
+
+    return Column(
       children: [
-        Column(
-          children: [
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => FavoriteFoodPage()));
-                },
-                icon: const Icon(
-                  Icons.star_outline_rounded,
-                  size: 50,
-                )),
-            const Text("즐겨찾기 관리")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.format_list_numbered_rounded,
-                  size: 50,
-                )),
-            const Text("권장 섭취량")
-          ],
-        ),
-        Column(
-          children: [
-            IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ProflieSetPage(uid),
-                  ));
-                },
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  size: 50,
-                )),
-            const Text("설정")
-          ],
-        ),
+        menuItem("즐겨찾기 관리", () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => FavoriteFoodPage()));
+        }),
+        menuItem("설정", () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ProfileSetPage(uid),
+          ));
+        })
       ],
     );
   }

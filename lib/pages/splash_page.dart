@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:project1/functions/login_state_controller.dart';
 import 'package:project1/pages/login_page.dart';
-import 'package:project1/pages/main_page.dart';
+import 'package:project1/pages/home_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -63,7 +63,7 @@ class _SplashPageState extends State<SplashPage> {
           ),
           SizedBox(height: 10),
           Text(
-            "WriEATe",
+            "O2EAT",
             style: TextStyle(color: Colors.white, fontSize: 30),
           )
         ],

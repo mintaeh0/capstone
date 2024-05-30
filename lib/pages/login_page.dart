@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 import 'package:project1/internet_controller.dart';
-import 'package:project1/pages/main_page.dart';
+import 'package:project1/pages/home_page.dart';
 import '../functions/login_state_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               Text(
-                "WriEATe",
+                "O2EAT",
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 30,

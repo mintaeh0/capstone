@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
@@ -12,29 +12,28 @@ import 'package:project1/functions/goal_state_controller.dart';
 import 'package:project1/functions/uid_info_controller.dart';
 
 // 프로필 설정 페이지
+const storage = FlutterSecureStorage();
+final _form = GlobalKey<FormState>();
+late String _height;
+List<String> nutriGoal = ["", "", "", ""];
+List<bool> nutriSwitch = [false, false, false, false];
+bool isSetInitial = false;
+List<String> goalKey = [
+  kCarboGoalText,
+  kProtGoalText,
+  kFatGoalText,
+  kKcalGoalText
+];
 
-class ProflieSetPage extends StatefulWidget {
+class ProfileSetPage extends ConsumerStatefulWidget {
   final String uid;
-  const ProflieSetPage(this.uid, {super.key});
+  const ProfileSetPage(this.uid, {super.key});
 
   @override
-  State<ProflieSetPage> createState() => _ProflieSetPageState();
+  ProfileSetPageState createState() => ProfileSetPageState();
 }
 
-class _ProflieSetPageState extends State<ProflieSetPage> {
-  final storage = const FlutterSecureStorage();
-  final _form = GlobalKey<FormState>();
-  late String _height;
-  List<String> nutriGoal = ["", "", "", ""];
-  List<bool> nutriSwitch = [false, false, false, false];
-  bool isSetInitial = false;
-  List<String> goalKey = [
-    kCarboGoalText,
-    kProtGoalText,
-    kFatGoalText,
-    kKcalGoalText
-  ];
-
+class ProfileSetPageState extends ConsumerState<ProfileSetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,55 +111,63 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              return Center(
-                child: SingleChildScrollView(
-                    child: Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Form(
-                    key: _form,
-                    child: Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 20, bottom: 10),
-                          child: Row(
-                            children: [
-                              Text(
-                                "내 정보",
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                              SizedBox(width: 10),
-                              Flexible(flex: 1, child: Divider())
-                            ],
-                          ),
+              return SingleChildScrollView(
+                  child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                child: Form(
+                  key: _form,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        child: Row(
+                          children: [
+                            Text(
+                              "내 정보",
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            SizedBox(width: 10),
+                            Flexible(flex: 1, child: Divider())
+                          ],
                         ),
-                        heightInput(snapshotData?["height"] ?? "0"),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 20, bottom: 10),
-                          child: Row(
-                            children: [
-                              Text(
-                                "목표 섭취량",
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                              SizedBox(width: 10),
-                              Flexible(flex: 1, child: Divider())
-                            ],
-                          ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child:
+                                  heightInput(snapshotData?["height"] ?? "0")),
+                          Expanded(flex: 1, child: Container())
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        child: Row(
+                          children: [
+                            Text(
+                              "목표 섭취량",
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            SizedBox(width: 10),
+                            Flexible(flex: 1, child: Divider())
+                          ],
                         ),
-                        nutriGoalInput(snapshotData?[goalKey[0]], 0),
-                        const SizedBox(height: 10),
-                        nutriGoalInput(snapshotData?[goalKey[1]], 1),
-                        const SizedBox(height: 10),
-                        nutriGoalInput(snapshotData?[goalKey[2]], 2),
-                        const SizedBox(height: 10),
-                        nutriGoalInput(snapshotData?[goalKey[3]], 3),
-                        const SizedBox(height: 30),
-                        profileSubmitButton()
-                      ],
-                    ),
+                      ),
+                      nutriGoalInput(snapshotData?[goalKey[0]], 0),
+                      const SizedBox(height: 20),
+                      nutriGoalInput(snapshotData?[goalKey[1]], 1),
+                      const SizedBox(height: 20),
+                      nutriGoalInput(snapshotData?[goalKey[2]], 2),
+                      const SizedBox(height: 20),
+                      nutriGoalInput(snapshotData?[goalKey[3]], 3),
+                      const SizedBox(height: 30),
+                      profileSubmitButton()
+                    ],
                   ),
-                )),
-              );
+                ),
+              ));
             }));
   }
 
@@ -177,7 +184,7 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
         _height = newValue as String;
       },
       decoration: const InputDecoration(
-          isDense: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           border: OutlineInputBorder(),
           labelText: "신장",
           suffixText: "cm",
@@ -221,7 +228,8 @@ class _ProflieSetPageState extends State<ProflieSetPage> {
                         nutriGoal[index] = newValue!;
                       },
                       decoration: InputDecoration(
-                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
                           border: const OutlineInputBorder(),
                           labelText: labelText[index],
                           suffixText: unitText[index],

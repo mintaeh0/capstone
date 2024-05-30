@@ -1,35 +1,38 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:project1/constants/colors.dart';
 import 'package:project1/dependency_injection.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project1/functions/uid_info_controller.dart';
 import 'package:project1/pages/splash_page.dart';
 import 'firebase_options.dart';
 
 // 시작
 // 로그인 정보 저장
 
+final darkModeProvider = StateProvider<String>((ref) => "");
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  getUid().then((value) {
+    runApp(ProviderScope(
+        overrides: [darkModeProvider.overrideWith((ref) => value ?? "")],
+        child: const MyApp()));
+  });
   DependencyInjection.init();
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GetMaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -76,14 +79,6 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: Color(0xf9ffffff),
           // primarySwatch: Colors.green,
           fontFamily: "NanumGothic"),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            brightness: Brightness.dark,
-            seedColor: primaryColor,
-            primary: primaryColor,
-            surfaceTint: Colors.white),
-      ),
       themeMode: ThemeMode.light,
       home: const SplashPage(),
     );

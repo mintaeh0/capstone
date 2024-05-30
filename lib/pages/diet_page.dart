@@ -91,7 +91,7 @@ class _DietPageState extends State<DietPage> {
                       },
                     );
                   },
-                  child: const Text("일일 식단 삭제"))
+                  child: const Text("일일 데이터 삭제"))
             ],
           ),
         ));
