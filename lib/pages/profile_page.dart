@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/favorite_food_page.dart';
+import 'package:project1/widgets/banner_ad_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../functions/uid_info_controller.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -83,11 +85,28 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.all(20),
                           child: Column(children: [
                             profileCard(userSnapshot.data!.data()),
-                            Container(height: 20),
+                            const SizedBox(height: 10),
+                            const BannerAdWidget(),
+                            const SizedBox(height: 10),
                             bmiCard(),
-                            Container(height: 20),
+                            const SizedBox(height: 20),
                             settingButton(uidSnapshot.data!),
-                            const SizedBox(height: 50)
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              child: const Text(
+                                "show license",
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.grey),
+                              ),
+                              onTap: () {
+                                showLicensePage(context: context);
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            const BannerAdWidget(),
+                            const SizedBox(height: 10),
                           ]),
                         );
                       });
@@ -258,14 +277,63 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       children: [
         menuItem("즐겨찾기 관리", () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => FavoriteFoodPage()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const FavoriteFoodPage()));
         }),
+        menuItem(
+            "문의하기",
+            () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Container(),
+                      content: Row(
+                        children: [
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("이메일"),
+                              SizedBox(height: 10),
+                              Text("카카오톡"),
+                            ],
+                          ),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("mth1150@naver.com"),
+                              const SizedBox(height: 10),
+                              GestureDetector(
+                                child: const Text(
+                                  "바로가기",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.green),
+                                ),
+                                onTap: () {
+                                  launchUrl(Uri.parse(
+                                      "https://open.kakao.com/o/sxLbtovg"));
+                                },
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("닫기"))
+                      ],
+                    ))),
         menuItem("설정", () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ProfileSetPage(uid),
           ));
-        })
+        }),
       ],
     );
   }

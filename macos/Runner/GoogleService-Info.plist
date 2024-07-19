@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.project1.RunnerTests</string>
+	<string>com.ssstudio.o2eat.RunnerTests</string>
 	<key>PROJECT_ID</key>
 	<string>knu-capstone-diet-app</string>
 	<key>STORAGE_BUCKET</key>

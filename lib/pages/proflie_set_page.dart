@@ -10,6 +10,7 @@ import 'package:project1/functions/add_goal_func.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/functions/goal_state_controller.dart';
 import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/widgets/banner_ad_widget.dart';
 
 // 프로필 설정 페이지
 const storage = FlutterSecureStorage();
@@ -47,7 +48,14 @@ class ProfileSetPageState extends ConsumerState<ProfileSetPage> {
                     builder: (context) {
                       return AlertDialog(
                         title: const Text("초기화"),
-                        content: const Text("계정 데이터를 초기화 하시겠습니까?"),
+                        content: const Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("계정 데이터를 초기화 하시겠습니까?"),
+                            SizedBox(height: 10),
+                            BannerAdWidget(),
+                          ],
+                        ),
                         actions: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
+import 'package:project1/widgets/banner_ad_widget.dart';
 import '../functions/uid_info_controller.dart';
 
 class DietChart extends StatefulWidget {
@@ -18,7 +19,6 @@ class DietChart extends StatefulWidget {
 class _DietChartState extends State<DietChart> {
   var storage = const FlutterSecureStorage();
   late List<num> nutriArray;
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -64,8 +64,10 @@ class _DietChartState extends State<DietChart> {
               }
 
               return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   dietPieChartCard(nutriArray),
+                  const BannerAdWidget(),
                   nutriCard(uidSnapshot.data),
                 ],
               );

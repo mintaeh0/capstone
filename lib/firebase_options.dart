@@ -67,7 +67,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '257558588020',
     projectId: 'knu-capstone-diet-app',
     storageBucket: 'knu-capstone-diet-app.appspot.com',
-    iosBundleId: 'com.example.project1',
+    iosBundleId: 'com.ssstudio.o2eat',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '257558588020',
     projectId: 'knu-capstone-diet-app',
     storageBucket: 'knu-capstone-diet-app.appspot.com',
-    iosBundleId: 'com.example.project1.RunnerTests',
+    iosBundleId: 'com.ssstudio.o2eat.RunnerTests',
   );
 }

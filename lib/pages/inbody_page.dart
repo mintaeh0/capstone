@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/widgets/inbody_chart.dart';
 import '../functions/add_inbody_func.dart';
 import '../functions/date_controller.dart';
@@ -21,7 +21,6 @@ class InbodyPage extends StatefulWidget {
 class _InbodyPageState extends State<InbodyPage> {
   final _form = GlobalKey<FormState>();
   late String _weight, _musclemass, _bodyfat;
-
   String dateString = getTodayString();
 
   @override
@@ -37,14 +36,14 @@ class _InbodyPageState extends State<InbodyPage> {
   }
 
   void incDate() {
-    var stor = stringToDate(dateString).add(Duration(days: 1));
+    var stor = stringToDate(dateString).add(const Duration(days: 1));
     setState(() {
       dateString = dateToString(stor);
     });
   }
 
   void decDate() {
-    var stor = stringToDate(dateString).subtract(Duration(days: 1));
+    var stor = stringToDate(dateString).subtract(const Duration(days: 1));
     setState(() {
       dateString = dateToString(stor);
     });
@@ -59,13 +58,18 @@ class _InbodyPageState extends State<InbodyPage> {
         child: Column(
           children: [
             dateRemoteBar(),
-            Container(height: 10),
+            const SizedBox(height: 10),
             InbodyTable(dateString),
-            Container(height: 10),
+            const SizedBox(height: 10),
             inbodyAddButton(),
             inbodyDeleteButton(),
-            Container(height: 10),
+            const SizedBox(height: 10),
+            const BannerAdWidget(),
+            const SizedBox(height: 10),
             InbodyChart(),
+            const SizedBox(height: 10),
+            const BannerAdWidget(),
+            const SizedBox(height: 10),
           ],
         ),
       ),

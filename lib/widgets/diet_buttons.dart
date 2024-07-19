@@ -145,17 +145,17 @@ class DietButtons extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: Text(
                   label,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.only(right: 10),
               height: 50,
               alignment: Alignment.centerRight,
               child: Text(
                 "$kcal kcal",
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
             )
           ],

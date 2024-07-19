@@ -3,28 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:project1/constants/colors.dart';
 import 'package:project1/dependency_injection.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:project1/functions/uid_info_controller.dart';
 import 'package:project1/pages/splash_page.dart';
 import 'firebase_options.dart';
 
 // 시작
 // 로그인 정보 저장
 
-final darkModeProvider = StateProvider<String>((ref) => "");
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  getUid().then((value) {
-    runApp(ProviderScope(
-        overrides: [darkModeProvider.overrideWith((ref) => value ?? "")],
-        child: const MyApp()));
-  });
+  runApp(const ProviderScope(child: MyApp()));
   DependencyInjection.init();
 }
 

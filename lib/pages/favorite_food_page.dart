@@ -97,7 +97,7 @@ class _FavoriteFoodPageState extends State<FavoriteFoodPage> {
                     }
 
                     dynamic snapshotData = snapshot.data?.data();
-                    List favFoods = snapshot.data!.data()![kFavsText];
+                    List favFoods = snapshotData?[kFavsText] ?? [];
 
                     if (snapshotData == null ||
                         snapshotData[kFavsText] == null ||

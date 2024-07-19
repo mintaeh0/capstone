@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/internet_controller.dart';
+import 'package:project1/widgets/banner_ad_widget.dart';
 import '../functions/login_state_controller.dart';
 import 'inbody_page.dart';
 import 'diet_page.dart';
@@ -12,29 +15,56 @@ import 'login_page.dart';
 import 'profile_page.dart';
 
 // 메인 페이지
+const List<Widget> _body = [
+  DietPage(),
+  InbodyPage(),
+  ProfilePage(),
+];
 
-class MainPage extends StatefulWidget {
+const List<Widget> _title = [
+  Text("식단 관리"),
+  Text("체성분 관리"),
+  Text("내 정보"),
+];
+
+const List<BottomNavigationBarItem> navigationItems = [
+  BottomNavigationBarItem(
+    label: '식단',
+    icon: Icon(Icons.lunch_dining_outlined),
+    activeIcon: Icon(Icons.lunch_dining),
+  ),
+  BottomNavigationBarItem(
+    label: '체성분',
+    icon: Icon(Icons.scale_outlined),
+    activeIcon: Icon(Icons.scale),
+  ),
+  BottomNavigationBarItem(
+    label: '내 정보',
+    icon: Icon(Icons.person_outlined),
+    activeIcon: Icon(Icons.person),
+  ),
+];
+
+final navigationIndexProvider =
+    StateNotifierProvider((ref) => NavigationIndex());
+
+class NavigationIndex extends StateNotifier {
+  NavigationIndex() : super(0);
+
+  void setIndex(int value) {
+    state = value;
+  }
+}
+
+class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  MainPageState createState() => MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends ConsumerState<MainPage> {
   // late bool _disconnected;
-
-  int _currentIndex = 0;
-
-  final List<Widget> _body = const [
-    DietPage(),
-    InbodyPage(),
-    ProfilePage(),
-  ];
-  final List<Widget> _title = const [
-    Text("식단 관리"),
-    Text("체성분 관리"),
-    Text("내 정보"),
-  ];
 
   @override
   void initState() {
@@ -44,96 +74,127 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: _title[_currentIndex],
-        actions: [
-          if (_currentIndex == 2)
-            IconButton(
-                tooltip: "로그아웃",
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Logout"),
-                        content: const Text("로그아웃 하시겠습니까?"),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              FilledButton(
-                                  onPressed: () async {
-                                    try {
-                                      await FirebaseAuth.instance.signOut();
-                                      await GoogleSignIn().signOut();
-                                      await FlutterSecureStorage()
-                                          .delete(key: "uid");
-                                      await setLoginState("false");
+    final int navigationIndex = ref.watch(navigationIndexProvider) as int;
 
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginPage()),
-                                        (route) => false,
-                                      );
-                                    } catch (e) {
-                                      Fluttertoast.showToast(msg: "$e");
-                                    }
-                                  },
-                                  child: const Text("확인")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("취소"))
-                            ],
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.power_settings_new))
-        ],
-      ),
-      body: _body[_currentIndex],
-      bottomNavigationBar: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black38)]),
-        child: BottomNavigationBar(
-          elevation: 2,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
-          currentIndex: _currentIndex,
-          // showSelectedLabels: false,
-          // showUnselectedLabels: false,
-          onTap: (int newIndex) {
-            setState(() {
-              _currentIndex = newIndex;
-            });
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("앱 종료"),
+              content: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("앱을 종료 하시겠습니까?"),
+                  SizedBox(height: 10),
+                  BannerAdWidget(),
+                ],
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    FilledButton(
+                      onPressed: () {
+                        SystemNavigator.pop();
+                      },
+                      child: const Text("종료"),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("취소")),
+                  ],
+                ),
+              ],
+            );
           },
-          items: const [
-            BottomNavigationBarItem(
-              label: '식단',
-              icon: Icon(Icons.lunch_dining_outlined),
-              activeIcon: Icon(Icons.lunch_dining),
-            ),
-            BottomNavigationBarItem(
-              label: '체성분',
-              icon: Icon(Icons.scale_outlined),
-              activeIcon: Icon(Icons.scale),
-            ),
-            BottomNavigationBarItem(
-              label: '내 정보',
-              icon: Icon(Icons.person_outlined),
-              activeIcon: Icon(Icons.person),
-            ),
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: _title[navigationIndex],
+          actions: [
+            if (navigationIndex == 2)
+              IconButton(
+                  tooltip: "로그아웃",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Logout"),
+                          content: const Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("로그아웃 하시겠습니까?"),
+                              SizedBox(height: 10),
+                              BannerAdWidget(),
+                            ],
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                FilledButton(
+                                    onPressed: () async {
+                                      try {
+                                        await FirebaseAuth.instance.signOut();
+                                        await GoogleSignIn().signOut();
+                                        await FlutterSecureStorage()
+                                            .delete(key: "uid");
+                                        await setLoginState("false");
+
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage()),
+                                          (route) => false,
+                                        );
+                                      } catch (e) {
+                                        Fluttertoast.showToast(msg: "$e");
+                                      }
+                                    },
+                                    child: const Text("확인")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("취소"))
+                              ],
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.power_settings_new))
           ],
+        ),
+        body: _body[navigationIndex],
+        bottomNavigationBar: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black38)]),
+          child: BottomNavigationBar(
+            elevation: 2,
+            iconSize: 30,
+            // backgroundColor: Theme.of(context).colorScheme.primary,
+            // selectedItemColor: Colors.white,
+            // unselectedItemColor: Colors.white,
+            currentIndex: navigationIndex,
+            selectedLabelStyle: const TextStyle(fontSize: 0),
+            unselectedLabelStyle: const TextStyle(fontSize: 0),
+            onTap: (int newIndex) =>
+                ref.read(navigationIndexProvider.notifier).setIndex(newIndex),
+            items: navigationItems,
+          ),
         ),
       ),
     );
