@@ -1,119 +1,128 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/favorite_food_page.dart';
+import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../functions/uid_info_controller.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
 
-class ProfilePage extends StatefulWidget {
+final profileStreamProvider =
+    StreamProvider.autoDispose<DocumentSnapshot<Map<String, dynamic>>>((ref) {
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .snapshots();
+});
+
+final profileFutureProvider =
+    FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .collection(kInbodyCollectionText)
+      .where("docdate", isNull: false)
+      .orderBy("docdate", descending: true)
+      .limit(1)
+      .get();
+});
+
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends ConsumerState<ProfilePage> {
   late num _currentWeight = 0, _height, _bmiNum = 0;
   String _bmiString = "체중(kg), 신장(cm) 입력 필요";
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUid(),
-      builder: (context, uidSnapshot) {
-        return SingleChildScrollView(
-          child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection(kUsersCollectionText)
-                  .doc(uidSnapshot.data)
-                  .snapshots(),
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+    final AsyncValue<DocumentSnapshot<Map<String, dynamic>>> profileStream =
+        ref.watch(profileStreamProvider);
+    final AsyncValue<QuerySnapshot<Map<String, dynamic>>> profileFuture =
+        ref.watch(profileFutureProvider);
+    final String userId = ref.watch(userIdProvider).asData!.value!;
 
-                if (userSnapshot.hasError) {
-                  return Center(child: Text('Error: ${userSnapshot.error}'));
-                } else {
-                  _height =
-                      num.parse(userSnapshot.data?.data()?["height"] ?? "0");
+    return SingleChildScrollView(
+      child: profileStream.when(data: (streamData) {
+        _height = num.parse(streamData.data()?["height"] ?? "0");
 
-                  return FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection(kUsersCollectionText)
-                          .doc(uidSnapshot.data)
-                          .collection(kInbodyCollectionText)
-                          .where("docdate", isNull: false)
-                          .orderBy("docdate", descending: true)
-                          .limit(1)
-                          .get(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData == false) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+        return profileFuture.when(
+          data: (futureData) {
+            for (var element in futureData.docs) {
+              _currentWeight = element["weight"];
+            }
 
-                        for (var element in snapshot.data!.docs) {
-                          _currentWeight = element["weight"];
-                        }
+            if (_height != 0 && _currentWeight != 0) {
+              _bmiNum = _currentWeight / ((_height * 0.01) * (_height * 0.01));
 
-                        if (_height != 0 && _currentWeight != 0) {
-                          _bmiNum = _currentWeight /
-                              ((_height * 0.01) * (_height * 0.01));
+              if (_bmiNum < 18.5) {
+                _bmiString = "저체중";
+              } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
+                _bmiString = "표준";
+              } else if (_bmiNum >= 23 && _bmiNum < 25) {
+                _bmiString = "비만전단계";
+              } else if (_bmiNum >= 25 && _bmiNum < 30) {
+                _bmiString = "1단계 비만";
+              } else if (_bmiNum >= 30 && _bmiNum < 35) {
+                _bmiString = "2단계 비만";
+              } else {
+                _bmiString = "3단계 비만";
+              }
+            }
 
-                          if (_bmiNum < 18.5) {
-                            _bmiString = "저체중";
-                          } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                            _bmiString = "표준";
-                          } else if (_bmiNum >= 23 && _bmiNum < 25) {
-                            _bmiString = "비만전단계";
-                          } else if (_bmiNum >= 25 && _bmiNum < 30) {
-                            _bmiString = "1단계 비만";
-                          } else if (_bmiNum >= 30 && _bmiNum < 35) {
-                            _bmiString = "2단계 비만";
-                          } else {
-                            _bmiString = "3단계 비만";
-                          }
-                        }
-
-                        return Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(children: [
-                            profileCard(userSnapshot.data!.data()),
-                            const SizedBox(height: 10),
-                            const BannerAdWidget(),
-                            const SizedBox(height: 10),
-                            bmiCard(),
-                            const SizedBox(height: 20),
-                            settingButton(uidSnapshot.data!),
-                            const SizedBox(height: 10),
-                            GestureDetector(
-                              child: const Text(
-                                "show license",
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Colors.grey),
-                              ),
-                              onTap: () {
-                                showLicensePage(context: context);
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            const BannerAdWidget(),
-                            const SizedBox(height: 10),
-                          ]),
-                        );
-                      });
-                }
-              }),
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(children: [
+                profileCard(streamData.data()),
+                const SizedBox(height: 10),
+                const BannerAdWidget(),
+                const SizedBox(height: 10),
+                bmiCard(),
+                const SizedBox(height: 20),
+                settingButton(userId),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  child: const Text(
+                    "라이센스 보기",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.grey),
+                  ),
+                  onTap: () {
+                    showLicensePage(context: context);
+                  },
+                ),
+                const SizedBox(height: 20),
+                const BannerAdWidget(),
+                const SizedBox(height: 10),
+              ]),
+            );
+          },
+          error: (error, stackTrace) {
+            return Center(child: Text("error : $error"));
+          },
+          loading: () {
+            return const Center(child: CircularProgressIndicator());
+          },
         );
-      },
+      }, error: (error, stackTrace) {
+        return Center(child: Text("error : $error"));
+      }, loading: () {
+        return const Center(child: CircularProgressIndicator());
+      }),
     );
   }
 
@@ -257,23 +266,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget settingButton(String uid) {
-    Widget menuItem(String title, Function() tapFunc) {
-      return GestureDetector(
-        onTap: tapFunc,
-        child: Card.outlined(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(title),
-                  const Icon(Icons.keyboard_arrow_right_rounded)
-                ]),
-          ),
-        ),
-      );
-    }
-
     return Column(
       children: [
         menuItem("즐겨찾기 관리", () {
@@ -331,10 +323,27 @@ class _ProfilePageState extends State<ProfilePage> {
                     ))),
         menuItem("설정", () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ProfileSetPage(uid),
+            builder: (context) => const ProfileSetPage(),
           ));
         }),
       ],
+    );
+  }
+
+  Widget menuItem(String title, Function() tapFunc) {
+    return GestureDetector(
+      onTap: tapFunc,
+      child: Card.outlined(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(title),
+                const Icon(Icons.keyboard_arrow_right_rounded)
+              ]),
+        ),
+      ),
     );
   }
 }

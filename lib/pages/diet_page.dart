@@ -1,61 +1,91 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/widgets/diet_chart.dart';
 import '../widgets/diet_buttons.dart';
 import '../functions/date_controller.dart';
-import '../functions/uid_info_controller.dart';
 
-class DietPage extends StatefulWidget {
-  const DietPage({super.key});
+final dateStringProvider =
+    StateNotifierProvider.autoDispose((ref) => DateString());
 
-  @override
-  State<DietPage> createState() => _DietPageState();
-}
-
-class _DietPageState extends State<DietPage> {
-  late String dateString;
-
-  @override
-  void initState() {
-    super.initState();
-    dateString = getTodayString();
-  }
+class DateString extends StateNotifier {
+  DateString() : super(getTodayString());
 
   void changeDate(DateTime datetime) {
-    setState(() {
-      dateString = dateToString(datetime);
-    });
+    state = dateToString(datetime);
+  }
+
+  void setTodayDate() {
+    state = dateToString(DateTime.now());
   }
 
   void incDate() {
-    var stor = stringToDate(dateString).add(const Duration(days: 1));
-    setState(() {
-      dateString = dateToString(stor);
-    });
+    var stor = stringToDate(state).add(const Duration(days: 1));
+    state = dateToString(stor);
   }
 
   void decDate() {
-    var stor = stringToDate(dateString).subtract(const Duration(days: 1));
-    setState(() {
-      dateString = dateToString(stor);
-    });
+    var stor = stringToDate(state).subtract(const Duration(days: 1));
+    state = dateToString(stor);
   }
+}
+
+class DietPage extends ConsumerWidget {
+  const DietPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final String dateString = ref.watch(dateStringProvider) as String;
+    final DateString dateStringNotifier = ref.read(dateStringProvider.notifier);
+
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              dateRemoteBar(),
-              // const SizedBox(height: 10),
-              DietChart(dateString),
+              Card(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      onPressed: () => dateStringNotifier.decDate(),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_left,
+                        size: 40,
+                      )),
+                  Text(dateString, style: const TextStyle(fontSize: 20)),
+                  IconButton(
+                      onPressed: () async {
+                        DateTime? datetime = await showDatePicker(
+                            context: context,
+                            initialDate: stringToDate(dateString),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now());
+                        if (datetime != null) {
+                          dateStringNotifier.changeDate(datetime);
+                        }
+                      },
+                      icon: const Icon(Icons.calendar_today)),
+                  IconButton(
+                      onPressed: () {
+                        if (dateString != getTodayString()) {
+                          dateStringNotifier.incDate();
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 40,
+                      )),
+                ],
+              )), // 날짜 조정 바
+              const DietChart(),
               const SizedBox(height: 10),
-              DietButtons(dateString),
+              const DietButtons(),
               const SizedBox(height: 20),
               FilledButton.tonal(
                   onPressed: () {
@@ -71,9 +101,9 @@ class _DietPageState extends State<DietPage> {
                               children: [
                                 FilledButton(
                                     onPressed: () async {
-                                      FirebaseFirestore.instance
+                                      await FirebaseFirestore.instance
                                           .collection(kUsersCollectionText)
-                                          .doc(await getUid())
+                                          .doc(userId)
                                           .collection(kDietCollectionText)
                                           .doc(dateString)
                                           .delete();
@@ -98,45 +128,5 @@ class _DietPageState extends State<DietPage> {
             ],
           ),
         ));
-  }
-
-  Widget dateRemoteBar() {
-    return Card(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-            onPressed: () {
-              decDate();
-            },
-            icon: const Icon(
-              Icons.keyboard_arrow_left,
-              size: 40,
-            )),
-        Text(dateString, style: const TextStyle(fontSize: 20)),
-        IconButton(
-            onPressed: () async {
-              DateTime? datetime = await showDatePicker(
-                  context: context,
-                  initialDate: stringToDate(dateString),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime.now());
-              if (datetime != null) {
-                changeDate(datetime);
-              }
-            },
-            icon: const Icon(Icons.calendar_today)),
-        IconButton(
-            onPressed: () {
-              if (dateString != getTodayString()) {
-                incDate();
-              }
-            },
-            icon: const Icon(
-              Icons.keyboard_arrow_right,
-              size: 40,
-            )),
-      ],
-    ));
   }
 }

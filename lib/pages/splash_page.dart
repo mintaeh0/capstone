@@ -43,7 +43,7 @@ class _SplashPageState extends State<SplashPage> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  loginState ? const MainPage() : const LoginPage()),
+                  loginState ? const HomePage() : const LoginPage()),
           (route) => false,
         );
       },

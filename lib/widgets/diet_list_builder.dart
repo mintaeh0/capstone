@@ -1,106 +1,118 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/pages/add_diet_page.dart';
+import 'package:project1/pages/diet_page.dart';
+import 'package:project1/pages/home_page.dart';
 
-class DietListBuilder extends StatefulWidget {
-  final String mealDate;
+final dietListStreamProvider = StreamProvider.autoDispose((ref) {
+  final String dateString = ref.watch(dateStringProvider) as String;
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .collection(kDietCollectionText)
+      .doc(dateString)
+      .snapshots();
+});
+
+class DietListBuilder extends ConsumerStatefulWidget {
   final String mealType;
-  final Function showFAB;
-  final Function hideFAB;
 
-  const DietListBuilder(
-      this.mealDate, this.mealType, this.showFAB, this.hideFAB,
-      {super.key});
+  const DietListBuilder(this.mealType, {super.key});
 
   @override
-  State<DietListBuilder> createState() => _DietListBuilderState();
+  DietListBuilderState createState() => DietListBuilderState();
 }
 
-class _DietListBuilderState extends State<DietListBuilder> {
-  ScrollController dietListController = ScrollController();
+class DietListBuilderState extends ConsumerState<DietListBuilder> {
+  final ScrollController _dietListController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    dietListController.addListener(() {
-      if (dietListController.position.userScrollDirection ==
+    final FabVisible fabVisibleNotifier = ref.read(fabVisibleProvider.notifier);
+    _dietListController.addListener(() {
+      if (_dietListController.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        widget.hideFAB();
+        fabVisibleNotifier.hide();
       } else {
-        widget.showFAB();
+        fabVisibleNotifier.show();
       }
     });
   }
 
   @override
   void dispose() {
-    dietListController.dispose();
+    _dietListController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUid(),
-      builder: (context, uidSnapshot) {
-        return StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection(kUsersCollectionText)
-                .doc(uidSnapshot.data)
-                .collection(kDietCollectionText)
-                .doc(widget.mealDate)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              dynamic snapshotData =
-                  snapshot.data?.data() as Map<String, dynamic>?;
+    final AsyncValue dietListStream = ref.watch(dietListStreamProvider);
 
-              if (snapshot.hasData &&
-                  snapshot.data!.exists &&
-                  snapshotData != null &&
-                  snapshotData.containsKey(widget.mealType)) {
-                dynamic dataArray = snapshot.data?.get(widget.mealType);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: dietListStream.when(
+        data: (data) {
+          Map<String, dynamic>? snapshotData = data.data();
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    controller: dietListController,
-                    scrollDirection: Axis.vertical,
-                    itemCount: dataArray.length,
-                    itemBuilder: (context, index) {
-                      var mapData = dataArray[index] as Map<String, dynamic>;
-                      return dietListContainer(mapData);
-                    },
-                  ),
-                );
-              } else {
-                return const SizedBox(
-                  height: double.maxFinite,
-                  width: double.maxFinite,
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 200),
-                      child: Center(child: Text("식단을 추가해보세요!")),
-                    ),
-                  ),
-                );
-              }
-            });
-      },
+          if (data.exists &&
+              snapshotData != null &&
+              snapshotData.containsKey(widget.mealType)) {
+            dynamic dataArray = data.get(widget.mealType);
+
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              shrinkWrap: true,
+              controller: _dietListController,
+              scrollDirection: Axis.vertical,
+              itemCount: dataArray.length,
+              itemBuilder: (context, index) {
+                var mapData = dataArray[index] as Map<String, dynamic>;
+                return DietListCard(mapData, widget.mealType);
+              },
+            );
+          } else {
+            return const SizedBox(
+              height: double.maxFinite,
+              width: double.maxFinite,
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 200),
+                  child: Center(child: Text("식단을 추가해보세요!")),
+                ),
+              ),
+            );
+          }
+        },
+        error: (error, stackTrace) {
+          return Center(child: Text('Error: $error'));
+        },
+        loading: () {
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
+}
 
-  Widget dietListContainer(Map<String, dynamic> mapData) {
+class DietListCard extends ConsumerWidget {
+  final Map<String, dynamic> mapData;
+  final String mealType;
+
+  const DietListCard(this.mapData, this.mealType, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String dateString = ref.watch(dateStringProvider) as String;
+    final String userId = ref.watch(userIdProvider).asData!.value!;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Padding(
@@ -131,25 +143,24 @@ class _DietListBuilderState extends State<DietListBuilder> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 FilledButton(
-                                    onPressed: () async {
+                                    onPressed: () {
                                       DocumentReference sampleRef =
                                           FirebaseFirestore.instance
                                               .collection(kUsersCollectionText)
-                                              .doc(await getUid())
+                                              .doc(userId)
                                               .collection(kDietCollectionText)
-                                              .doc(widget.mealDate);
+                                              .doc(dateString);
 
                                       sampleRef.update({
-                                        widget.mealType:
+                                        mealType:
                                             FieldValue.arrayRemove([mapData])
                                       }).then((_) {
                                         sampleRef.get().then((value) {
                                           dynamic stor = value.data();
                                           stor.remove("docdate");
 
-                                          if (stor[widget.mealType].length <
-                                              1) {
-                                            stor.remove(widget.mealType);
+                                          if (stor[mealType].length < 1) {
+                                            stor.remove(mealType);
                                           }
 
                                           if (stor.length < 1) {

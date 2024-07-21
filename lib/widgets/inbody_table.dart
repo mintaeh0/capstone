@@ -1,55 +1,57 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/pages/home_page.dart';
+import 'package:project1/pages/inbody_page.dart';
 
-class InbodyTable extends StatefulWidget {
-  final String bodyDate;
+final tableStreamProvider = StreamProvider.autoDispose((ref) {
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+  final String dateString = ref.watch(dateStringProvider) as String;
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .collection(kInbodyCollectionText)
+      .doc(dateString)
+      .snapshots();
+});
 
-  const InbodyTable(this.bodyDate, {super.key});
+class InbodyTable extends ConsumerStatefulWidget {
+  const InbodyTable({super.key});
 
   @override
-  State<InbodyTable> createState() => _InbodyTableState();
+  InbodyTableState createState() => InbodyTableState();
 }
 
-class _InbodyTableState extends State<InbodyTable> {
+class InbodyTableState extends ConsumerState<InbodyTable> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUid(),
-      builder: (context, uidSnapshot) {
-        return StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection(kUsersCollectionText)
-              .doc(uidSnapshot.data)
-              .collection(kInbodyCollectionText)
-              .doc(widget.bodyDate)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-            dynamic snapshotData =
-                snapshot.data?.data() as Map<String, dynamic>?;
-            List array;
+    final AsyncValue tableStream = ref.watch(tableStreamProvider);
 
-            if (snapshot.hasData &&
-                snapshot.data!.exists &&
-                snapshotData != null) {
-              dynamic bodyData = snapshot.data!.data();
+    return tableStream.when(
+      data: (data) {
+        dynamic snapshotData = data?.data() as Map<String, dynamic>?;
+        List array;
 
-              array = [
-                bodyData["weight"],
-                bodyData["musclemass"],
-                bodyData["bodyfat"]
-              ];
-            } else {
-              array = [0, 0, 0];
-            }
+        if (data!.exists && snapshotData != null) {
+          dynamic bodyData = data!.data();
 
-            return inbodyCard(array);
-          },
-        );
+          array = [
+            bodyData["weight"],
+            bodyData["musclemass"],
+            bodyData["bodyfat"]
+          ];
+        } else {
+          array = [0, 0, 0];
+        }
+
+        return inbodyCard(array);
+      },
+      error: (error, stackTrace) {
+        return Center(child: Text('Error: $error'));
+      },
+      loading: () {
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

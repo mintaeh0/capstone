@@ -1,121 +1,120 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/pages/diet_page.dart';
+import 'package:project1/pages/home_page.dart';
 import '../constants/colors.dart';
 import '../pages/add_diet_page.dart';
 
-class DietButtons extends StatelessWidget {
-  final String dateString;
-  const DietButtons(this.dateString, {super.key});
+final dietListStreamProvider = StreamProvider.autoDispose((ref) {
+  final String dateString = ref.watch(dateStringProvider) as String;
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .collection(kDietCollectionText)
+      .doc(dateString)
+      .snapshots();
+});
+
+class DietButtons extends ConsumerWidget {
+  const DietButtons({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUid(),
-      builder: (context, uidSnapshot) {
-        if (uidSnapshot.connectionState == ConnectionState.done) {
-          return StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection(kUsersCollectionText)
-                  .doc(uidSnapshot.data)
-                  .collection(kDietCollectionText)
-                  .doc(dateString)
-                  .snapshots(),
-              builder: (context, dataSnapshot) {
-                if (dataSnapshot.connectionState == ConnectionState.waiting ||
-                    dataSnapshot.connectionState == ConnectionState.none) {
-                  return const CircularProgressIndicator();
-                }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue dietButtonStream = ref.watch(dietListStreamProvider);
 
-                Map<String, dynamic> stor = dataSnapshot.data!.data() ?? {};
+    return dietButtonStream.when(
+      data: (data) {
+        Map<String, dynamic> stor = data!.data() ?? {};
 
-                num breakfastKcal = 0;
-                num lunchKcal = 0;
-                num dinnerKcal = 0;
-                num snackKcal = 0;
+        num breakfastKcal = 0;
+        num lunchKcal = 0;
+        num dinnerKcal = 0;
+        num snackKcal = 0;
 
-                stor.remove("docdate");
-                stor.forEach((key, value) {
-                  if (key == kBreakfastText) {
-                    for (var e in value) {
-                      breakfastKcal += e[kKcalText] * e[kAmountText];
-                    }
-                  }
-                  if (key == kLunchText) {
-                    for (var e in value) {
-                      lunchKcal += e[kKcalText] * e[kAmountText];
-                    }
-                  }
-                  if (key == kDinnerText) {
-                    for (var e in value) {
-                      dinnerKcal += e[kKcalText] * e[kAmountText];
-                    }
-                  }
-                  if (key == kSnackText) {
-                    for (var e in value) {
-                      snackKcal += e[kKcalText] * e[kAmountText];
-                    }
-                  }
-                });
+        stor.remove("docdate"); // 필요 없는 날짜 데이터는 제외
 
-                return Container(
-                  alignment: Alignment.center,
-                  child: Wrap(
-                    direction: Axis.vertical,
-                    spacing: 15,
-                    children: [
-                      Wrap(
-                        spacing: 15,
-                        direction: Axis.horizontal,
-                        children: [
-                          dietButton(
-                              label: "아침",
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddDietPage(dateString, 0)));
-                              },
-                              kcal: breakfastKcal),
-                          dietButton(
-                              label: "점심",
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddDietPage(dateString, 1)));
-                              },
-                              kcal: lunchKcal),
-                        ],
-                      ),
-                      Wrap(
-                        spacing: 15,
-                        direction: Axis.horizontal,
-                        children: [
-                          dietButton(
-                              label: "저녁",
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddDietPage(dateString, 2)));
-                              },
-                              kcal: dinnerKcal),
-                          dietButton(
-                              label: "간식",
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddDietPage(dateString, 3)));
-                              },
-                              kcal: snackKcal),
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              });
-        } else {
-          return const CircularProgressIndicator();
-        }
+        stor.forEach((key, value) {
+          if (key == kBreakfastText) {
+            for (var e in value) {
+              breakfastKcal += e[kKcalText] * e[kAmountText];
+            }
+          }
+          if (key == kLunchText) {
+            for (var e in value) {
+              lunchKcal += e[kKcalText] * e[kAmountText];
+            }
+          }
+          if (key == kDinnerText) {
+            for (var e in value) {
+              dinnerKcal += e[kKcalText] * e[kAmountText];
+            }
+          }
+          if (key == kSnackText) {
+            for (var e in value) {
+              snackKcal += e[kKcalText] * e[kAmountText];
+            }
+          }
+        });
+
+        return Container(
+          alignment: Alignment.center,
+          child: Wrap(
+            direction: Axis.vertical,
+            spacing: 15,
+            children: [
+              Wrap(
+                spacing: 15,
+                direction: Axis.horizontal,
+                children: [
+                  dietButton(
+                      label: "아침",
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AddDietPage(0)));
+                      },
+                      kcal: breakfastKcal),
+                  dietButton(
+                      label: "점심",
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AddDietPage(1)));
+                      },
+                      kcal: lunchKcal),
+                ],
+              ),
+              Wrap(
+                spacing: 15,
+                direction: Axis.horizontal,
+                children: [
+                  dietButton(
+                      label: "저녁",
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AddDietPage(2)));
+                      },
+                      kcal: dinnerKcal),
+                  dietButton(
+                      label: "간식",
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AddDietPage(3)));
+                      },
+                      kcal: snackKcal),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        return Center(child: Text("error : $error"));
+      },
+      loading: () {
+        return const CircularProgressIndicator();
       },
     );
   }

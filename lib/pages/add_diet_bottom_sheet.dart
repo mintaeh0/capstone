@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/pages/diet_page.dart';
 
 import '../constants/strings.dart';
 import '../functions/add_diet_func.dart';
 import '../functions/add_favorite_food_func.dart';
 
-class AddDietBottomSheet extends StatefulWidget {
-  final String mealDate;
+class AddDietBottomSheet extends ConsumerStatefulWidget {
   final String mealType;
 
-  const AddDietBottomSheet(this.mealDate, this.mealType, {super.key});
+  const AddDietBottomSheet(this.mealType, {super.key});
 
   @override
-  State<AddDietBottomSheet> createState() => _AddDietBottomSheetState();
+  AddDietBottomSheetState createState() => AddDietBottomSheetState();
 }
 
-class _AddDietBottomSheetState extends State<AddDietBottomSheet> {
+class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheet> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool favCheck = false;
 
@@ -24,6 +25,8 @@ class _AddDietBottomSheetState extends State<AddDietBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final String dateString = ref.watch(dateStringProvider) as String;
+
     return SingleChildScrollView(
       child: Form(
         key: _form,
@@ -79,7 +82,8 @@ class _AddDietBottomSheetState extends State<AddDietBottomSheet> {
                       ],
                     ),
                   ),
-                  Expanded(flex: 1, child: dietSubmitButton(favCheck)),
+                  Expanded(
+                      flex: 1, child: dietSubmitButton(favCheck, dateString)),
                 ],
               )
             ]),
@@ -183,7 +187,7 @@ class _AddDietBottomSheetState extends State<AddDietBottomSheet> {
     );
   }
 
-  Widget dietSubmitButton(bool favCheck) {
+  Widget dietSubmitButton(bool favCheck, String dateString) {
     return FilledButton(
         onPressed: () async {
           if (_form.currentState!.validate()) {
@@ -208,7 +212,7 @@ class _AddDietBottomSheetState extends State<AddDietBottomSheet> {
             }
 
             try {
-              await addDietFunc(widget.mealDate, widget.mealType, foodMap);
+              await addDietFunc(dateString, widget.mealType, foodMap);
             } catch (e) {
               Fluttertoast.showToast(msg: "$e");
             }

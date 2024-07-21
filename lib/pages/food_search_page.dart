@@ -3,26 +3,29 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/pages/diet_page.dart';
 
 import '../functions/add_diet_func.dart';
 
-class FoodSearchPage extends StatefulWidget {
-  final String mealDate;
+class FoodSearchPage extends ConsumerStatefulWidget {
   final String mealType;
 
-  const FoodSearchPage(this.mealDate, this.mealType, {super.key});
+  const FoodSearchPage(this.mealType, {super.key});
 
   @override
-  State<FoodSearchPage> createState() => _FoodSearchPageState();
+  FoodSearchPageState createState() => FoodSearchPageState();
 }
 
-class _FoodSearchPageState extends State<FoodSearchPage> {
+class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
   String keyword = "";
   Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
+    final String dateString = ref.watch(dateStringProvider) as String;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -34,7 +37,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                 onTapOutside: (event) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                     border: UnderlineInputBorder(borderSide: BorderSide.none),
                     hintText: "음식을 검색하세요",
@@ -55,7 +58,9 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
             ),
           ],
         ),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.info_outline))],
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.info_outline))
+        ],
       ),
       body: SizedBox(
         height: double.maxFinite,
@@ -404,7 +409,7 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
                                                       amountController.text),
                                                 };
                                                 try {
-                                                  addDietFunc(widget.mealDate,
+                                                  addDietFunc(dateString,
                                                       widget.mealType, foodMap);
                                                   Fluttertoast.showToast(
                                                       msg: "목록에 추가되었습니다!");
@@ -471,7 +476,8 @@ class _FoodSearchPageState extends State<FoodSearchPage> {
     });
 
     for (Map element in dataList) {
-      if (element["foodNm"]!.contains(keyword)) {
+      if (element["foodNm"]!.contains(keyword) ||
+          element["companyNm"]!.contains(keyword)) {
         returnList.add(element);
       }
     }

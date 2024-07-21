@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/widgets/inbody_chart.dart';
 import '../functions/add_inbody_func.dart';
@@ -10,63 +11,98 @@ import '../widgets/inbody_table.dart';
 import '../constants/strings.dart';
 
 // 체성분 페이지
+final dateStringProvider =
+    StateNotifierProvider.autoDispose((ref) => DateString());
 
-class InbodyPage extends StatefulWidget {
-  const InbodyPage({super.key});
-
-  @override
-  State<InbodyPage> createState() => _InbodyPageState();
-}
-
-class _InbodyPageState extends State<InbodyPage> {
-  final _form = GlobalKey<FormState>();
-  late String _weight, _musclemass, _bodyfat;
-  String dateString = getTodayString();
-
-  @override
-  void initState() {
-    super.initState();
-    dateString = getTodayString();
-  }
+class DateString extends StateNotifier {
+  DateString() : super(getTodayString());
 
   void changeDate(DateTime datetime) {
-    setState(() {
-      dateString = dateToString(datetime);
-    });
+    state = dateToString(datetime);
+  }
+
+  void setTodayDate() {
+    state = dateToString(DateTime.now());
   }
 
   void incDate() {
-    var stor = stringToDate(dateString).add(const Duration(days: 1));
-    setState(() {
-      dateString = dateToString(stor);
-    });
+    var stor = stringToDate(state).add(const Duration(days: 1));
+    state = dateToString(stor);
   }
 
   void decDate() {
-    var stor = stringToDate(dateString).subtract(const Duration(days: 1));
-    setState(() {
-      dateString = dateToString(stor);
-    });
+    var stor = stringToDate(state).subtract(const Duration(days: 1));
+    state = dateToString(stor);
   }
+}
+
+class InbodyPage extends ConsumerStatefulWidget {
+  const InbodyPage({super.key});
+
+  @override
+  InbodyPageState createState() => InbodyPageState();
+}
+
+class InbodyPageState extends ConsumerState<InbodyPage> {
+  final _form = GlobalKey<FormState>();
+  late String _weight, _musclemass, _bodyfat;
 
   @override
   Widget build(BuildContext context) {
+    final String dateString = ref.watch(dateStringProvider) as String;
+    final DateString dateStringNotifier = ref.read(dateStringProvider.notifier);
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            dateRemoteBar(),
+            Card(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      onPressed: () => dateStringNotifier.decDate(),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_left,
+                        size: 40,
+                      )),
+                  Text(dateString, style: const TextStyle(fontSize: 20)),
+                  IconButton(
+                      onPressed: () async {
+                        DateTime? datetime = await showDatePicker(
+                            context: context,
+                            initialDate: stringToDate(dateString),
+                            firstDate: DateTime(2024),
+                            lastDate: DateTime.now());
+                        if (datetime != null) {
+                          dateStringNotifier.changeDate(datetime);
+                        }
+                      },
+                      icon: const Icon(Icons.calendar_today)),
+                  IconButton(
+                      onPressed: () {
+                        if (dateString != getTodayString()) {
+                          dateStringNotifier.incDate();
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 40,
+                      )),
+                ],
+              ),
+            ),
             const SizedBox(height: 10),
-            InbodyTable(dateString),
+            const InbodyTable(),
             const SizedBox(height: 10),
-            inbodyAddButton(),
-            inbodyDeleteButton(),
+            inbodyAddButton(dateString),
+            inbodyDeleteButton(dateString),
             const SizedBox(height: 10),
             const BannerAdWidget(),
             const SizedBox(height: 10),
-            InbodyChart(),
+            const InbodyChart(),
             const SizedBox(height: 10),
             const BannerAdWidget(),
             const SizedBox(height: 10),
@@ -76,48 +112,7 @@ class _InbodyPageState extends State<InbodyPage> {
     );
   }
 
-  Widget dateRemoteBar() {
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-              onPressed: () {
-                decDate();
-              },
-              icon: const Icon(
-                Icons.keyboard_arrow_left,
-                size: 40,
-              )),
-          Text(dateString, style: const TextStyle(fontSize: 20)),
-          IconButton(
-              onPressed: () async {
-                DateTime? datetime = await showDatePicker(
-                    context: context,
-                    initialDate: stringToDate(dateString),
-                    firstDate: DateTime(2024),
-                    lastDate: DateTime.now());
-                if (datetime != null) {
-                  changeDate(datetime);
-                }
-              },
-              icon: const Icon(Icons.calendar_today)),
-          IconButton(
-              onPressed: () {
-                if (dateString != getTodayString()) {
-                  incDate();
-                }
-              },
-              icon: const Icon(
-                Icons.keyboard_arrow_right,
-                size: 40,
-              )),
-        ],
-      ),
-    );
-  }
-
-  Widget inbodyAddButton() {
+  Widget inbodyAddButton(String dateString) {
     return FilledButton(
       onPressed: () {
         showModalBottomSheet(
@@ -149,7 +144,7 @@ class _InbodyPageState extends State<InbodyPage> {
                         Container(height: 10),
                         bodyfatInput(),
                         Container(height: 10),
-                        inbodySubmitButton()
+                        inbodySubmitButton(dateString)
                       ],
                     )),
               ),
@@ -230,7 +225,7 @@ class _InbodyPageState extends State<InbodyPage> {
     );
   }
 
-  Widget inbodySubmitButton() {
+  Widget inbodySubmitButton(String dateString) {
     return FilledButton(
         onPressed: () {
           if (_form.currentState!.validate()) {
@@ -247,7 +242,7 @@ class _InbodyPageState extends State<InbodyPage> {
         child: const Text("등록/수정"));
   }
 
-  Widget inbodyDeleteButton() {
+  Widget inbodyDeleteButton(String dateString) {
     return FilledButton.tonal(
         onPressed: () {
           showDialog(

@@ -5,7 +5,7 @@ import 'uid_info_controller.dart';
 Future<void> addDietFunc(
     String mealDate, String mealType, Map<String, dynamic> foodMap) async {
   // Firebase 경로 설정
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   dynamic stor;
 
   final mealRef = firestore

@@ -1,63 +1,56 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/add_diet_bottom_sheet.dart';
+import 'package:project1/pages/diet_page.dart';
 import 'package:project1/pages/favorite_food_drawer_page.dart';
 import 'package:project1/pages/food_search_page.dart';
+import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
-import '../functions/uid_info_controller.dart';
 
 // 식단 추가 페이지
 
-class AddDietPage extends StatefulWidget {
-  final int mealIndex;
-  final String mealDate;
+final fabVisibleProvider =
+    StateNotifierProvider.autoDispose((ref) => FabVisible());
 
-  const AddDietPage(this.mealDate, this.mealIndex, {super.key});
+class FabVisible extends StateNotifier {
+  FabVisible() : super(true);
 
-  @override
-  State<AddDietPage> createState() => _AddDietPageState();
+  void hide() {
+    state ? state = false : ();
+  }
+
+  void show() {
+    state ? () : state = true;
+  }
 }
 
-class _AddDietPageState extends State<AddDietPage> {
-  bool isVisibleFAB = true;
-  List mealType = [kBreakfastText, kLunchText, kDinnerText, kSnackText];
-  List mealTypeKor = ["아침", "점심", "저녁", "간식"];
-  GlobalKey fabKey = GlobalKey();
+class AddDietPage extends ConsumerWidget {
+  AddDietPage(this.mealIndex, {super.key});
 
-  void hideFAB() {
-    if (isVisibleFAB != false) {
-      fabKey.currentState!.setState(() {
-        isVisibleFAB = false;
-      });
-    }
-  }
-
-  void showFAB() {
-    if (isVisibleFAB != true) {
-      fabKey.currentState!.setState(() {
-        isVisibleFAB = true;
-      });
-    }
-  }
+  final int mealIndex;
+  final List mealType = [kBreakfastText, kLunchText, kDinnerText, kSnackText];
+  final List mealTypeKor = ["아침", "점심", "저녁", "간식"];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final String dateString = ref.watch(dateStringProvider) as String;
+    final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
+
     return Scaffold(
-      endDrawer: Drawer(
-          child: FavoriteFoodDrawerPage(
-              widget.mealDate, mealType[widget.mealIndex])),
+      endDrawer: Drawer(child: FavoriteFoodDrawerPage(mealType[mealIndex])),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("${widget.mealDate}  ${mealTypeKor[widget.mealIndex]}"),
+        title: Text("$dateString  ${mealTypeKor[mealIndex]}"),
         actions: [
           IconButton(
             icon: const Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FoodSearchPage(
-                      widget.mealDate, mealType[widget.mealIndex])));
+                  builder: (context) => FoodSearchPage(mealType[mealIndex])));
             },
           ),
           IconButton(
@@ -67,22 +60,21 @@ class _AddDietPageState extends State<AddDietPage> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text(
-                        "${widget.mealDate} ${mealTypeKor[widget.mealIndex]}"),
+                    title: Text("$dateString ${mealTypeKor[mealIndex]}"),
                     content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
                     actions: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           FilledButton(
-                              onPressed: () async {
+                              onPressed: () {
                                 dynamic stor;
                                 DocumentReference sampleRef = FirebaseFirestore
                                     .instance
                                     .collection(kUsersCollectionText)
-                                    .doc(await getUid())
+                                    .doc(userId)
                                     .collection(kDietCollectionText)
-                                    .doc(widget.mealDate);
+                                    .doc(dateString);
 
                                 try {
                                   sampleRef.get().then((value) {
@@ -91,15 +83,13 @@ class _AddDietPageState extends State<AddDietPage> {
                                     if (stor == null) {
                                       Fluttertoast.showToast(
                                           msg: "목록이 이미 비어있습니다!");
-                                    } else if (stor[
-                                            mealType[widget.mealIndex]] ==
+                                    } else if (stor[mealType[mealIndex]] ==
                                         null) {
                                       Fluttertoast.showToast(
                                           msg: "목록이 이미 비어있습니다!");
                                     } else {
                                       sampleRef.update({
-                                        mealType[widget.mealIndex]:
-                                            FieldValue.delete()
+                                        mealType[mealIndex]: FieldValue.delete()
                                       }).then((_) {
                                         sampleRef.get().then((value) {
                                           stor = value.data();
@@ -134,49 +124,43 @@ class _AddDietPageState extends State<AddDietPage> {
           ),
         ],
       ),
-      body: DietListBuilder(
-          widget.mealDate, mealType[widget.mealIndex], showFAB, hideFAB),
-      floatingActionButton: StatefulBuilder(
-          key: fabKey,
-          builder: (context, setState) {
-            return Visibility(
-              visible: isVisibleFAB,
-              child: Builder(builder: (context) {
-                return IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      FloatingActionButton(
-                        heroTag: "favorite",
-                        child: const Icon(Icons.star),
-                        onPressed: () {
-                          Scaffold.of(context).openEndDrawer();
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      FloatingActionButton(
-                        heroTag: "add",
-                        child: const Icon(Icons.edit),
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return AddDietBottomSheet(widget.mealDate,
-                                      mealType[widget.mealIndex]);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            );
-          }),
+      body: DietListBuilder(mealType[mealIndex]),
+      floatingActionButton: Visibility(
+        visible: fabVisible,
+        child: Builder(builder: (context) {
+          return IntrinsicHeight(
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  heroTag: "favorite",
+                  child: const Icon(Icons.star),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  heroTag: "add",
+                  child: const Icon(Icons.edit),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return AddDietBottomSheet(mealType[mealIndex]);
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

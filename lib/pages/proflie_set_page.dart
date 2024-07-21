@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,7 +8,7 @@ import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/add_goal_func.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/functions/goal_state_controller.dart';
-import 'package:project1/functions/uid_info_controller.dart';
+import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 
 // 프로필 설정 페이지
@@ -26,9 +25,17 @@ List<String> goalKey = [
   kKcalGoalText
 ];
 
+final settingStreamProvider = StreamProvider.autoDispose((ref) {
+  final String userId = ref.watch(userIdProvider).asData!.value!;
+
+  return FirebaseFirestore.instance
+      .collection(kUsersCollectionText)
+      .doc(userId)
+      .snapshots();
+});
+
 class ProfileSetPage extends ConsumerStatefulWidget {
-  final String uid;
-  const ProfileSetPage(this.uid, {super.key});
+  const ProfileSetPage({super.key});
 
   @override
   ProfileSetPageState createState() => ProfileSetPageState();
@@ -37,146 +44,147 @@ class ProfileSetPage extends ConsumerStatefulWidget {
 class ProfileSetPageState extends ConsumerState<ProfileSetPage> {
   @override
   Widget build(BuildContext context) {
+    final AsyncValue settingStream = ref.watch(settingStreamProvider);
+    final String userId = ref.watch(userIdProvider).asData!.value!;
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("설정"),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("초기화"),
-                        content: const Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("계정 데이터를 초기화 하시겠습니까?"),
-                            SizedBox(height: 10),
-                            BannerAdWidget(),
-                          ],
-                        ),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              FilledButton(
-                                  onPressed: () async {
-                                    DocumentReference myRef = FirebaseFirestore
-                                        .instance
-                                        .collection(kUsersCollectionText)
-                                        .doc(await getUid());
-
-                                    await myRef
-                                        .collection(kDietCollectionText)
-                                        .get()
-                                        .then((value) async {
-                                      for (QueryDocumentSnapshot e
-                                          in value.docs) {
-                                        await e.reference.delete();
-                                      }
-                                    }); // 식단 초기화
-
-                                    await myRef
-                                        .collection(kInbodyCollectionText)
-                                        .get()
-                                        .then((value) async {
-                                      for (QueryDocumentSnapshot e
-                                          in value.docs) {
-                                        await e.reference.delete();
-                                      }
-                                    });
-
-                                    await myRef.delete(); // 체성분 초기화
-
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("확인")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("취소"))
-                            ],
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.delete_forever))
-          ],
-        ),
-        body: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection(kUsersCollectionText)
-                .doc(widget.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              var snapshotData = snapshot.data?.data();
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              return SingleChildScrollView(
-                  child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Form(
-                  key: _form,
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
-                        child: Row(
-                          children: [
-                            Text(
-                              "내 정보",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                            SizedBox(width: 10),
-                            Flexible(flex: 1, child: Divider())
-                          ],
-                        ),
-                      ),
-                      Row(
+      appBar: AppBar(
+        title: const Text("설정"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("초기화"),
+                      content: const Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(
-                              flex: 1,
-                              child:
-                                  heightInput(snapshotData?["height"] ?? "0")),
-                          Expanded(flex: 1, child: Container())
+                          Text("계정 데이터를 초기화 하시겠습니까?"),
+                          SizedBox(height: 10),
+                          BannerAdWidget(),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
-                        child: Row(
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
-                              "목표 섭취량",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                            SizedBox(width: 10),
-                            Flexible(flex: 1, child: Divider())
+                            FilledButton(
+                                onPressed: () async {
+                                  DocumentReference myRef = FirebaseFirestore
+                                      .instance
+                                      .collection(kUsersCollectionText)
+                                      .doc(userId);
+
+                                  await myRef
+                                      .collection(kDietCollectionText)
+                                      .get()
+                                      .then((value) async {
+                                    for (QueryDocumentSnapshot e
+                                        in value.docs) {
+                                      await e.reference.delete();
+                                    }
+                                  }); // 식단 초기화
+
+                                  await myRef
+                                      .collection(kInbodyCollectionText)
+                                      .get()
+                                      .then((value) async {
+                                    for (QueryDocumentSnapshot e
+                                        in value.docs) {
+                                      await e.reference.delete();
+                                    }
+                                  });
+
+                                  await myRef.delete(); // 체성분 초기화
+
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("확인")),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("취소"))
                           ],
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.delete_forever))
+        ],
+      ),
+      body: settingStream.when(
+        data: (data) {
+          var snapshotData = data?.data();
+
+          return SingleChildScrollView(
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            child: Form(
+              key: _form,
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          "내 정보",
+                          style: TextStyle(color: Colors.black54),
                         ),
-                      ),
-                      nutriGoalInput(snapshotData?[goalKey[0]], 0),
-                      const SizedBox(height: 20),
-                      nutriGoalInput(snapshotData?[goalKey[1]], 1),
-                      const SizedBox(height: 20),
-                      nutriGoalInput(snapshotData?[goalKey[2]], 2),
-                      const SizedBox(height: 20),
-                      nutriGoalInput(snapshotData?[goalKey[3]], 3),
-                      const SizedBox(height: 30),
-                      profileSubmitButton()
+                        SizedBox(width: 10),
+                        Flexible(flex: 1, child: Divider())
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: heightInput(snapshotData?["height"] ?? "0")),
+                      Expanded(flex: 1, child: Container())
                     ],
                   ),
-                ),
-              ));
-            }));
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 20),
+                    child: Row(
+                      children: [
+                        Text(
+                          "목표 섭취량",
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        SizedBox(width: 10),
+                        Flexible(flex: 1, child: Divider())
+                      ],
+                    ),
+                  ),
+                  nutriGoalInput(snapshotData?[goalKey[0]], 0),
+                  const SizedBox(height: 20),
+                  nutriGoalInput(snapshotData?[goalKey[1]], 1),
+                  const SizedBox(height: 20),
+                  nutriGoalInput(snapshotData?[goalKey[2]], 2),
+                  const SizedBox(height: 20),
+                  nutriGoalInput(snapshotData?[goalKey[3]], 3),
+                  const SizedBox(height: 30),
+                  profileSubmitButton()
+                ],
+              ),
+            ),
+          ));
+        },
+        error: (error, stackTrace) {
+          return Center(child: Text("error : $error"));
+        },
+        loading: () {
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
   }
 
   Widget heightInput(String height) {

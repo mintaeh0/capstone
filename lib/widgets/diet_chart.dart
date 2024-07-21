@@ -1,79 +1,81 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
+import 'package:project1/pages/diet_page.dart';
+import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
-import '../functions/uid_info_controller.dart';
 
-class DietChart extends StatefulWidget {
-  final String mealDate;
-
-  const DietChart(this.mealDate, {super.key});
+class DietChart extends ConsumerStatefulWidget {
+  const DietChart({super.key});
 
   @override
-  State<DietChart> createState() => _DietChartState();
+  DietChartState createState() => DietChartState();
 }
 
-class _DietChartState extends State<DietChart> {
-  var storage = const FlutterSecureStorage();
+class DietChartState extends ConsumerState<DietChart> {
   late List<num> nutriArray;
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUid(),
-      builder: (context, uidSnapshot) {
-        return StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection(kUsersCollectionText)
-                .doc(uidSnapshot.data)
-                .collection(kDietCollectionText)
-                .doc(widget.mealDate)
-                .snapshots(),
-            builder: (context, snapshot) {
-              dynamic snapshotData =
-                  snapshot.data?.data() as Map<String, dynamic>?;
+    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final String dateString = ref.watch(dateStringProvider) as String;
 
-              if (snapshot.hasData &&
-                  snapshot.data!.exists &&
-                  snapshotData != null) {
-                snapshotData.remove("docdate");
-                double carbo = 0;
-                num protein = 0;
-                num fat = 0;
-                num kcal = 0;
+    // return chartStream.when(
+    //   data: (data) {},
+    //   error: (error, stackTrace) {},
+    //   loading: () {},
+    // );
 
-                snapshotData.forEach((key, value) {
-                  for (Map ch in value) {
-                    carbo += ch[kCarboText] * ch["amount"];
-                    protein += ch[kProteinText] * ch["amount"];
-                    fat += ch[kFatText] * ch["amount"];
-                    kcal += ch[kKcalText] * ch["amount"];
-                  }
-                });
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection(kUsersCollectionText)
+            .doc(userId)
+            .collection(kDietCollectionText)
+            .doc(dateString)
+            .snapshots(),
+        builder: (context, snapshot) {
+          dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
 
-                carbo = double.parse(carbo.toStringAsFixed(1));
-                protein = double.parse(protein.toStringAsFixed(1));
-                fat = double.parse(fat.toStringAsFixed(1));
-                kcal = double.parse(kcal.toStringAsFixed(1));
+          if (snapshot.hasData &&
+              snapshot.data!.exists &&
+              snapshotData != null) {
+            snapshotData.remove("docdate");
+            double carbo = 0;
+            num protein = 0;
+            num fat = 0;
+            num kcal = 0;
 
-                nutriArray = [carbo, protein, fat, kcal];
-              } else {
-                nutriArray = [0, 0, 0, 0];
+            snapshotData.forEach((key, value) {
+              for (Map ch in value) {
+                carbo += ch[kCarboText] * ch["amount"];
+                protein += ch[kProteinText] * ch["amount"];
+                fat += ch[kFatText] * ch["amount"];
+                kcal += ch[kKcalText] * ch["amount"];
               }
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  dietPieChartCard(nutriArray),
-                  const BannerAdWidget(),
-                  nutriCard(uidSnapshot.data),
-                ],
-              );
             });
-      },
-    );
+
+            carbo = double.parse(carbo.toStringAsFixed(1));
+            protein = double.parse(protein.toStringAsFixed(1));
+            fat = double.parse(fat.toStringAsFixed(1));
+            kcal = double.parse(kcal.toStringAsFixed(1));
+
+            nutriArray = [carbo, protein, fat, kcal];
+          } else {
+            nutriArray = [0, 0, 0, 0];
+          }
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              dietPieChartCard(nutriArray),
+              const BannerAdWidget(),
+              nutriCard(userId),
+            ],
+          );
+        });
   }
 
   Widget dietPieChartCard(List list) {
@@ -130,7 +132,7 @@ class _DietChartState extends State<DietChart> {
     );
   }
 
-  Widget nutriCard(String? uid) {
+  Widget nutriCard(String uid) {
     Widget nutriRow(int index) {
       List<String> nutriText = ["탄수화물", "단백질", "지방", "칼로리"];
       List<String> goalKey = [
