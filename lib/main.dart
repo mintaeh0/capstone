@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:project1/constants/colors.dart';
-import 'package:project1/dependency_injection.dart';
+import 'package:project1/utils/dependency_injection.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project1/pages/splash_page.dart';
 import 'firebase_options.dart';

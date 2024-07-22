@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/add_diet_bottom_sheet.dart';
-import 'package:project1/pages/diet_page.dart';
-import 'package:project1/pages/favorite_food_drawer_page.dart';
-import 'package:project1/pages/food_search_page.dart';
+import 'package:project1/pages/diet/add_diet_bottom_sheet.dart';
+import 'package:project1/pages/diet/diet_page.dart';
+import 'package:project1/pages/diet/favorite_food_drawer_page.dart';
+import 'package:project1/pages/diet/food_search_page.dart';
 import 'package:project1/pages/home_page.dart';
-import 'package:project1/widgets/diet_list_builder.dart';
+import 'package:project1/pages/diet/widgets/diet_list_builder.dart';
 
 // 식단 추가 페이지
 

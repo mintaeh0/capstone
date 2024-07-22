@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
-import 'package:project1/widgets/diet_chart.dart';
-import '../widgets/diet_buttons.dart';
-import '../functions/date_controller.dart';
+import 'package:project1/pages/diet/widgets/diet_chart.dart';
+import 'widgets/diet_buttons.dart';
+import '../../functions/date_controller.dart';
 
 final dateStringProvider =
     StateNotifierProvider.autoDispose((ref) => DateString());

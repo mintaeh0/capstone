@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/add_diet_page.dart';
-import 'package:project1/pages/diet_page.dart';
+import 'package:project1/pages/diet/add_diet_page.dart';
+import 'package:project1/pages/diet/diet_page.dart';
 import 'package:project1/pages/home_page.dart';
 
 final dietListStreamProvider = StreamProvider.autoDispose((ref) {

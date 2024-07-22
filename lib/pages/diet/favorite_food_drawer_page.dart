@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/functions/add_diet_func.dart';
-import 'package:project1/pages/diet_page.dart';
+import 'package:project1/pages/diet/diet_page.dart';
 import 'package:project1/pages/home_page.dart';
-import '../constants/strings.dart';
+import '../../constants/strings.dart';
 
 final drawerStreamProvider = StreamProvider.autoDispose((ref) {
   final String userId = ref.watch(userIdProvider).asData!.value!;

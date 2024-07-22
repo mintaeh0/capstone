@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:project1/internet_controller.dart';
+import 'package:project1/utils/internet_controller.dart';
 
 class DependencyInjection {
   static void init() {

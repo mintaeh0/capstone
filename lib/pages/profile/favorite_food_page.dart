@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/pages/home_page.dart';
 
-import '../constants/strings.dart';
-import '../functions/add_favorite_food_func.dart';
+import '../../constants/strings.dart';
+import '../../functions/add_favorite_food_func.dart';
 
 final favFoodStreamProvider = StreamProvider.autoDispose((ref) {
   final String userId = ref.watch(userIdProvider).asData!.value!;
