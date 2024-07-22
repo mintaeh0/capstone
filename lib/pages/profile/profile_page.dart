@@ -94,12 +94,13 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
                 settingButton(userId),
                 const SizedBox(height: 10),
                 GestureDetector(
-                  child: const Text(
+                  child: Text(
                     "라이센스 보기",
                     style: TextStyle(
-                        color: Colors.grey,
+                        fontSize: 17,
+                        color: Colors.grey.shade600,
                         decoration: TextDecoration.underline,
-                        decorationColor: Colors.grey),
+                        decorationColor: Colors.grey.shade600),
                   ),
                   onTap: () {
                     showLicensePage(context: context);
@@ -272,6 +273,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const FavoriteFoodPage()));
         }),
+        const SizedBox(height: 5),
         menuItem(
             "문의하기",
             () => showDialog(
@@ -321,6 +323,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
                             child: const Text("닫기"))
                       ],
                     ))),
+        const SizedBox(height: 5),
         menuItem("설정", () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => const ProfileSetPage(),
@@ -335,13 +338,12 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
       onTap: tapFunc,
       child: Card.outlined(
         child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title),
-                const Icon(Icons.keyboard_arrow_right_rounded)
-              ]),
+          padding: const EdgeInsets.all(15),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(title, style: const TextStyle(fontSize: 17)),
+            const Icon(Icons.keyboard_arrow_right_rounded)
+          ]),
         ),
       ),
     );
