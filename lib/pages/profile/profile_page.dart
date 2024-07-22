@@ -85,7 +85,8 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(children: [
-                profileCard(streamData.data()),
+                profileCard(),
+                inbodyGoalCard(streamData.data()),
                 const SizedBox(height: 10),
                 const BannerAdWidget(),
                 const SizedBox(height: 10),
@@ -127,52 +128,59 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget profileCard(Map? userdata) {
+  Widget profileCard() {
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                const IconButton.filled(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.person,
-                      size: 40,
-                    )),
-                const SizedBox(width: 10),
-                Text(
-                  "${FirebaseAuth.instance.currentUser!.displayName}\n${_height}cm",
-                  style: const TextStyle(fontSize: 20),
-                )
-              ],
+            Text(
+              "${FirebaseAuth.instance.currentUser!.displayName}",
+              style: const TextStyle(fontSize: 20),
             ),
-            Row(
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text("탄수화물"),
-                    Text("단백질"),
-                    Text("지방"),
-                    Text("칼로리"),
-                  ],
-                ),
-                const SizedBox(width: 10),
-                Column(children: [
-                  Text("${userdata?[kCarboGoalText] ?? 0}"),
-                  Text("${userdata?[kProtGoalText] ?? 0}"),
-                  Text("${userdata?[kFatGoalText] ?? 0}"),
-                  Text("${userdata?[kKcalGoalText] ?? 0}"),
-                ])
-              ],
-            )
+            Text(
+              "${_height}cm",
+              style: const TextStyle(fontSize: 20),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget inbodyGoalCard(Map? userdata) {
+    return Card.outlined(
+        child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "내가 설정한\n하루 목표 섭취량",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18),
+          ),
+          Row(
+            children: [
+              const Column(children: [
+                Text("탄수화물"),
+                Text("단백질"),
+                Text("지방"),
+                Text("칼로리"),
+              ]),
+              const SizedBox(width: 10),
+              Column(children: [
+                Text("${userdata?[kCarboGoalText] ?? 0}"),
+                Text("${userdata?[kProtGoalText] ?? 0}"),
+                Text("${userdata?[kFatGoalText] ?? 0}"),
+                Text("${userdata?[kKcalGoalText] ?? 0}"),
+              ]),
+            ],
+          ),
+        ],
+      ),
+    ));
   }
 
   Widget bmiCard() {
