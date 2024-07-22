@@ -287,39 +287,28 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
             () => showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                      title: Container(),
-                      content: Row(
+                      title: const Text("문의하기"),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("이메일"),
-                              SizedBox(height: 10),
-                              Text("카카오톡"),
-                            ],
-                          ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("mth1150@naver.com"),
-                              const SizedBox(height: 10),
-                              GestureDetector(
-                                child: const Text(
-                                  "바로가기",
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Colors.green),
-                                ),
-                                onTap: () {
-                                  launchUrl(Uri.parse(
-                                      "https://open.kakao.com/o/sxLbtovg"));
-                                },
-                              )
-                            ],
+                          const SizedBox(height: 10),
+                          const Text("mth1150@naver.com",
+                              style: TextStyle(fontSize: 18)),
+                          const SizedBox(height: 10),
+                          GestureDetector(
+                            child: const Text(
+                              "카카오톡으로 문의하기",
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.green,
+                                  fontSize: 18),
+                            ),
+                            onTap: () {
+                              launchUrl(Uri.parse(
+                                  "https://open.kakao.com/o/sxLbtovg"));
+                            },
                           )
                         ],
                       ),

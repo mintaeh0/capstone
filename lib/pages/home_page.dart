@@ -23,8 +23,8 @@ const List<Widget> _body = [
 ];
 
 const List<Widget> _title = [
-  Text("식단 관리"),
-  Text("체성분 관리"),
+  Text("식단 기록"),
+  Text("체성분 기록"),
   Text("내 정보"),
 ];
 
