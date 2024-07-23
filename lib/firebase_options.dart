@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_config/flutter_config.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -43,39 +44,39 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCoeqn4EVI_cia1L6vDRSJhInRBqJlC2Ds',
-    appId: '1:257558588020:web:1719ee878db8c508197f21',
-    messagingSenderId: '257558588020',
-    projectId: 'knu-capstone-diet-app',
-    authDomain: 'knu-capstone-diet-app.firebaseapp.com',
-    storageBucket: 'knu-capstone-diet-app.appspot.com',
-    measurementId: 'G-R7V8RE5014',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: FlutterConfig.get('WEB_API_KEY'),
+    appId: FlutterConfig.get('WEB_APP_ID'),
+    messagingSenderId: FlutterConfig.get('MESSAGING_SENDERING_ID'),
+    projectId: FlutterConfig.get('PROJECT_ID'),
+    authDomain: FlutterConfig.get('WEB_AUTH_DOMAIN'),
+    storageBucket: FlutterConfig.get('STORAGE_BUCKET'),
+    measurementId: FlutterConfig.get('WEB_MEASUREMENT_ID'),
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyALRN9elCuGqXk5PXWkBAQQTEYAk6I3n0A',
-    appId: '1:257558588020:android:99f577d6bf7400ce197f21',
-    messagingSenderId: '257558588020',
-    projectId: 'knu-capstone-diet-app',
-    storageBucket: 'knu-capstone-diet-app.appspot.com',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: FlutterConfig.get('ANDROID_API_KEY'),
+    appId: FlutterConfig.get('ANDROID_APP_ID'),
+    messagingSenderId: FlutterConfig.get('MESSAGING_SENDERING_ID'),
+    projectId: FlutterConfig.get('PROJECT_ID'),
+    storageBucket: FlutterConfig.get('STORAGE_BUCKET'),
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCmKrMhzJUiXqkTxG2DIYXbzYWCIiAvIrA',
-    appId: '1:257558588020:ios:72bd56a7e9e4758d197f21',
-    messagingSenderId: '257558588020',
-    projectId: 'knu-capstone-diet-app',
-    storageBucket: 'knu-capstone-diet-app.appspot.com',
-    iosBundleId: 'com.ssstudio.o2eat',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: FlutterConfig.get('IOS_API_KEY'),
+    appId: FlutterConfig.get('IOS_APP_ID'),
+    messagingSenderId: FlutterConfig.get('MESSAGING_SENDERING_ID'),
+    projectId: FlutterConfig.get('PROJECT_ID'),
+    storageBucket: FlutterConfig.get('STORAGE_BUCKET'),
+    iosBundleId: FlutterConfig.get('IOS_BUNDLE_ID'),
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCmKrMhzJUiXqkTxG2DIYXbzYWCIiAvIrA',
-    appId: '1:257558588020:ios:af7a14eaafdb707d197f21',
-    messagingSenderId: '257558588020',
-    projectId: 'knu-capstone-diet-app',
-    storageBucket: 'knu-capstone-diet-app.appspot.com',
-    iosBundleId: 'com.ssstudio.o2eat.RunnerTests',
+  static FirebaseOptions macos = FirebaseOptions(
+    apiKey: FlutterConfig.get('MACOS_API_KEY'),
+    appId: FlutterConfig.get('MACOS_APP_ID'),
+    messagingSenderId: FlutterConfig.get('MESSAGING_SENDERING_ID'),
+    projectId: FlutterConfig.get('PROJECT_ID'),
+    storageBucket: FlutterConfig.get('STORAGE_BUCKET'),
+    iosBundleId: FlutterConfig.get('MACOS_IOS_BUNDLE_ID'),
   );
 }

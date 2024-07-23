@@ -39,61 +39,76 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.ramen_dining,
-                size: 100,
-                color: Theme.of(context).colorScheme.primary,
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.ramen_dining,
+                      size: 100,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    Text(
+                      "O2EAT",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                "O2EAT",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(height: 50),
-              StatefulBuilder(
-                  key: buttonsKey,
-                  builder: (context, setState) {
-                    return Column(
-                      children: [
-                        Visibility(
-                            visible: isLoading,
-                            child: const CircularProgressIndicator()),
-                        Visibility(
-                          visible: !isLoading,
-                          child: Column(
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    StatefulBuilder(
+                        key: buttonsKey,
+                        builder: (context, setState) {
+                          return Column(
                             children: [
-                              GestureDetector(
-                                  onTap: () async {
-                                    try {
-                                      _uid = await signInWithGoogle();
+                              Visibility(
+                                  visible: isLoading,
+                                  child: const CircularProgressIndicator()),
+                              Visibility(
+                                visible: !isLoading,
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () async {
+                                          try {
+                                            _uid = await signInWithGoogle();
 
-                                      if (_uid != null) {
-                                        setLoginState("true");
-                                        setUid(_uid!);
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const HomePage()),
-                                          (route) => false,
-                                        );
-                                      }
-                                    } catch (e) {
-                                      Fluttertoast.showToast(msg: "$e");
-                                    }
-                                  },
-                                  child: Image.asset(
-                                    "assets/images/google_sign_in_light.png",
-                                    width: 200,
-                                  )),
+                                            if (_uid != null) {
+                                              setLoginState("true");
+                                              setUid(_uid!);
+                                              Navigator.of(context)
+                                                  .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const HomePage()),
+                                                (route) => false,
+                                              );
+                                            }
+                                          } catch (e) {
+                                            Fluttertoast.showToast(msg: "$e");
+                                          }
+                                        },
+                                        child: Image.asset(
+                                          "assets/images/google_sign_in_light.png",
+                                          width: 300,
+                                        )),
+                                  ],
+                                ),
+                              ),
                             ],
-                          ),
-                        ),
-                      ],
-                    );
-                  }),
+                          );
+                        }),
+                    const SizedBox(height: 50),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
