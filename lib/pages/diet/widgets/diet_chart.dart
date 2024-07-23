@@ -176,7 +176,10 @@ class DietChartState extends ConsumerState<DietChart> {
                           children: [
                             Text("${nutriArray[index]}",
                                 style: const TextStyle(fontSize: 15)),
-                            const Text("g")
+                            if (index == 3)
+                              const Text("kcal")
+                            else
+                              const Text("g")
                           ],
                         )
                       ],
@@ -211,7 +214,10 @@ class DietChartState extends ConsumerState<DietChart> {
                           Text("${nutriArray[index]}",
                               style: const TextStyle(fontSize: 15)),
                           Text(" / $goal"),
-                          const Text("g")
+                          if (index == 3)
+                            const Text("kcal")
+                          else
+                            const Text("g")
                         ],
                       )
                     ],

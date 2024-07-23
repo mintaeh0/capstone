@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_config/flutter_config.dart';
@@ -14,7 +13,7 @@ import 'firebase_options.dart';
 // 시작
 // 로그인 정보 저장
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await FlutterConfig.loadEnvVariables();
