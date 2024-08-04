@@ -149,7 +149,7 @@ class MainPageState extends ConsumerState<HomePage> {
                                         try {
                                           await FirebaseAuth.instance.signOut();
                                           await GoogleSignIn().signOut();
-                                          await FlutterSecureStorage()
+                                          await const FlutterSecureStorage()
                                               .delete(key: "uid");
                                           await setLoginState("false");
 

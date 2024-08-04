@@ -7,3 +7,5 @@
 -dontwarn io.flutter.embedding.**
 
 -keep class com.google.firebase.** { *; }
+
+-keep class com.ssstudio.o2eat.BuildConfig { *; }

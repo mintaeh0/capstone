@@ -72,7 +72,7 @@ class MyApp extends ConsumerWidget {
             showSelectedLabels: false,
             showUnselectedLabels: false,
           ),
-          scaffoldBackgroundColor: Color(0xf9ffffff),
+          scaffoldBackgroundColor: const Color(0xf9ffffff),
           // primarySwatch: Colors.green,
           fontFamily: "NanumGothic"),
       themeMode: ThemeMode.light,

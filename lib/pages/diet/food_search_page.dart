@@ -273,7 +273,7 @@ class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
                                               children: [
                                                 nutriText("", kcalController,
                                                     " kcal"),
-                                                Text("${foodSize} g/ml")
+                                                Text("$foodSize g/ml")
                                               ],
                                             ),
                                             const SizedBox(height: 10),
@@ -296,7 +296,7 @@ class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
                                                                       controller:
                                                                           gramController,
                                                                       decoration:
-                                                                          InputDecoration(
+                                                                          const InputDecoration(
                                                                               counterText: ""),
                                                                       maxLength:
                                                                           5,

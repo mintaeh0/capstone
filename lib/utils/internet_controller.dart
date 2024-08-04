@@ -45,7 +45,7 @@ class InternetController extends GetxController {
     Get.isDialogOpen!
         ? ()
         : Get.dialog(AlertDialog(
-            title: Text("네트워크 에러"),
+            title: const Text("네트워크 에러"),
             content: const Text("인터넷 연결을 확인해주세요."),
             actions: [
               Row(
@@ -55,12 +55,12 @@ class InternetController extends GetxController {
                       onPressed: () {
                         Platform.isIOS ? exit(0) : SystemNavigator.pop();
                       },
-                      child: Text("종료")),
+                      child: const Text("종료")),
                   TextButton(
                       onPressed: () {
                         Get.back();
                       },
-                      child: Text("재시도"))
+                      child: const Text("재시도"))
                 ],
               )
             ],
