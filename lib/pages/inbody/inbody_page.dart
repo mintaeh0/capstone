@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project1/providers/inbody_date_provider.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/pages/inbody/widgets/inbody_chart.dart';
 import '../../functions/add_inbody_func.dart';
@@ -11,30 +12,6 @@ import 'widgets/inbody_table.dart';
 import '../../constants/strings.dart';
 
 // 체성분 페이지
-final dateStringProvider =
-    StateNotifierProvider.autoDispose((ref) => DateString());
-
-class DateString extends StateNotifier {
-  DateString() : super(getTodayString());
-
-  void changeDate(DateTime datetime) {
-    state = dateToString(datetime);
-  }
-
-  void setTodayDate() {
-    state = dateToString(DateTime.now());
-  }
-
-  void incDate() {
-    var stor = stringToDate(state).add(const Duration(days: 1));
-    state = dateToString(stor);
-  }
-
-  void decDate() {
-    var stor = stringToDate(state).subtract(const Duration(days: 1));
-    state = dateToString(stor);
-  }
-}
 
 class InbodyPage extends ConsumerStatefulWidget {
   const InbodyPage({super.key});
@@ -49,8 +26,8 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dateStringProvider) as String;
-    final DateString dateStringNotifier = ref.read(dateStringProvider.notifier);
+    final String dateString = ref.watch(inbodyDateProvider) as String;
+    final DateString dateStringNotifier = ref.read(inbodyDateProvider.notifier);
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

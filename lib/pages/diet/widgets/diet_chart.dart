@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
-import 'package:project1/pages/diet/diet_page.dart';
-import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
+
+import '../../../providers/diet_date_provider.dart';
+import '../../../providers/uid_provider.dart';
 
 class DietChart extends ConsumerStatefulWidget {
   const DietChart({super.key});
@@ -21,7 +22,7 @@ class DietChartState extends ConsumerState<DietChart> {
   @override
   Widget build(BuildContext context) {
     final String userId = ref.watch(userIdProvider).asData!.value!;
-    final String dateString = ref.watch(dateStringProvider) as String;
+    final String dateString = ref.watch(dietDateProvider) as String;
 
     // return chartStream.when(
     //   data: (data) {},

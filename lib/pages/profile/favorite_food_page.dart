@@ -3,18 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/pages/home_page.dart';
-
+import 'package:project1/providers/user_stream_provider.dart';
 import '../../constants/strings.dart';
 import '../../functions/add_favorite_food_func.dart';
-
-final favFoodStreamProvider = StreamProvider.autoDispose((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .snapshots();
-});
+import '../../providers/uid_provider.dart';
 
 class FavoriteFoodPage extends ConsumerStatefulWidget {
   const FavoriteFoodPage({super.key});
@@ -29,7 +21,7 @@ class FavoriteFoodPageState extends ConsumerState<FavoriteFoodPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue favFoodStream = ref.watch(favFoodStreamProvider);
+    final AsyncValue favFoodStream = ref.watch(userStreamProvider);
     final String userId = ref.watch(userIdProvider).asData!.value!;
 
     return Scaffold(

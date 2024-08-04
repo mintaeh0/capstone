@@ -2,36 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/pages/diet/widgets/diet_chart.dart';
+import '../../providers/diet_date_provider.dart';
+import '../../providers/uid_provider.dart';
 import 'widgets/diet_buttons.dart';
 import '../../functions/date_controller.dart';
-
-final dateStringProvider =
-    StateNotifierProvider.autoDispose((ref) => DateString());
-
-class DateString extends StateNotifier {
-  DateString() : super(getTodayString());
-
-  void changeDate(DateTime datetime) {
-    state = dateToString(datetime);
-  }
-
-  void setTodayDate() {
-    state = dateToString(DateTime.now());
-  }
-
-  void incDate() {
-    var stor = stringToDate(state).add(const Duration(days: 1));
-    state = dateToString(stor);
-  }
-
-  void decDate() {
-    var stor = stringToDate(state).subtract(const Duration(days: 1));
-    state = dateToString(stor);
-  }
-}
 
 class DietPage extends ConsumerWidget {
   const DietPage({super.key});
@@ -39,8 +15,8 @@ class DietPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String userId = ref.watch(userIdProvider).asData!.value!;
-    final String dateString = ref.watch(dateStringProvider) as String;
-    final DateString dateStringNotifier = ref.read(dateStringProvider.notifier);
+    final String dateString = ref.watch(dietDateProvider) as String;
+    final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
 
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,

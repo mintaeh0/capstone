@@ -1,20 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/home_page.dart';
-import 'package:project1/pages/inbody/inbody_page.dart';
-
-final tableStreamProvider = StreamProvider.autoDispose((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-  final String dateString = ref.watch(dateStringProvider) as String;
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .collection(kInbodyCollectionText)
-      .doc(dateString)
-      .snapshots();
-});
+import '../../../providers/inbody_stream_provider.dart';
 
 class InbodyTable extends ConsumerStatefulWidget {
   const InbodyTable({super.key});
@@ -26,7 +12,7 @@ class InbodyTable extends ConsumerStatefulWidget {
 class InbodyTableState extends ConsumerState<InbodyTable> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue tableStream = ref.watch(tableStreamProvider);
+    final AsyncValue tableStream = ref.watch(inbodyStreamProvider);
 
     return tableStream.when(
       data: (data) {

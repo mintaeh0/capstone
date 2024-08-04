@@ -24,6 +24,80 @@ void main() async {
   DependencyInjection.init();
 }
 
+ThemeData lightThemeData = ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      brightness: Brightness.light,
+      seedColor: primaryColor,
+      primary: primaryColor,
+      primaryContainer: primaryColor,
+      onPrimaryContainer: Colors.white,
+      // primary: Color(0xff38DA87),
+      surfaceTint: Colors.white,
+      surface: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+        // backgroundColor: Color(0xff38DA87),
+        // surfaceTintColor: Color(0xff38DA87),
+        backgroundColor: primaryColor,
+        surfaceTintColor: Colors.white,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
+        centerTitle: true,
+        toolbarHeight: 70,
+        scrolledUnderElevation: 5,
+        shadowColor: Colors.black87),
+    filledButtonTheme: const FilledButtonThemeData(
+        style: ButtonStyle(
+            shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)))))),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+    ),
+    scaffoldBackgroundColor: const Color(0xf9ffffff),
+    // primarySwatch: Colors.green,
+    fontFamily: "NanumGothic");
+
+ThemeData darkThemeData = ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      brightness: Brightness.light,
+      seedColor: primaryColor,
+      primary: primaryColor,
+      primaryContainer: primaryColor,
+      onPrimaryContainer: Colors.white,
+      // primary: Color(0xff38DA87),
+      surfaceTint: Colors.white,
+      surface: Colors.white,
+    ),
+    appBarTheme: const AppBarTheme(
+        // backgroundColor: Color(0xff38DA87),
+        // surfaceTintColor: Color(0xff38DA87),
+        backgroundColor: primaryColor,
+        surfaceTintColor: Colors.white,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
+        centerTitle: true,
+        toolbarHeight: 70,
+        scrolledUnderElevation: 5,
+        shadowColor: Colors.black87),
+    filledButtonTheme: const FilledButtonThemeData(
+        style: ButtonStyle(
+            shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)))))),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+    ),
+    scaffoldBackgroundColor: const Color(0xf9ffffff),
+    // primarySwatch: Colors.green,
+    fontFamily: "NanumGothic");
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -38,44 +112,10 @@ class MyApp extends ConsumerWidget {
       supportedLocales: const [Locale('ko', 'KR')],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            brightness: Brightness.light,
-            seedColor: primaryColor,
-            primary: primaryColor,
-            primaryContainer: primaryColor,
-            onPrimaryContainer: Colors.white,
-            // primary: Color(0xff38DA87),
-            surfaceTint: Colors.white,
-            surface: Colors.white,
-          ),
-          appBarTheme: const AppBarTheme(
-              // backgroundColor: Color(0xff38DA87),
-              // surfaceTintColor: Color(0xff38DA87),
-              backgroundColor: primaryColor,
-              surfaceTintColor: Colors.white,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(20))),
-              centerTitle: true,
-              toolbarHeight: 70,
-              scrolledUnderElevation: 5,
-              shadowColor: Colors.black87),
-          filledButtonTheme: const FilledButtonThemeData(
-              style: ButtonStyle(
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)))))),
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-          ),
-          scaffoldBackgroundColor: const Color(0xf9ffffff),
-          // primarySwatch: Colors.green,
-          fontFamily: "NanumGothic"),
+      theme: lightThemeData,
+      darkTheme: darkThemeData,
       themeMode: ThemeMode.light,
+      // themeMode: ThemeMode.dark,
       home: const SplashPage(),
     );
   }

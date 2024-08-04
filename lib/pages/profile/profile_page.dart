@@ -4,22 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/profile/favorite_food_page.dart';
-import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../providers/uid_provider.dart';
+import '../../providers/user_stream_provider.dart';
 import 'proflie_set_page.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
-
-final profileStreamProvider =
-    StreamProvider.autoDispose<DocumentSnapshot<Map<String, dynamic>>>((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .snapshots();
-});
 
 final profileFutureProvider =
     FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
@@ -49,7 +40,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<DocumentSnapshot<Map<String, dynamic>>> profileStream =
-        ref.watch(profileStreamProvider);
+        ref.watch(userStreamProvider);
     final AsyncValue<QuerySnapshot<Map<String, dynamic>>> profileFuture =
         ref.watch(profileFutureProvider);
     final String userId = ref.watch(userIdProvider).asData!.value!;

@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/pages/diet/diet_page.dart';
-
 import '../../functions/add_diet_func.dart';
+import '../../providers/diet_date_provider.dart';
 
 class FoodSearchPage extends ConsumerStatefulWidget {
   final String mealType;
@@ -24,7 +23,7 @@ class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dateStringProvider) as String;
+    final String dateString = ref.watch(dietDateProvider) as String;
 
     return Scaffold(
       appBar: AppBar(

@@ -8,31 +8,29 @@ import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/add_goal_func.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/functions/goal_state_controller.dart';
-import 'package:project1/pages/home_page.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
+import '../../providers/uid_provider.dart';
+import '../../providers/user_stream_provider.dart';
 
 // 프로필 설정 페이지
 const storage = FlutterSecureStorage();
+
 final _form = GlobalKey<FormState>();
+
 late String _height;
+
 List<String> nutriGoal = ["", "", "", ""];
+
 List<bool> nutriSwitch = [false, false, false, false];
+
 bool isSetInitial = false;
+
 List<String> goalKey = [
   kCarboGoalText,
   kProtGoalText,
   kFatGoalText,
   kKcalGoalText
 ];
-
-final settingStreamProvider = StreamProvider.autoDispose((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .snapshots();
-});
 
 class ProfileSetPage extends ConsumerStatefulWidget {
   const ProfileSetPage({super.key});
@@ -44,7 +42,7 @@ class ProfileSetPage extends ConsumerStatefulWidget {
 class ProfileSetPageState extends ConsumerState<ProfileSetPage> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue settingStream = ref.watch(settingStreamProvider);
+    final AsyncValue settingStream = ref.watch(userStreamProvider);
     final String userId = ref.watch(userIdProvider).asData!.value!;
 
     return Scaffold(

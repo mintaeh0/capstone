@@ -1,30 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/diet/diet_page.dart';
-import 'package:project1/pages/home_page.dart';
 import '../../../constants/colors.dart';
+import '../../../providers/diet_stream_provider.dart';
 import '../add_diet_page.dart';
-
-final dietListStreamProvider = StreamProvider.autoDispose((ref) {
-  final String dateString = ref.watch(dateStringProvider) as String;
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .collection(kDietCollectionText)
-      .doc(dateString)
-      .snapshots();
-});
 
 class DietButtons extends ConsumerWidget {
   const DietButtons({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue dietButtonStream = ref.watch(dietListStreamProvider);
+    final AsyncValue dietButtonStream = ref.watch(dietStreamProvider);
 
     return dietButtonStream.when(
       data: (data) {

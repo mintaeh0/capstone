@@ -3,21 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/diet/add_diet_page.dart';
-import 'package:project1/pages/diet/diet_page.dart';
-import 'package:project1/pages/home_page.dart';
-
-final dietListStreamProvider = StreamProvider.autoDispose((ref) {
-  final String dateString = ref.watch(dateStringProvider) as String;
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .collection(kDietCollectionText)
-      .doc(dateString)
-      .snapshots();
-});
+import '../../../providers/diet_date_provider.dart';
+import '../../../providers/diet_stream_provider.dart';
+import '../../../providers/fab_visible_provider.dart';
+import '../../../providers/uid_provider.dart';
 
 class DietListBuilder extends ConsumerStatefulWidget {
   final String mealType;
@@ -53,7 +42,7 @@ class DietListBuilderState extends ConsumerState<DietListBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue dietListStream = ref.watch(dietListStreamProvider);
+    final AsyncValue dietListStream = ref.watch(dietStreamProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -110,7 +99,7 @@ class DietListCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String dateString = ref.watch(dateStringProvider) as String;
+    final String dateString = ref.watch(dietDateProvider) as String;
     final String userId = ref.watch(userIdProvider).asData!.value!;
 
     return Card(

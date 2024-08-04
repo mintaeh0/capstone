@@ -4,28 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/pages/diet/add_diet_bottom_sheet.dart';
-import 'package:project1/pages/diet/diet_page.dart';
 import 'package:project1/pages/diet/favorite_food_drawer_page.dart';
 import 'package:project1/pages/diet/food_search_page.dart';
-import 'package:project1/pages/home_page.dart';
 import 'package:project1/pages/diet/widgets/diet_list_builder.dart';
+import '../../providers/diet_date_provider.dart';
+import '../../providers/fab_visible_provider.dart';
+import '../../providers/uid_provider.dart';
 
 // 식단 추가 페이지
-
-final fabVisibleProvider =
-    StateNotifierProvider.autoDispose((ref) => FabVisible());
-
-class FabVisible extends StateNotifier {
-  FabVisible() : super(true);
-
-  void hide() {
-    state ? state = false : ();
-  }
-
-  void show() {
-    state ? () : state = true;
-  }
-}
 
 class AddDietPage extends ConsumerWidget {
   AddDietPage(this.mealIndex, {super.key});
@@ -37,7 +23,7 @@ class AddDietPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String userId = ref.watch(userIdProvider).asData!.value!;
-    final String dateString = ref.watch(dateStringProvider) as String;
+    final String dateString = ref.watch(dietDateProvider) as String;
     final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
 
     return Scaffold(

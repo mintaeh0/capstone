@@ -3,21 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/home_page.dart';
 import 'dart:math';
 
-final chartStreamProvider = StreamProvider.autoDispose((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .collection(kInbodyCollectionText)
-      .where("docdate", isNull: false)
-      .orderBy("docdate", descending: true)
-      .limit(7)
-      .snapshots();
-});
+import 'package:project1/providers/inbody_chart_stream_provider.dart';
 
 class InbodyChart extends ConsumerStatefulWidget {
   const InbodyChart({super.key});
@@ -31,7 +19,7 @@ class InbodyChartState extends ConsumerState<InbodyChart> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue chartStream = ref.watch(chartStreamProvider);
+    final AsyncValue chartStream = ref.watch(inbodyChartStreamProvider);
 
     return chartStream.when(
       data: (data) {

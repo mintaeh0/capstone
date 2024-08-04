@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/pages/diet/diet_page.dart';
-
 import '../../constants/strings.dart';
 import '../../functions/add_diet_func.dart';
 import '../../functions/add_favorite_food_func.dart';
+import '../../providers/diet_date_provider.dart';
 
 class AddDietBottomSheet extends ConsumerStatefulWidget {
   final String mealType;
@@ -25,7 +24,7 @@ class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dateStringProvider) as String;
+    final String dateString = ref.watch(dietDateProvider) as String;
 
     return SingleChildScrollView(
       child: Form(
