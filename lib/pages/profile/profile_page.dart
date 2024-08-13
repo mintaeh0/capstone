@@ -43,7 +43,6 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
         ref.watch(userStreamProvider);
     final AsyncValue<QuerySnapshot<Map<String, dynamic>>> profileFuture =
         ref.watch(profileFutureProvider);
-    final String userId = ref.watch(userIdProvider).asData!.value!;
 
     return SingleChildScrollView(
       child: profileStream.when(data: (streamData) {
@@ -83,7 +82,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
                 const SizedBox(height: 10),
                 bmiCard(),
                 const SizedBox(height: 20),
-                settingButton(userId),
+                settingButton(),
                 const SizedBox(height: 10),
                 GestureDetector(
                   child: Text(
@@ -265,7 +264,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget settingButton(String uid) {
+  Widget settingButton() {
     return Column(
       children: [
         menuItem("즐겨찾기 관리", () {

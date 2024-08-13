@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:project1/functions/uid_info_controller.dart';
@@ -35,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
           body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(80),
+          padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 50),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -75,6 +76,26 @@ class _LoginPageState extends State<LoginPage> {
                                 visible: !isLoading,
                                 child: Column(
                                   children: [
+                                    const Row(
+                                      children: [
+                                        Expanded(
+                                            child: Divider(
+                                          color: Colors.black38,
+                                        )),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "로그인하여 시작하기",
+                                          style:
+                                              TextStyle(color: Colors.black38),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                            child: Divider(
+                                          color: Colors.black38,
+                                        )),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
                                     GestureDetector(
                                         onTap: () async {
                                           try {
@@ -97,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                                         },
                                         child: Image.asset(
                                           "assets/images/google_sign_in_light.png",
-                                          width: 300,
+                                          width: 250,
                                         )),
                                   ],
                                 ),
