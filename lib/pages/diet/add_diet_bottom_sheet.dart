@@ -197,7 +197,7 @@ class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheet> {
               kProteinText: int.tryParse(_protein) ?? double.parse(_protein),
               kFatText: int.tryParse(_fat) ?? double.parse(_fat),
               kKcalText: int.tryParse(_kcal) ?? double.parse(_kcal),
-              "amount": int.parse(_amount),
+              kAmountText: int.parse(_amount),
             };
 
             if (favCheck) {
@@ -216,7 +216,9 @@ class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheet> {
               Fluttertoast.showToast(msg: "$e");
             }
 
-            Navigator.of(context).pop();
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
           }
         },
         child: const Text("저장"));

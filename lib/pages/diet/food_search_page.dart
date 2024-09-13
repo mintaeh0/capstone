@@ -83,9 +83,9 @@ class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (context, index) {
+                        // String upDate = snapshot.data?[index]["upDate"];
                         String foodNm = snapshot.data?[index]["foodNm"];
                         String companyNm = snapshot.data?[index]["companyNm"];
-                        // String upDate = snapshot.data?[index]["upDate"];
                         num carbo = snapshot.data?[index]["carbo"];
                         num dietFib = snapshot.data?[index]["dietFib"];
                         num sugar = snapshot.data?[index]["sugar"];
