@@ -30,8 +30,6 @@ render.experimental.xml
 *.jks
 *.keystore
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
 
 # Android Profiling
 *.hprof
@@ -128,3 +126,9 @@ lib/generated_plugin_registrant.dart
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,flutter,android
+
+# Firebase
+**/google-services.json
+firebase.json
+**/firebase_options.dart
+**/GoogleService-Info.plist

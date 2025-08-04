@@ -4,9 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:project1/utils/internet_controller.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import '../functions/login_state_controller.dart';
 import '../providers/navi_index_provider.dart';
@@ -58,7 +56,6 @@ class MainPageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    Get.put(InternetController()).checkConnection();
   }
 
   @override
@@ -136,7 +133,7 @@ class MainPageState extends ConsumerState<HomePage> {
                                       onPressed: () async {
                                         try {
                                           await FirebaseAuth.instance.signOut();
-                                          await GoogleSignIn().signOut();
+                                          await GoogleSignIn.instance.signOut();
                                           await const FlutterSecureStorage()
                                               .delete(key: "uid");
                                           await setLoginState("false");

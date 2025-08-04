@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:project1/functions/uid_info_controller.dart';
-import 'package:project1/utils/internet_controller.dart';
 import 'package:project1/pages/home_page.dart';
 import '../functions/login_state_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -26,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    Get.put(InternetController()).checkConnection();
   }
 
   @override
@@ -140,7 +136,8 @@ class _LoginPageState extends State<LoginPage> {
   Future<String?> signInWithGoogle() async {
     String? uid;
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn.instance.authenticate();
 
     if (googleUser == null) {
       Fluttertoast.showToast(
@@ -160,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
+      accessToken: googleAuth.idToken,
       idToken: googleAuth.idToken,
     );
 

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:project1/constants/colors.dart';
-import 'package:project1/utils/dependency_injection.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project1/pages/splash_page.dart';
 import 'firebase_options.dart';
@@ -16,12 +13,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  await FlutterConfig.loadEnvVariables();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const ProviderScope(child: MyApp()));
-  DependencyInjection.init();
 }
 
 ThemeData lightThemeData = ThemeData(
@@ -50,7 +45,7 @@ ThemeData lightThemeData = ThemeData(
         shadowColor: Colors.black87),
     filledButtonTheme: const FilledButtonThemeData(
         style: ButtonStyle(
-            shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10)))))),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
@@ -87,7 +82,7 @@ ThemeData darkThemeData = ThemeData(
         shadowColor: Colors.black87),
     filledButtonTheme: const FilledButtonThemeData(
         style: ButtonStyle(
-            shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10)))))),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
@@ -103,7 +98,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GetMaterialApp(
+    return MaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
