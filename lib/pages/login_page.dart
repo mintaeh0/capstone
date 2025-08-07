@@ -94,23 +94,23 @@ class _LoginPageState extends State<LoginPage> {
                                     const SizedBox(height: 20),
                                     GestureDetector(
                                         onTap: () async {
-                                          try {
-                                            _uid = await signInWithGoogle();
+                                          // try {
+                                          _uid = await signInWithGoogle();
 
-                                            if (_uid != null) {
-                                              setLoginState("true");
-                                              setUid(_uid!);
-                                              Navigator.of(context)
-                                                  .pushAndRemoveUntil(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const HomePage()),
-                                                (route) => false,
-                                              );
-                                            }
-                                          } catch (e) {
-                                            Fluttertoast.showToast(msg: "$e");
+                                          if (_uid != null) {
+                                            setLoginState("true");
+                                            setUid(_uid!);
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const HomePage()),
+                                              (route) => false,
+                                            );
                                           }
+                                          // } catch (e) {
+                                          //   Fluttertoast.showToast(msg: "$e");
+                                          // }
                                         },
                                         child: Image.asset(
                                           "assets/images/google_sign_in_light.png",
@@ -136,8 +136,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<String?> signInWithGoogle() async {
     String? uid;
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser =
-        await GoogleSignIn.instance.authenticate();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     if (googleUser == null) {
       Fluttertoast.showToast(

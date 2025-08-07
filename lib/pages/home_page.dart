@@ -133,7 +133,7 @@ class MainPageState extends ConsumerState<HomePage> {
                                       onPressed: () async {
                                         try {
                                           await FirebaseAuth.instance.signOut();
-                                          await GoogleSignIn.instance.signOut();
+                                          await GoogleSignIn().signOut();
                                           await const FlutterSecureStorage()
                                               .delete(key: "uid");
                                           await setLoginState("false");
