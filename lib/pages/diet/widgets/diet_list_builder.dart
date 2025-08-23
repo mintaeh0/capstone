@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/pages/home_view_model.dart';
+import 'package:provider/provider.dart';
 import '../../../providers/diet_date_provider.dart';
 import '../../../providers/diet_stream_provider.dart';
 import '../../../providers/fab_visible_provider.dart';
-import '../../../providers/uid_provider.dart';
 
 class DietListBuilder extends ConsumerStatefulWidget {
   final String mealType;
@@ -99,8 +100,9 @@ class DietListCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
     final String dateString = ref.watch(dietDateProvider) as String;
-    final String userId = ref.watch(userIdProvider).asData!.value!;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -136,7 +138,7 @@ class DietListCard extends ConsumerWidget {
                                       DocumentReference sampleRef =
                                           FirebaseFirestore.instance
                                               .collection(kUsersCollectionText)
-                                              .doc(userId)
+                                              .doc(homeViewModel.userId)
                                               .collection(kDietCollectionText)
                                               .doc(dateString);
 

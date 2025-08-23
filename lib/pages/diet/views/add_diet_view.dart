@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/diet/add_diet_bottom_sheet.dart';
-import 'package:project1/pages/diet/favorite_food_drawer_page.dart';
-import 'package:project1/pages/diet/food_search_page.dart';
+import 'package:project1/pages/diet/views/add_diet_bottom_sheet_view.dart';
+import 'package:project1/pages/diet/views/favorite_food_drawer_view.dart';
+import 'package:project1/pages/diet/views/food_search_view.dart';
 import 'package:project1/pages/diet/widgets/diet_list_builder.dart';
-import '../../providers/diet_date_provider.dart';
-import '../../providers/fab_visible_provider.dart';
-import '../../providers/uid_provider.dart';
+import 'package:project1/pages/home_view_model.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/diet_date_provider.dart';
+import '../../../providers/fab_visible_provider.dart';
 
 // 식단 추가 페이지
 
-class AddDietPage extends ConsumerWidget {
-  AddDietPage(this.mealIndex, {super.key});
+class AddDietView extends ConsumerWidget {
+  AddDietView(this.mealIndex, {super.key});
 
   final int mealIndex;
   final List mealType = [kBreakfastText, kLunchText, kDinnerText, kSnackText];
@@ -22,12 +23,13 @@ class AddDietPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
     final String dateString = ref.watch(dietDateProvider) as String;
     final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
 
     return Scaffold(
-      endDrawer: Drawer(child: FavoriteFoodDrawerPage(mealType[mealIndex])),
+      endDrawer: Drawer(child: FavoriteFoodDrawerView(mealType[mealIndex])),
       appBar: AppBar(
         centerTitle: true,
         title: Text("$dateString  ${mealTypeKor[mealIndex]}"),
@@ -36,7 +38,7 @@ class AddDietPage extends ConsumerWidget {
             icon: const Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FoodSearchPage(mealType[mealIndex])));
+                  builder: (context) => FoodSearchView(mealType[mealIndex])));
             },
           ),
           IconButton(
@@ -58,7 +60,7 @@ class AddDietPage extends ConsumerWidget {
                                 DocumentReference sampleRef = FirebaseFirestore
                                     .instance
                                     .collection(kUsersCollectionText)
-                                    .doc(userId)
+                                    .doc(homeViewModel.userId)
                                     .collection(kDietCollectionText)
                                     .doc(dateString);
 
@@ -135,7 +137,7 @@ class AddDietPage extends ConsumerWidget {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setState) {
-                            return AddDietBottomSheet(mealType[mealIndex]);
+                            return AddDietBottomSheetView(mealType[mealIndex]);
                           },
                         );
                       },

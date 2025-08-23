@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../functions/add_diet_func.dart';
-import '../../providers/diet_date_provider.dart';
+import '../../../functions/add_diet_func.dart';
+import '../../../providers/diet_date_provider.dart';
 
-class FoodSearchPage extends ConsumerStatefulWidget {
+class FoodSearchView extends ConsumerStatefulWidget {
   final String mealType;
 
-  const FoodSearchPage(this.mealType, {super.key});
+  const FoodSearchView(this.mealType, {super.key});
 
   @override
   FoodSearchPageState createState() => FoodSearchPageState();
 }
 
-class FoodSearchPageState extends ConsumerState<FoodSearchPage> {
+class FoodSearchPageState extends ConsumerState<FoodSearchView> {
   String keyword = "";
   Timer? _timer;
 

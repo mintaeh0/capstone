@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
+import 'package:project1/pages/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../../providers/diet_date_provider.dart';
-import '../../../providers/uid_provider.dart';
 
 class DietChart extends ConsumerStatefulWidget {
   const DietChart({super.key});
@@ -21,7 +22,8 @@ class DietChartState extends ConsumerState<DietChart> {
 
   @override
   Widget build(BuildContext context) {
-    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
     final String dateString = ref.watch(dietDateProvider) as String;
 
     // return chartStream.when(
@@ -33,7 +35,7 @@ class DietChartState extends ConsumerState<DietChart> {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection(kUsersCollectionText)
-            .doc(userId)
+            .doc(homeViewModel.userId)
             .collection(kDietCollectionText)
             .doc(dateString)
             .snapshots(),
@@ -73,7 +75,7 @@ class DietChartState extends ConsumerState<DietChart> {
             children: [
               dietPieChartCard(nutriArray),
               const BannerAdWidget(),
-              nutriCard(userId),
+              nutriCard(homeViewModel.userId!),
             ],
           );
         });

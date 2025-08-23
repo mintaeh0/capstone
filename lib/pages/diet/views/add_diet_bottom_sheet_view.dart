@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../constants/strings.dart';
-import '../../functions/add_diet_func.dart';
-import '../../functions/add_favorite_food_func.dart';
-import '../../providers/diet_date_provider.dart';
+import '../../../constants/strings.dart';
+import '../../../functions/add_diet_func.dart';
+import '../../../functions/add_favorite_food_func.dart';
+import '../../../providers/diet_date_provider.dart';
 
-class AddDietBottomSheet extends ConsumerStatefulWidget {
+class AddDietBottomSheetView extends ConsumerStatefulWidget {
   final String mealType;
 
-  const AddDietBottomSheet(this.mealType, {super.key});
+  const AddDietBottomSheetView(this.mealType, {super.key});
 
   @override
   AddDietBottomSheetState createState() => AddDietBottomSheetState();
 }
 
-class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheet> {
+class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheetView> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool favCheck = false;
 

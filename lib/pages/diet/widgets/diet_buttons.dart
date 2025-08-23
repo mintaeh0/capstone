@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import '../../../constants/colors.dart';
 import '../../../providers/diet_stream_provider.dart';
-import '../add_diet_page.dart';
+import '../views/add_diet_view.dart';
 
 class DietButtons extends ConsumerWidget {
   const DietButtons({super.key});
@@ -60,14 +60,14 @@ class DietButtons extends ConsumerWidget {
                       label: "아침",
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietPage(0)));
+                            builder: (context) => AddDietView(0)));
                       },
                       kcal: breakfastKcal),
                   dietButton(
                       label: "점심",
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietPage(1)));
+                            builder: (context) => AddDietView(1)));
                       },
                       kcal: lunchKcal),
                 ],
@@ -80,14 +80,14 @@ class DietButtons extends ConsumerWidget {
                       label: "저녁",
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietPage(2)));
+                            builder: (context) => AddDietView(2)));
                       },
                       kcal: dinnerKcal),
                   dietButton(
                       label: "간식",
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietPage(3)));
+                            builder: (context) => AddDietView(3)));
                       },
                       kcal: snackKcal),
                 ],

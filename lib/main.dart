@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:project1/constants/colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:project1/pages/splash_page.dart';
+import 'package:project1/pages/splash_view.dart';
+import 'package:project1/pages/splash_view_model.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 // 시작
@@ -14,10 +15,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MobileAds.instance.initialize();
   await Firebase.initializeApp(
-    demoProjectId: "demo-project-id",
+    // demoProjectId: "demo-project-id",
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(MyApp());
 }
 
 ThemeData lightThemeData = ThemeData(
@@ -94,11 +95,11 @@ ThemeData darkThemeData = ThemeData(
     // primarySwatch: Colors.green,
     fontFamily: "NanumGothic");
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -112,7 +113,11 @@ class MyApp extends ConsumerWidget {
       darkTheme: darkThemeData,
       themeMode: ThemeMode.light,
       // themeMode: ThemeMode.dark,
-      home: const SplashPage(),
+      home: ChangeNotifierProvider(
+          create: (context) => SplashViewModel(),
+          builder: (context, child) {
+            return SplashView();
+          }),
     );
   }
 }

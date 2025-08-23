@@ -2,19 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/pages/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/pages/diet/widgets/diet_chart.dart';
-import '../../providers/diet_date_provider.dart';
-import '../../providers/uid_provider.dart';
-import 'widgets/diet_buttons.dart';
-import '../../functions/date_controller.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/diet_date_provider.dart';
+import '../widgets/diet_buttons.dart';
+import '../../../functions/date_controller.dart';
 
-class DietPage extends ConsumerWidget {
-  const DietPage({super.key});
+class DietView extends ConsumerWidget {
+  const DietView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String userId = ref.watch(userIdProvider).asData!.value!;
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
     final String dateString = ref.watch(dietDateProvider) as String;
     final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
 
@@ -75,22 +77,25 @@ class DietPage extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                FilledButton(
-                                    onPressed: () async {
-                                      await FirebaseFirestore.instance
-                                          .collection(kUsersCollectionText)
-                                          .doc(userId)
-                                          .collection(kDietCollectionText)
-                                          .doc(dateString)
-                                          .delete();
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("삭제")),
                                 TextButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("취소"))
+                                    child: const Text("취소")),
+                                FilledButton(
+                                    onPressed: () async {
+                                      await FirebaseFirestore.instance
+                                          .collection(kUsersCollectionText)
+                                          .doc(homeViewModel.userId)
+                                          .collection(kDietCollectionText)
+                                          .doc(dateString)
+                                          .delete();
+
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    child: const Text("삭제")),
                               ],
                             )
                           ],

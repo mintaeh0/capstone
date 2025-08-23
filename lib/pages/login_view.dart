@@ -2,20 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/functions/uid_info_controller.dart';
-import 'package:project1/pages/home_page.dart';
+import 'package:project1/pages/home_view.dart';
+import 'package:project1/pages/home_view_model.dart';
+import 'package:project1/pages/login_view_model.dart';
+import 'package:provider/provider.dart';
 import '../functions/login_state_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 // 로그인 페이지
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginViewState extends State<LoginView> {
   String? _uid;
   bool isLoading = false;
   GlobalKey buttonsKey = GlobalKey();
@@ -27,6 +30,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final LoginViewModel loginViewModel = context.watch<LoginViewModel>();
+
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -98,15 +103,24 @@ class _LoginPageState extends State<LoginPage> {
                                           _uid = await signInWithGoogle();
 
                                           if (_uid != null) {
-                                            setLoginState("true");
-                                            setUid(_uid!);
-                                            Navigator.of(context)
-                                                .pushAndRemoveUntil(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const HomePage()),
-                                              (route) => false,
-                                            );
+                                            await setLoginState("true");
+                                            await loginViewModel.setUid(_uid!);
+
+                                            if (context.mounted) {
+                                              Navigator.of(context)
+                                                  .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ChangeNotifierProvider(
+                                                            create: (context) =>
+                                                                HomeViewModel(),
+                                                            builder: (context,
+                                                                child) {
+                                                              return HomeView();
+                                                            })),
+                                                (route) => false,
+                                              );
+                                            }
                                           }
                                           // } catch (e) {
                                           //   Fluttertoast.showToast(msg: "$e");

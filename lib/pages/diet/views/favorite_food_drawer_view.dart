@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/functions/add_diet_func.dart';
-import '../../constants/strings.dart';
-import '../../providers/diet_date_provider.dart';
-import '../../providers/user_stream_provider.dart';
+import '../../../constants/strings.dart';
+import '../../../providers/diet_date_provider.dart';
+import '../../../providers/user_stream_provider.dart';
 
-class FavoriteFoodDrawerPage extends ConsumerStatefulWidget {
+class FavoriteFoodDrawerView extends ConsumerStatefulWidget {
   final String mealType;
-  const FavoriteFoodDrawerPage(this.mealType, {super.key});
+  const FavoriteFoodDrawerView(this.mealType, {super.key});
 
   @override
   FavoriteFoodDrawerPageState createState() => FavoriteFoodDrawerPageState();
 }
 
 class FavoriteFoodDrawerPageState
-    extends ConsumerState<FavoriteFoodDrawerPage> {
+    extends ConsumerState<FavoriteFoodDrawerView> {
   final GlobalKey naviKey = GlobalKey();
 
   @override
