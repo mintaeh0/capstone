@@ -4,18 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/providers/user_stream_provider.dart';
-import '../../constants/strings.dart';
-import '../../functions/add_favorite_food_func.dart';
-import '../../providers/uid_provider.dart';
+import '../constants/strings.dart';
+import '../functions/add_favorite_food_func.dart';
+import '../providers/uid_provider.dart';
 
-class FavoriteFoodPage extends ConsumerStatefulWidget {
-  const FavoriteFoodPage({super.key});
+class FavoriteFoodView extends ConsumerStatefulWidget {
+  const FavoriteFoodView({super.key});
 
   @override
-  FavoriteFoodPageState createState() => FavoriteFoodPageState();
+  FavoriteFoodViewState createState() => FavoriteFoodViewState();
 }
 
-class FavoriteFoodPageState extends ConsumerState<FavoriteFoodPage> {
+class FavoriteFoodViewState extends ConsumerState<FavoriteFoodView> {
   final _form = GlobalKey<FormState>();
   late String _name, _carbo, _protein, _fat, _kcal;
 

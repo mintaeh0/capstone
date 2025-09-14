@@ -7,4 +7,9 @@ class LoginViewModel extends ChangeNotifier {
     var storage = const FlutterSecureStorage();
     await storage.write(key: "uid", value: uid);
   }
+
+  Future<void> enableAutoLogin() async {
+    var storage = const FlutterSecureStorage();
+    await storage.write(key: "loginState", value: "true");
+  }
 }

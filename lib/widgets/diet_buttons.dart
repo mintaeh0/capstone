@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import '../../../constants/colors.dart';
 import '../../../providers/diet_stream_provider.dart';
-import '../views/add_diet_view.dart';
+import '../../../views/add_diet_view.dart';
 
 class DietButtons extends ConsumerWidget {
   const DietButtons({super.key});

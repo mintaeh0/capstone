@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project1/functions/uid_info_controller.dart';
-import 'package:project1/pages/home_view.dart';
-import 'package:project1/pages/home_view_model.dart';
-import 'package:project1/pages/login_view_model.dart';
+import 'package:project1/views/home_view.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/viewmodels/login_view_model.dart';
 import 'package:provider/provider.dart';
-import '../functions/login_state_controller.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 // 로그인 페이지
@@ -103,7 +101,8 @@ class _LoginViewState extends State<LoginView> {
                                           _uid = await signInWithGoogle();
 
                                           if (_uid != null) {
-                                            await setLoginState("true");
+                                            await loginViewModel
+                                                .enableAutoLogin();
                                             await loginViewModel.setUid(_uid!);
 
                                             if (context.mounted) {

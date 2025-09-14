@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:project1/pages/home_view_model.dart';
-import 'package:project1/pages/login_view.dart';
-import 'package:project1/pages/home_view.dart';
-import 'package:project1/pages/splash_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/views/login_view.dart';
+import 'package:project1/views/home_view.dart';
+import 'package:project1/viewmodels/splash_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SplashView extends StatefulWidget {

@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/home_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/pages/diet/widgets/diet_chart.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/diet_date_provider.dart';
-import '../widgets/diet_buttons.dart';
-import '../../../functions/date_controller.dart';
+import '../providers/diet_date_provider.dart';
+import '../pages/diet/widgets/diet_buttons.dart';
+import '../functions/date_controller.dart';
 
 class DietView extends ConsumerWidget {
   const DietView({super.key});

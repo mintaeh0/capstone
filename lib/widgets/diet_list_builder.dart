@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/home_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/diet_date_provider.dart';
 import '../../../providers/diet_stream_provider.dart';

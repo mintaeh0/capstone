@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
-import 'package:project1/pages/diet/views/add_diet_bottom_sheet_view.dart';
-import 'package:project1/pages/diet/views/favorite_food_drawer_view.dart';
-import 'package:project1/pages/diet/views/food_search_view.dart';
+import 'package:project1/views/add_diet_bottom_sheet_view.dart';
+import 'package:project1/views/favorite_food_drawer_view.dart';
+import 'package:project1/views/food_search_view.dart';
 import 'package:project1/pages/diet/widgets/diet_list_builder.dart';
-import 'package:project1/pages/home_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/diet_date_provider.dart';
-import '../../../providers/fab_visible_provider.dart';
+import '../providers/diet_date_provider.dart';
+import '../providers/fab_visible_provider.dart';
 
 // 식단 추가 페이지
 

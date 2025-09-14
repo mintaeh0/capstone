@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../../../functions/add_diet_func.dart';
-import '../../../providers/diet_date_provider.dart';
+import '../functions/add_diet_func.dart';
+import '../providers/diet_date_provider.dart';
 
 class FoodSearchView extends ConsumerStatefulWidget {
   final String mealType;

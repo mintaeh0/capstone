@@ -28,4 +28,9 @@ class HomeViewModel extends ChangeNotifier {
     navigationBarIndex = index;
     notifyListeners();
   }
+
+  Future<void> disableAutoLogin() async {
+    var storage = const FlutterSecureStorage();
+    await storage.write(key: "loginState", value: "false");
+  }
 }

@@ -9,8 +9,8 @@ import 'package:project1/functions/add_goal_func.dart';
 import 'package:project1/functions/add_profile_func.dart';
 import 'package:project1/functions/goal_state_controller.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
-import '../../providers/uid_provider.dart';
-import '../../providers/user_stream_provider.dart';
+import '../providers/uid_provider.dart';
+import '../providers/user_stream_provider.dart';
 
 // 프로필 설정 페이지
 const storage = FlutterSecureStorage();

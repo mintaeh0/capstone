@@ -4,14 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:project1/pages/home_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
-import '../functions/login_state_controller.dart';
-import 'inbody/inbody_page.dart';
-import 'diet/views/diet_view.dart';
+import 'inbody_page.dart';
+import 'diet_view.dart';
 import 'login_view.dart';
-import 'profile/profile_page.dart';
+import 'profile_page.dart';
 
 // 메인 페이지
 const List<Widget> _body = [
@@ -152,15 +151,18 @@ class _MainPageState extends State<HomeView> {
                                                       .signOut();
                                                   await const FlutterSecureStorage()
                                                       .delete(key: "uid");
-                                                  await setLoginState("false");
+                                                  await homeViewModel
+                                                      .disableAutoLogin();
 
-                                                  Navigator.of(context)
-                                                      .pushAndRemoveUntil(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const LoginView()),
-                                                    (route) => false,
-                                                  );
+                                                  if (context.mounted) {
+                                                    Navigator.of(context)
+                                                        .pushAndRemoveUntil(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const LoginView()),
+                                                      (route) => false,
+                                                    );
+                                                  }
                                                 } catch (e) {
                                                   Fluttertoast.showToast(
                                                       msg: "$e");
