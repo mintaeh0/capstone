@@ -6,7 +6,7 @@ import 'package:project1/constants/strings.dart';
 import 'package:project1/views/add_diet_bottom_sheet_view.dart';
 import 'package:project1/views/favorite_food_drawer_view.dart';
 import 'package:project1/views/food_search_view.dart';
-import 'package:project1/pages/diet/widgets/diet_list_builder.dart';
+import 'package:project1/widgets/diet_list_builder.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
 import '../providers/diet_date_provider.dart';

@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/diet_date_provider.dart';
+import '../providers/diet_date_provider.dart';
 
 class DietChart extends ConsumerStatefulWidget {
   const DietChart({super.key});
@@ -23,8 +24,9 @@ class DietChartState extends ConsumerState<DietChart> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-    final String dateString = ref.watch(dietDateProvider) as String;
+    // final String dateString = ref.watch(dietDateProvider) as String;
 
     // return chartStream.when(
     //   data: (data) {},
@@ -37,7 +39,7 @@ class DietChartState extends ConsumerState<DietChart> {
             .collection(kUsersCollectionText)
             .doc(homeViewModel.userId)
             .collection(kDietCollectionText)
-            .doc(dateString)
+            .doc(dietViewModel.dietDateString)
             .snapshots(),
         builder: (context, snapshot) {
           dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;

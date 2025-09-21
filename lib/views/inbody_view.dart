@@ -3,31 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/providers/inbody_date_provider.dart';
+import 'package:project1/viewmodels/inbody_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
-import 'package:project1/pages/inbody/widgets/inbody_chart.dart';
+import 'package:project1/widgets/inbody_chart.dart';
+import 'package:provider/provider.dart';
 import '../functions/add_inbody_func.dart';
 import '../functions/date_controller.dart';
 import '../functions/uid_info_controller.dart';
-import '../pages/inbody/widgets/inbody_table.dart';
+import '../widgets/inbody_table.dart';
 import '../constants/strings.dart';
 
 // 체성분 페이지
 
-class InbodyPage extends ConsumerStatefulWidget {
-  const InbodyPage({super.key});
+class InbodyView extends ConsumerStatefulWidget {
+  const InbodyView({super.key});
 
   @override
-  InbodyPageState createState() => InbodyPageState();
+  InbodyViewState createState() => InbodyViewState();
 }
 
-class InbodyPageState extends ConsumerState<InbodyPage> {
-  final _form = GlobalKey<FormState>();
-  late String _weight, _musclemass, _bodyfat;
+class InbodyViewState extends ConsumerState<InbodyView> {
+  // final formKey = GlobalKey<FormState>();
+  // late String weight, musclemass, bodyfat;
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(inbodyDateProvider) as String;
-    final DateString dateStringNotifier = ref.read(inbodyDateProvider.notifier);
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
+
+    // final String dateString = ref.watch(inbodyDateProvider) as String;
+    // final DateString dateStringNotifier = ref.read(inbodyDateProvider.notifier);
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -40,28 +44,31 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () => dateStringNotifier.decDate(),
+                      onPressed: () => inbodyViewModel.decInbodyDate(),
                       icon: const Icon(
                         Icons.keyboard_arrow_left,
                         size: 40,
                       )),
-                  Text(dateString, style: const TextStyle(fontSize: 20)),
+                  Text(inbodyViewModel.inbodyDateString,
+                      style: const TextStyle(fontSize: 20)),
                   IconButton(
                       onPressed: () async {
                         DateTime? datetime = await showDatePicker(
                             context: context,
-                            initialDate: stringToDate(dateString),
+                            initialDate: inbodyViewModel.inbodyDate,
                             firstDate: DateTime(2024),
                             lastDate: DateTime.now());
+
                         if (datetime != null) {
-                          dateStringNotifier.changeDate(datetime);
+                          inbodyViewModel.setInbodyDate(datetime);
                         }
                       },
                       icon: const Icon(Icons.calendar_today)),
                   IconButton(
                       onPressed: () {
-                        if (dateString != getTodayString()) {
-                          dateStringNotifier.incDate();
+                        if (inbodyViewModel.inbodyDate
+                            .isBefore(DateTime.now())) {
+                          inbodyViewModel.incInbodyDate();
                         }
                       },
                       icon: const Icon(
@@ -74,8 +81,8 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
             const SizedBox(height: 10),
             const InbodyTable(),
             const SizedBox(height: 10),
-            inbodyAddButton(dateString),
-            inbodyDeleteButton(dateString),
+            inbodyAddButton(inbodyViewModel.inbodyDateString),
+            inbodyDeleteButton(inbodyViewModel.inbodyDateString),
             const SizedBox(height: 10),
             const BannerAdWidget(),
             const SizedBox(height: 10),
@@ -90,6 +97,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
   }
 
   Widget inbodyAddButton(String dateString) {
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
     return FilledButton(
       onPressed: () {
         showModalBottomSheet(
@@ -103,7 +111,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Form(
-                    key: _form,
+                    key: inbodyViewModel.formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -134,6 +142,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
   }
 
   Widget weightInput() {
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
@@ -143,7 +152,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
         }
       },
       onSaved: (newValue) {
-        _weight = newValue as String;
+        inbodyViewModel.weight = newValue as String;
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
@@ -157,6 +166,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
   }
 
   Widget musclemassInput() {
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
@@ -166,7 +176,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
         }
       },
       onSaved: (newValue) {
-        _musclemass = newValue as String;
+        inbodyViewModel.musclemass = newValue as String;
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
@@ -180,6 +190,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
   }
 
   Widget bodyfatInput() {
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
@@ -189,7 +200,7 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
         }
       },
       onSaved: (newValue) {
-        _bodyfat = newValue as String;
+        inbodyViewModel.bodyfat = newValue as String;
       },
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       keyboardType: TextInputType.number,
@@ -203,14 +214,16 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
   }
 
   Widget inbodySubmitButton(String dateString) {
+    final InbodyViewModel inbodyViewModel = context.watch<InbodyViewModel>();
+
     return FilledButton(
         onPressed: () {
-          if (_form.currentState!.validate()) {
-            _form.currentState!.save();
+          if (inbodyViewModel.formKey.currentState!.validate()) {
+            inbodyViewModel.formKey.currentState!.save();
             Map<String, dynamic> bodyMap = {
-              "weight": int.parse(_weight),
-              "musclemass": int.parse(_musclemass),
-              "bodyfat": int.parse(_bodyfat),
+              "weight": int.parse(inbodyViewModel.weight),
+              "musclemass": int.parse(inbodyViewModel.musclemass),
+              "bodyfat": int.parse(inbodyViewModel.bodyfat),
             };
             addInbodyFunc(dateString, bodyMap);
             Navigator.of(context).pop();
@@ -240,7 +253,10 @@ class InbodyPageState extends ConsumerState<InbodyPage> {
                                 .collection(kInbodyCollectionText)
                                 .doc(dateString)
                                 .delete();
-                            Navigator.pop(context);
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
                           },
                           child: const Text("삭제")),
                       TextButton(

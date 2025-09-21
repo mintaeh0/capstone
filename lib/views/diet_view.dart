@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
-import 'package:project1/pages/diet/widgets/diet_chart.dart';
+import 'package:project1/widgets/diet_chart.dart';
 import 'package:provider/provider.dart';
 import '../providers/diet_date_provider.dart';
-import '../pages/diet/widgets/diet_buttons.dart';
+import '../widgets/diet_buttons.dart';
 import '../functions/date_controller.dart';
 
 class DietView extends ConsumerWidget {
@@ -16,9 +17,10 @@ class DietView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-    final String dateString = ref.watch(dietDateProvider) as String;
-    final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
+    // final String dateString = ref.watch(dietDateProvider) as String;
+    // final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
 
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -31,28 +33,32 @@ class DietView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () => dateStringNotifier.decDate(),
+                      onPressed: () => dietViewModel.decDietDate(),
                       icon: const Icon(
                         Icons.keyboard_arrow_left,
                         size: 40,
                       )),
-                  Text(dateString, style: const TextStyle(fontSize: 20)),
+                  Text(dietViewModel.dietDateString,
+                      style: const TextStyle(fontSize: 20)),
                   IconButton(
                       onPressed: () async {
                         DateTime? datetime = await showDatePicker(
                             context: context,
-                            initialDate: stringToDate(dateString),
+                            initialDate:
+                                stringToDate(dietViewModel.dietDateString),
                             firstDate: DateTime(2000),
                             lastDate: DateTime.now());
+
+                        // 날짜가 선택이 되었다면, 날짜를 설정
                         if (datetime != null) {
-                          dateStringNotifier.changeDate(datetime);
+                          dietViewModel.setDietDate(datetime);
                         }
                       },
                       icon: const Icon(Icons.calendar_today)),
                   IconButton(
                       onPressed: () {
-                        if (dateString != getTodayString()) {
-                          dateStringNotifier.incDate();
+                        if (dietViewModel.dietDate != DateTime.now()) {
+                          dietViewModel.incDietDate();
                         }
                       },
                       icon: const Icon(
@@ -63,7 +69,7 @@ class DietView extends ConsumerWidget {
               )), // 날짜 조정 바
               const DietChart(),
               const SizedBox(height: 10),
-              const DietButtons(),
+              // const DietButtons(),
               const SizedBox(height: 20),
               FilledButton.tonal(
                   onPressed: () {
@@ -71,7 +77,7 @@ class DietView extends ConsumerWidget {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text(dateString),
+                          title: Text(dietViewModel.dietDateString),
                           content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
                           actions: [
                             Row(
@@ -88,7 +94,7 @@ class DietView extends ConsumerWidget {
                                           .collection(kUsersCollectionText)
                                           .doc(homeViewModel.userId)
                                           .collection(kDietCollectionText)
-                                          .doc(dateString)
+                                          .doc(dietViewModel.dietDateString)
                                           .delete();
 
                                       if (context.mounted) {

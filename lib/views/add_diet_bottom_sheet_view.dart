@@ -13,10 +13,11 @@ class AddDietBottomSheetView extends ConsumerStatefulWidget {
   const AddDietBottomSheetView(this.mealType, {super.key});
 
   @override
-  AddDietBottomSheetState createState() => AddDietBottomSheetState();
+  AddDietBottomSheetViewState createState() => AddDietBottomSheetViewState();
 }
 
-class AddDietBottomSheetState extends ConsumerState<AddDietBottomSheetView> {
+class AddDietBottomSheetViewState
+    extends ConsumerState<AddDietBottomSheetView> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool favCheck = false;
 

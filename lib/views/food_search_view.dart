@@ -14,10 +14,10 @@ class FoodSearchView extends ConsumerStatefulWidget {
   const FoodSearchView(this.mealType, {super.key});
 
   @override
-  FoodSearchPageState createState() => FoodSearchPageState();
+  FoodSearchViewState createState() => FoodSearchViewState();
 }
 
-class FoodSearchPageState extends ConsumerState<FoodSearchView> {
+class FoodSearchViewState extends ConsumerState<FoodSearchView> {
   String keyword = "";
   Timer? _timer;
 

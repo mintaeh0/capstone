@@ -4,24 +4,35 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/viewmodels/inbody_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
-import 'inbody_page.dart';
+import 'inbody_view.dart';
 import 'diet_view.dart';
 import 'login_view.dart';
-import 'profile_page.dart';
+import 'profile_view.dart';
 
 // 메인 페이지
-const List<Widget> _body = [
-  DietView(),
-  InbodyPage(),
-  ProfilePage(),
+final List<Widget> _body = [
+  ChangeNotifierProvider(
+      create: (context) => DietViewModel(),
+      builder: (context, child) {
+        return DietView();
+      }),
+  // Container(),
+  // ChangeNotifierProvider(
+  //     create: (context) => InbodyViewModel(),
+  //     builder: (context, child) {
+  //       return InbodyView();
+  //     }),
+  ProfileView(),
 ];
 
 const List<Widget> _title = [
   Text("식단 기록"),
-  Text("체성분 기록"),
+  // Text("체성분 기록"),
   Text("내 정보"),
 ];
 
@@ -31,11 +42,11 @@ const List<BottomNavigationBarItem> navigationItems = [
     icon: Icon(Icons.lunch_dining_outlined),
     activeIcon: Icon(Icons.lunch_dining),
   ),
-  BottomNavigationBarItem(
-    label: '체성분',
-    icon: Icon(Icons.scale_outlined),
-    activeIcon: Icon(Icons.scale),
-  ),
+  // BottomNavigationBarItem(
+  //   label: '체성분',
+  //   icon: Icon(Icons.scale_outlined),
+  //   activeIcon: Icon(Icons.scale),
+  // ),
   BottomNavigationBarItem(
     label: '내 정보',
     icon: Icon(Icons.person_outlined),
@@ -47,13 +58,15 @@ class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _MainPageState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _MainPageState extends State<HomeView> {
+class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    final HomeViewModel homeViewModel = context.read<HomeViewModel>();
+    homeViewModel.init();
   }
 
   @override

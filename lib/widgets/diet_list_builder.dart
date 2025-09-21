@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/diet_date_provider.dart';
-import '../../../providers/diet_stream_provider.dart';
-import '../../../providers/fab_visible_provider.dart';
+import '../providers/diet_date_provider.dart';
+import '../providers/diet_stream_provider.dart';
+import '../providers/fab_visible_provider.dart';
 
 class DietListBuilder extends ConsumerStatefulWidget {
   final String mealType;

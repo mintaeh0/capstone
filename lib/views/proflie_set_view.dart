@@ -32,14 +32,14 @@ List<String> goalKey = [
   kKcalGoalText
 ];
 
-class ProfileSetPage extends ConsumerStatefulWidget {
-  const ProfileSetPage({super.key});
+class ProfileSetView extends ConsumerStatefulWidget {
+  const ProfileSetView({super.key});
 
   @override
-  ProfileSetPageState createState() => ProfileSetPageState();
+  ProfileSetViewState createState() => ProfileSetViewState();
 }
 
-class ProfileSetPageState extends ConsumerState<ProfileSetPage> {
+class ProfileSetViewState extends ConsumerState<ProfileSetView> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue settingStream = ref.watch(userStreamProvider);

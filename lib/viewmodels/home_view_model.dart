@@ -29,6 +29,7 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // 자동 로그인 해제
   Future<void> disableAutoLogin() async {
     var storage = const FlutterSecureStorage();
     await storage.write(key: "loginState", value: "false");

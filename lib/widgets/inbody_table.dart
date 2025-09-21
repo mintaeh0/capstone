@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../providers/inbody_stream_provider.dart';
+import '../providers/inbody_stream_provider.dart';
 
 class InbodyTable extends ConsumerStatefulWidget {
   const InbodyTable({super.key});

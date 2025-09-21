@@ -11,10 +11,10 @@ class FavoriteFoodDrawerView extends ConsumerStatefulWidget {
   const FavoriteFoodDrawerView(this.mealType, {super.key});
 
   @override
-  FavoriteFoodDrawerPageState createState() => FavoriteFoodDrawerPageState();
+  FavoriteFoodDrawerViewState createState() => FavoriteFoodDrawerViewState();
 }
 
-class FavoriteFoodDrawerPageState
+class FavoriteFoodDrawerViewState
     extends ConsumerState<FavoriteFoodDrawerView> {
   final GlobalKey naviKey = GlobalKey();
 

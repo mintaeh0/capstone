@@ -6,7 +6,8 @@ import 'uid_provider.dart';
 
 final inbodyStreamProvider = StreamProvider.autoDispose((ref) {
   final String userId = ref.watch(userIdProvider).asData!.value!;
-  final String dateString = ref.watch(inbodyDateProvider) as String;
+  // final String dateString = ref.watch(inbodyDateProvider) as String;
+  final String dateString = "";
 
   return FirebaseFirestore.instance
       .collection(kUsersCollectionText)

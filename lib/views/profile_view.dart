@@ -8,7 +8,7 @@ import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/uid_provider.dart';
 import '../providers/user_stream_provider.dart';
-import 'proflie_set_page.dart';
+import 'proflie_set_view.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
 
@@ -26,14 +26,14 @@ final profileFutureProvider =
       .get();
 });
 
-class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+class ProfileView extends ConsumerStatefulWidget {
+  const ProfileView({super.key});
 
   @override
-  ProfilePageState createState() => ProfilePageState();
+  ProfileViewState createState() => ProfileViewState();
 }
 
-class ProfilePageState extends ConsumerState<ProfilePage> {
+class ProfileViewState extends ConsumerState<ProfileView> {
   late num _currentWeight = 0, _height, _bmiNum = 0;
   String _bmiString = "체중(kg), 신장(cm) 입력 필요";
 
@@ -313,7 +313,7 @@ class ProfilePageState extends ConsumerState<ProfilePage> {
         const SizedBox(height: 5),
         menuItem("설정", () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const ProfileSetPage(),
+            builder: (context) => const ProfileSetView(),
           ));
         }),
       ],
