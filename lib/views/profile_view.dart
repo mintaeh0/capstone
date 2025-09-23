@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/viewmodels/profile_view_model.dart';
 import 'package:project1/views/favorite_food_view.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/uid_provider.dart';
 import '../providers/user_stream_provider.dart';
@@ -12,110 +15,85 @@ import 'proflie_set_view.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
 
-final profileFutureProvider =
-    FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
-  final String userId = ref.watch(userIdProvider).asData!.value!;
+// final profileFutureProvider =
+//     FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
+//   final String userId = ref.watch(userIdProvider).asData!.value!;
 
-  return FirebaseFirestore.instance
-      .collection(kUsersCollectionText)
-      .doc(userId)
-      .collection(kInbodyCollectionText)
-      .where("docdate", isNull: false)
-      .orderBy("docdate", descending: true)
-      .limit(1)
-      .get();
-});
+//   return FirebaseFirestore.instance
+//       .collection(kUsersCollectionText)
+//       .doc(userId)
+//       .collection(kInbodyCollectionText)
+//       .where("docdate", isNull: false)
+//       .orderBy("docdate", descending: true)
+//       .limit(1)
+//       .get();
+// });
 
-class ProfileView extends ConsumerStatefulWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
   @override
-  ProfileViewState createState() => ProfileViewState();
+  State<ProfileView> createState() => _ProfileViewState();
 }
 
-class ProfileViewState extends ConsumerState<ProfileView> {
-  late num _currentWeight = 0, _height, _bmiNum = 0;
-  String _bmiString = "체중(kg), 신장(cm) 입력 필요";
+class _ProfileViewState extends State<ProfileView> {
+  // late num _currentWeight = 0, _height, _bmiNum = 0;
+  // String _bmiString = "체중(kg), 신장(cm) 입력 필요";
+
+  @override
+  void initState() {
+    super.initState();
+    final ProfileViewModel profileViewModel = context.read<ProfileViewModel>();
+    final HomeViewModel homeViewModel = context.read<HomeViewModel>();
+
+    profileViewModel.listenProfile(homeViewModel.userId!);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<DocumentSnapshot<Map<String, dynamic>>> profileStream =
-        ref.watch(userStreamProvider);
-    final AsyncValue<QuerySnapshot<Map<String, dynamic>>> profileFuture =
-        ref.watch(profileFutureProvider);
+    final ProfileViewModel profileViewModel = context.watch<ProfileViewModel>();
+    // final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
+    // final AsyncValue<DocumentSnapshot<Map<String, dynamic>>> profileStream =
+    //     ref.watch(userStreamProvider);
+    // final AsyncValue<QuerySnapshot<Map<String, dynamic>>> profileFuture =
+    //     ref.watch(profileFutureProvider);
+
+    if (profileViewModel.profileData == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return SingleChildScrollView(
-      child: profileStream.when(data: (streamData) {
-        _height = num.parse(streamData.data()?["height"] ?? "0");
-
-        return profileFuture.when(
-          data: (futureData) {
-            for (var element in futureData.docs) {
-              _currentWeight = element["weight"];
-            }
-
-            if (_height != 0 && _currentWeight != 0) {
-              _bmiNum = _currentWeight / ((_height * 0.01) * (_height * 0.01));
-
-              if (_bmiNum < 18.5) {
-                _bmiString = "저체중";
-              } else if (_bmiNum >= 18.5 && _bmiNum < 23) {
-                _bmiString = "표준";
-              } else if (_bmiNum >= 23 && _bmiNum < 25) {
-                _bmiString = "비만전단계";
-              } else if (_bmiNum >= 25 && _bmiNum < 30) {
-                _bmiString = "1단계 비만";
-              } else if (_bmiNum >= 30 && _bmiNum < 35) {
-                _bmiString = "2단계 비만";
-              } else {
-                _bmiString = "3단계 비만";
-              }
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(children: [
-                profileCard(),
-                inbodyGoalCard(streamData.data()),
-                const SizedBox(height: 10),
-                const BannerAdWidget(),
-                const SizedBox(height: 10),
-                bmiCard(),
-                const SizedBox(height: 20),
-                settingButton(),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  child: Text(
-                    "라이센스 보기",
-                    style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.grey.shade600,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.grey.shade600),
-                  ),
-                  onTap: () {
-                    showLicensePage(context: context);
-                  },
-                ),
-                const SizedBox(height: 20),
-                const BannerAdWidget(),
-                const SizedBox(height: 10),
-              ]),
-            );
+        child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(children: [
+        profileCard(),
+        inbodyGoalCard(profileViewModel.profileData),
+        const SizedBox(height: 10),
+        const BannerAdWidget(),
+        // const SizedBox(height: 10),
+        // bmiCard(),
+        const SizedBox(height: 20),
+        settingButton(),
+        const SizedBox(height: 10),
+        GestureDetector(
+          child: Text(
+            "라이센스 보기",
+            style: TextStyle(
+                fontSize: 17,
+                color: Colors.grey.shade600,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.grey.shade600),
+          ),
+          onTap: () {
+            showLicensePage(context: context);
           },
-          error: (error, stackTrace) {
-            return Center(child: Text("error : $error"));
-          },
-          loading: () {
-            return const Center(child: CircularProgressIndicator());
-          },
-        );
-      }, error: (error, stackTrace) {
-        return Center(child: Text("error : $error"));
-      }, loading: () {
-        return const Center(child: CircularProgressIndicator());
-      }),
-    );
+        ),
+        const SizedBox(height: 20),
+        const BannerAdWidget(),
+        const SizedBox(height: 10),
+      ]),
+    ));
   }
 
   Widget profileCard() {
@@ -130,7 +108,7 @@ class ProfileViewState extends ConsumerState<ProfileView> {
               style: const TextStyle(fontSize: 20),
             ),
             Text(
-              "${_height}cm",
+              "${175}cm",
               style: const TextStyle(fontSize: 20),
             ),
           ],
@@ -173,96 +151,96 @@ class ProfileViewState extends ConsumerState<ProfileView> {
     ));
   }
 
-  Widget bmiCard() {
-    return Card.outlined(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("BMI", style: TextStyle(fontSize: 20)),
-                Text(
-                  "* 대한비만학회 비만 진료지침 2022(8판)",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-            Text(_bmiString, style: const TextStyle(fontSize: 20)),
-            bmiGauge(),
-            Text(_bmiNum.toStringAsFixed(1),
-                style: const TextStyle(fontSize: 30))
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget bmiCard() {
+  //   return Card.outlined(
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(20),
+  //       child: Column(
+  //         children: [
+  //           const Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Text("BMI", style: TextStyle(fontSize: 20)),
+  //               Text(
+  //                 "* 대한비만학회 비만 진료지침 2022(8판)",
+  //                 style: TextStyle(fontSize: 12),
+  //               ),
+  //             ],
+  //           ),
+  //           Text(_bmiString, style: const TextStyle(fontSize: 20)),
+  //           bmiGauge(),
+  //           Text(_bmiNum.toStringAsFixed(1),
+  //               style: const TextStyle(fontSize: 30))
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget bmiGauge() {
-    return SfLinearGauge(
-      minimum: 15,
-      maximum: 38,
-      ranges: const [
-        LinearGaugeRange(
-          startValue: 15,
-          endValue: 18.5,
-          color: Colors.lightBlue,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-        LinearGaugeRange(
-          startValue: 18.5,
-          endValue: 23,
-          color: Colors.greenAccent,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-        LinearGaugeRange(
-          startValue: 23,
-          endValue: 25,
-          color: Colors.yellow,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-        LinearGaugeRange(
-          startValue: 25,
-          endValue: 30,
-          color: Colors.amber,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-        LinearGaugeRange(
-          startValue: 30,
-          endValue: 35,
-          color: Colors.redAccent,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-        LinearGaugeRange(
-          startValue: 35,
-          endValue: 38,
-          color: Colors.deepPurpleAccent,
-          startWidth: 10,
-          endWidth: 10,
-        ),
-      ],
-      markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
-      showAxisTrack: false,
-      onGenerateLabels: () {
-        return [
-          LinearAxisLabel(text: "", value: 15),
-          LinearAxisLabel(text: "18.5", value: 18.5),
-          LinearAxisLabel(text: "23", value: 23),
-          LinearAxisLabel(text: "25", value: 25),
-          LinearAxisLabel(text: "30", value: 30),
-          LinearAxisLabel(text: "35", value: 35),
-          LinearAxisLabel(text: "", value: 38),
-        ];
-      },
-      minorTicksPerInterval: 0,
-    );
-  }
+  // Widget bmiGauge() {
+  //   return SfLinearGauge(
+  //     minimum: 15,
+  //     maximum: 38,
+  //     ranges: const [
+  //       LinearGaugeRange(
+  //         startValue: 15,
+  //         endValue: 18.5,
+  //         color: Colors.lightBlue,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //       LinearGaugeRange(
+  //         startValue: 18.5,
+  //         endValue: 23,
+  //         color: Colors.greenAccent,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //       LinearGaugeRange(
+  //         startValue: 23,
+  //         endValue: 25,
+  //         color: Colors.yellow,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //       LinearGaugeRange(
+  //         startValue: 25,
+  //         endValue: 30,
+  //         color: Colors.amber,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //       LinearGaugeRange(
+  //         startValue: 30,
+  //         endValue: 35,
+  //         color: Colors.redAccent,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //       LinearGaugeRange(
+  //         startValue: 35,
+  //         endValue: 38,
+  //         color: Colors.deepPurpleAccent,
+  //         startWidth: 10,
+  //         endWidth: 10,
+  //       ),
+  //     ],
+  //     markerPointers: [LinearShapePointer(value: _bmiNum.toDouble())],
+  //     showAxisTrack: false,
+  //     onGenerateLabels: () {
+  //       return [
+  //         LinearAxisLabel(text: "", value: 15),
+  //         LinearAxisLabel(text: "18.5", value: 18.5),
+  //         LinearAxisLabel(text: "23", value: 23),
+  //         LinearAxisLabel(text: "25", value: 25),
+  //         LinearAxisLabel(text: "30", value: 30),
+  //         LinearAxisLabel(text: "35", value: 35),
+  //         LinearAxisLabel(text: "", value: 38),
+  //       ];
+  //     },
+  //     minorTicksPerInterval: 0,
+  //   );
+  // }
 
   Widget settingButton() {
     return Column(

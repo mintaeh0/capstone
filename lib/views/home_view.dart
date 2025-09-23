@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/viewmodels/inbody_view_model.dart';
+import 'package:project1/viewmodels/profile_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 import 'inbody_view.dart';
@@ -15,20 +16,24 @@ import 'login_view.dart';
 import 'profile_view.dart';
 
 // 메인 페이지
-final List<Widget> _body = [
-  ChangeNotifierProvider(
-      create: (context) => DietViewModel(),
-      builder: (context, child) {
-        return DietView();
-      }),
-  // Container(),
-  // ChangeNotifierProvider(
-  //     create: (context) => InbodyViewModel(),
-  //     builder: (context, child) {
-  //       return InbodyView();
-  //     }),
-  ProfileView(),
-];
+// final List<Widget> _body = [
+//   ChangeNotifierProvider(
+//       create: (context) => DietViewModel(),
+//       builder: (context, child) {
+//         return DietView();
+//       }),
+//   // Container(),
+//   // ChangeNotifierProvider(
+//   //     create: (context) => InbodyViewModel(),
+//   //     builder: (context, child) {
+//   //       return InbodyView();
+//   //     }),
+//   ChangeNotifierProvider(
+//       create: (context) => ProfileViewModel(),
+//       builder: (context, child) {
+//         return ProfileView();
+//       }),
+// ];
 
 const List<Widget> _title = [
   Text("식단 기록"),
@@ -72,6 +77,29 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+
+    final List<Widget> body = [
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => DietViewModel()),
+          ChangeNotifierProvider.value(value: homeViewModel),
+        ],
+        builder: (context, child) => DietView(),
+      ),
+      // Container(),
+      // ChangeNotifierProvider(
+      //     create: (context) => InbodyViewModel(),
+      //     builder: (context, child) {
+      //       return InbodyView();
+      //     }),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => ProfileViewModel()),
+          ChangeNotifierProvider.value(value: homeViewModel),
+        ],
+        builder: (context, child) => ProfileView(),
+      )
+    ];
 
     return PopScope(
       canPop: false,
@@ -197,7 +225,7 @@ class _HomeViewState extends State<HomeView> {
                             icon: const Icon(Icons.power_settings_new))
                     ],
                   ),
-                  body: _body[homeViewModel.navigationBarIndex],
+                  body: body[homeViewModel.navigationBarIndex],
                   bottomNavigationBar: Container(
                     clipBehavior: Clip.hardEdge,
                     decoration: const BoxDecoration(
