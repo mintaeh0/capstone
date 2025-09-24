@@ -9,8 +9,6 @@ import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/diet_date_provider.dart';
-
 class DietChart extends ConsumerStatefulWidget {
   const DietChart({super.key});
 

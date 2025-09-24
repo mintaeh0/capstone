@@ -1,18 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/viewmodels/favorite_food_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/viewmodels/profile_set_view_model.dart';
 import 'package:project1/viewmodels/profile_view_model.dart';
 import 'package:project1/views/favorite_food_view.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../providers/uid_provider.dart';
-import '../providers/user_stream_provider.dart';
 import 'proflie_set_view.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 // 프로필 페이지
 
 // final profileFutureProvider =
@@ -52,7 +50,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     final ProfileViewModel profileViewModel = context.watch<ProfileViewModel>();
-    // final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
 
     // final AsyncValue<DocumentSnapshot<Map<String, dynamic>>> profileStream =
     //     ref.watch(userStreamProvider);
@@ -61,6 +59,78 @@ class _ProfileViewState extends State<ProfileView> {
 
     if (profileViewModel.profileData == null) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    Widget settingButton() {
+      return Column(
+        children: [
+          menuItem("즐겨찾기 관리", () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                              create: (context) => FavoriteFoodViewModel()),
+                          ChangeNotifierProvider.value(value: homeViewModel),
+                        ],
+                        builder: (context, child) {
+                          return FavoriteFoodView();
+                        })));
+          }),
+          const SizedBox(height: 5),
+          menuItem(
+              "문의하기",
+              () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: const Text("문의하기"),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 10),
+                            const Text("mth1150@naver.com",
+                                style: TextStyle(fontSize: 18)),
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              child: const Text(
+                                "카카오톡으로 문의하기",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.green,
+                                    fontSize: 18),
+                              ),
+                              onTap: () {
+                                launchUrl(Uri.parse(
+                                    "https://open.kakao.com/o/sxLbtovg"));
+                              },
+                            )
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("닫기"))
+                        ],
+                      ))),
+          const SizedBox(height: 5),
+          menuItem("설정", () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider(
+                        create: (context) => ProfileSetViewModel()),
+                    ChangeNotifierProvider.value(value: homeViewModel)
+                  ],
+                  builder: (context, child) {
+                    return ProfileSetView();
+                  }),
+            ));
+          }),
+        ],
+      );
     }
 
     return SingleChildScrollView(
@@ -241,62 +311,6 @@ class _ProfileViewState extends State<ProfileView> {
   //     minorTicksPerInterval: 0,
   //   );
   // }
-
-  Widget settingButton() {
-    return Column(
-      children: [
-        menuItem("즐겨찾기 관리", () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const FavoriteFoodView()));
-        }),
-        const SizedBox(height: 5),
-        menuItem(
-            "문의하기",
-            () => showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                      title: const Text("문의하기"),
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 10),
-                          const Text("mth1150@naver.com",
-                              style: TextStyle(fontSize: 18)),
-                          const SizedBox(height: 10),
-                          GestureDetector(
-                            child: const Text(
-                              "카카오톡으로 문의하기",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.green,
-                                  fontSize: 18),
-                            ),
-                            onTap: () {
-                              launchUrl(Uri.parse(
-                                  "https://open.kakao.com/o/sxLbtovg"));
-                            },
-                          )
-                        ],
-                      ),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("닫기"))
-                      ],
-                    ))),
-        const SizedBox(height: 5),
-        menuItem("설정", () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const ProfileSetView(),
-          ));
-        }),
-      ],
-    );
-  }
 
   Widget menuItem(String title, Function() tapFunc) {
     return GestureDetector(
