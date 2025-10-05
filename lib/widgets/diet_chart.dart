@@ -1,7 +1,8 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/functions/goal_state_controller.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
@@ -9,15 +10,15 @@ import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
 
-class DietChart extends ConsumerStatefulWidget {
+class DietChart extends StatefulWidget {
   const DietChart({super.key});
 
   @override
-  DietChartState createState() => DietChartState();
+  State<DietChart> createState() => _DietChartState();
 }
 
-class DietChartState extends ConsumerState<DietChart> {
-  late List<num> nutriArray;
+class _DietChartState extends State<DietChart> {
+  // late List<num> nutriArray;
 
   @override
   Widget build(BuildContext context) {
@@ -32,56 +33,129 @@ class DietChartState extends ConsumerState<DietChart> {
     //   loading: () {},
     // );
 
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection(kUsersCollectionText)
-            .doc(homeViewModel.userId)
-            .collection(kDietCollectionText)
-            .doc(dietViewModel.dietDateString)
-            .snapshots(),
-        builder: (context, snapshot) {
-          dynamic snapshotData = snapshot.data?.data() as Map<String, dynamic>?;
+    Widget nutriCard(String userId) {
+      Widget nutriRow(int index) {
+        List<String> nutriText = ["탄수화물", "단백질", "지방", "칼로리"];
+        List<String> goalKey = [
+          kCarboGoalText,
+          kProtGoalText,
+          kFatGoalText,
+          kKcalGoalText
+        ];
+        List<Future> myFutures = [
+          getCarboGoalState(),
+          getProtGoalState(),
+          getFatGoalState(),
+          getKcalGoalState()
+        ];
 
-          if (snapshot.hasData &&
-              snapshot.data!.exists &&
-              snapshotData != null) {
-            snapshotData.remove("docdate");
-            double carbo = 0;
-            num protein = 0;
-            num fat = 0;
-            num kcal = 0;
-
-            snapshotData.forEach((key, value) {
-              for (Map ch in value) {
-                carbo += ch[kCarboText] * ch["amount"];
-                protein += ch[kProteinText] * ch["amount"];
-                fat += ch[kFatText] * ch["amount"];
-                kcal += ch[kKcalText] * ch["amount"];
+        return StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection(kUsersCollectionText)
+                .doc(userId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container();
               }
+
+              var snapshotData = snapshot.data?.data();
+              num goal = snapshotData?[goalKey[index]] ?? 0;
+              num? gap = dietViewModel.nutriArray[index] - goal;
+
+              return FutureBuilder(
+                  future: myFutures[index],
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !bool.parse(snapshot.data ?? "false")) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(nutriText[index],
+                              style: const TextStyle(fontSize: 17)),
+                          Row(
+                            children: [
+                              Text("${dietViewModel.nutriArray[index]}",
+                                  style: const TextStyle(fontSize: 15)),
+                              if (index == 3)
+                                const Text("kcal")
+                              else
+                                const Text("g")
+                            ],
+                          )
+                        ],
+                      );
+                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(nutriText[index],
+                            style: const TextStyle(fontSize: 17)),
+                        Row(children: [
+                          if (gap < 0)
+                            Text(
+                              (gap * -1).toStringAsFixed(1),
+                              style: const TextStyle(color: Colors.blue),
+                            )
+                          else
+                            Text(
+                              (gap).toStringAsFixed(1),
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          if (gap < 0)
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.blue,
+                            )
+                          else
+                            const Icon(Icons.arrow_drop_up, color: Colors.red),
+                        ]),
+                        Row(
+                          children: [
+                            Text("${dietViewModel.nutriArray[index]}",
+                                style: const TextStyle(fontSize: 15)),
+                            Text(" / $goal"),
+                            if (index == 3)
+                              const Text("kcal")
+                            else
+                              const Text("g")
+                          ],
+                        )
+                      ],
+                    );
+                  });
             });
+      }
 
-            carbo = double.parse(carbo.toStringAsFixed(1));
-            protein = double.parse(protein.toStringAsFixed(1));
-            fat = double.parse(fat.toStringAsFixed(1));
-            kcal = double.parse(kcal.toStringAsFixed(1));
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            nutriRow(0),
+            const Divider(height: 35),
+            nutriRow(1),
+            const Divider(height: 35),
+            nutriRow(2),
+            const Divider(height: 35),
+            nutriRow(3),
+          ],
+        ),
+      ));
+    }
 
-            nutriArray = [carbo, protein, fat, kcal];
-          } else {
-            nutriArray = [0, 0, 0, 0];
-          }
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              dietPieChartCard(nutriArray),
-              const BannerAdWidget(),
-              nutriCard(homeViewModel.userId!),
-            ],
-          );
-        });
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        dietPieChartCard(dietViewModel.nutriArray),
+        const BannerAdWidget(),
+        nutriCard(homeViewModel.userId!),
+      ],
+    );
   }
 
   Widget dietPieChartCard(List list) {
+    log("$list");
     List<PieChartSectionData> chartSectionList;
     const double chartRadius = 50;
     const double chartTitlePosition = 0.5;
@@ -133,116 +207,5 @@ class DietChartState extends ConsumerState<DietChart> {
             ])),
       ),
     );
-  }
-
-  Widget nutriCard(String uid) {
-    Widget nutriRow(int index) {
-      List<String> nutriText = ["탄수화물", "단백질", "지방", "칼로리"];
-      List<String> goalKey = [
-        kCarboGoalText,
-        kProtGoalText,
-        kFatGoalText,
-        kKcalGoalText
-      ];
-      List<Future> myFutures = [
-        getCarboGoalState(),
-        getProtGoalState(),
-        getFatGoalState(),
-        getKcalGoalState()
-      ];
-
-      return StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection(kUsersCollectionText)
-              .doc(uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container();
-            }
-
-            var snapshotData = snapshot.data?.data();
-            num goal = snapshotData?[goalKey[index]] ?? 0;
-            num? gap = nutriArray[index] - goal;
-
-            return FutureBuilder(
-                future: myFutures[index],
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting ||
-                      !bool.parse(snapshot.data ?? "false")) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(nutriText[index],
-                            style: const TextStyle(fontSize: 17)),
-                        Row(
-                          children: [
-                            Text("${nutriArray[index]}",
-                                style: const TextStyle(fontSize: 15)),
-                            if (index == 3)
-                              const Text("kcal")
-                            else
-                              const Text("g")
-                          ],
-                        )
-                      ],
-                    );
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(nutriText[index],
-                          style: const TextStyle(fontSize: 17)),
-                      Row(children: [
-                        if (gap < 0)
-                          Text(
-                            (gap * -1).toStringAsFixed(1),
-                            style: const TextStyle(color: Colors.blue),
-                          )
-                        else
-                          Text(
-                            (gap).toStringAsFixed(1),
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        if (gap < 0)
-                          const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.blue,
-                          )
-                        else
-                          const Icon(Icons.arrow_drop_up, color: Colors.red),
-                      ]),
-                      Row(
-                        children: [
-                          Text("${nutriArray[index]}",
-                              style: const TextStyle(fontSize: 15)),
-                          Text(" / $goal"),
-                          if (index == 3)
-                            const Text("kcal")
-                          else
-                            const Text("g")
-                        ],
-                      )
-                    ],
-                  );
-                });
-          });
-    }
-
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          nutriRow(0),
-          const Divider(height: 35),
-          nutriRow(1),
-          const Divider(height: 35),
-          nutriRow(2),
-          const Divider(height: 35),
-          nutriRow(3),
-        ],
-      ),
-    ));
   }
 }

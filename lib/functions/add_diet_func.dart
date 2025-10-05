@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/enums/meal_type.dart';
 import 'uid_info_controller.dart';
 
 Future<void> addDietFunc(
-    String mealDate, String mealType, Map<String, dynamic> foodMap) async {
+    String mealDate, MealType mealType, Map<String, dynamic> foodMap) async {
   // Firebase 경로 설정
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   dynamic stor;
@@ -21,15 +22,15 @@ Future<void> addDietFunc(
 
   // 비어있는지 검사
 
-  if (stor == null ? true : stor[mealType] == null) {
+  if (stor == null ? true : stor[mealType.code] == null) {
     // 비어있을 경우 새로 저장
     mealRef.set({
-      mealType: [foodMap]
+      mealType.code: [foodMap]
     }, SetOptions(merge: true));
   } else {
     // 내용이 있으면 기존 값에 추가
     mealRef.update({
-      mealType: FieldValue.arrayUnion([foodMap])
+      mealType.code: FieldValue.arrayUnion([foodMap])
     });
   }
 

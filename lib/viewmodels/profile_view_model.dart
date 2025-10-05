@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class ProfileViewModel extends ChangeNotifier {
         .doc(userId)
         .snapshots()
         .listen((doc) {
+      log("profile data listened");
       profileData = doc.data();
       notifyListeners();
     });

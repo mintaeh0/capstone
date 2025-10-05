@@ -1,21 +1,21 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-setCarboGoalState(String carboGoal) async {
+Future<void> setCarboGoalState(String carboGoal) async {
   var storage = const FlutterSecureStorage();
   await storage.write(key: "carboGoal", value: carboGoal);
 }
 
-setProtGoalState(String protGoal) async {
+Future<void> setProtGoalState(String protGoal) async {
   var storage = const FlutterSecureStorage();
   await storage.write(key: "protGoal", value: protGoal);
 }
 
-setFatGoalState(String fatGoal) async {
+Future<void> setFatGoalState(String fatGoal) async {
   var storage = const FlutterSecureStorage();
   await storage.write(key: "fatGoal", value: fatGoal);
 }
 
-setKcalGoalState(String kcalGoal) async {
+Future<void> setKcalGoalState(String kcalGoal) async {
   var storage = const FlutterSecureStorage();
   await storage.write(key: "kcalGoal", value: kcalGoal);
 }

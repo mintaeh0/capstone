@@ -3,42 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/enums/meal_type.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/views/add_diet_bottom_sheet_view.dart';
 import 'package:project1/views/favorite_food_drawer_view.dart';
 import 'package:project1/views/food_search_view.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
-import '../providers/diet_date_provider.dart';
 import '../providers/fab_visible_provider.dart';
 
 // 식단 추가 페이지
 
 class AddDietView extends ConsumerWidget {
-  AddDietView(this.mealIndex, {super.key});
+  const AddDietView(this.mealType, {super.key});
 
-  final int mealIndex;
-  final List mealType = [kBreakfastText, kLunchText, kDinnerText, kSnackText];
-  final List mealTypeKor = ["아침", "점심", "저녁", "간식"];
+  final MealType mealType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-    final String dateString = ref.watch(dietDateProvider) as String;
-    final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
+    // final String dateString = ref.watch(dietDateProvider) as String;
+    // final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
 
     return Scaffold(
-      endDrawer: Drawer(child: FavoriteFoodDrawerView(mealType[mealIndex])),
+      endDrawer: Drawer(child: FavoriteFoodDrawerView(mealType)),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("$dateString  ${mealTypeKor[mealIndex]}"),
+        title: Text("${dietViewModel.dietDateString}  ${mealType.name}"),
         actions: [
           IconButton(
             icon: const Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FoodSearchView(mealType[mealIndex])));
+                  builder: (context) => FoodSearchView(mealType)));
             },
           ),
           IconButton(
@@ -48,7 +48,8 @@ class AddDietView extends ConsumerWidget {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text("$dateString ${mealTypeKor[mealIndex]}"),
+                    title: Text(
+                        "${dietViewModel.dietDateString} ${mealType.name}"),
                     content: const Text("해당 식단 목록을 모두 삭제하시겠습니까?"),
                     actions: [
                       Row(
@@ -62,7 +63,7 @@ class AddDietView extends ConsumerWidget {
                                     .collection(kUsersCollectionText)
                                     .doc(homeViewModel.userId)
                                     .collection(kDietCollectionText)
-                                    .doc(dateString);
+                                    .doc(dietViewModel.dietDateString);
 
                                 try {
                                   sampleRef.get().then((value) {
@@ -71,13 +72,12 @@ class AddDietView extends ConsumerWidget {
                                     if (stor == null) {
                                       Fluttertoast.showToast(
                                           msg: "목록이 이미 비어있습니다!");
-                                    } else if (stor[mealType[mealIndex]] ==
-                                        null) {
+                                    } else if (stor[mealType.code] == null) {
                                       Fluttertoast.showToast(
                                           msg: "목록이 이미 비어있습니다!");
                                     } else {
                                       sampleRef.update({
-                                        mealType[mealIndex]: FieldValue.delete()
+                                        mealType.code: FieldValue.delete()
                                       }).then((_) {
                                         sampleRef.get().then((value) {
                                           stor = value.data();
@@ -112,9 +112,9 @@ class AddDietView extends ConsumerWidget {
           ),
         ],
       ),
-      body: DietListBuilder(mealType[mealIndex]),
+      body: DietListBuilder(mealType),
       floatingActionButton: Visibility(
-        visible: fabVisible,
+        visible: true,
         child: Builder(builder: (context) {
           return IntrinsicHeight(
             child: Column(
@@ -137,7 +137,7 @@ class AddDietView extends ConsumerWidget {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setState) {
-                            return AddDietBottomSheetView(mealType[mealIndex]);
+                            return AddDietBottomSheetView(mealType);
                           },
                         );
                       },

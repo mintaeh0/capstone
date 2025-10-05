@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/enums/meal_type.dart';
 import '../constants/strings.dart';
 import '../functions/add_diet_func.dart';
 import '../functions/add_favorite_food_func.dart';
 import '../providers/diet_date_provider.dart';
 
 class AddDietBottomSheetView extends ConsumerStatefulWidget {
-  final String mealType;
+  final MealType mealType;
 
   const AddDietBottomSheetView(this.mealType, {super.key});
 

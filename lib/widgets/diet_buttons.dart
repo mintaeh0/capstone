@@ -1,107 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:project1/constants/strings.dart';
+import 'package:project1/enums/meal_type.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:provider/provider.dart';
 import '../constants/colors.dart';
-import '../providers/diet_stream_provider.dart';
 import '../views/add_diet_view.dart';
 
-class DietButtons extends ConsumerWidget {
+class DietButtons extends StatelessWidget {
   const DietButtons({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue dietButtonStream = ref.watch(dietStreamProvider);
+  Widget build(BuildContext context) {
+    // final AsyncValue dietButtonStream = ref.watch(dietStreamProvider);
 
-    return dietButtonStream.when(
-      data: (data) {
-        Map<String, dynamic> stor = data!.data() ?? {};
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-        num breakfastKcal = 0;
-        num lunchKcal = 0;
-        num dinnerKcal = 0;
-        num snackKcal = 0;
+    Future showAddDietView(BuildContext context, MealType mealType) {
+      return Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider.value(value: homeViewModel),
+                      ChangeNotifierProvider.value(value: dietViewModel),
+                    ],
+                    builder: (context, child) {
+                      return AddDietView(mealType);
+                    })),
+      );
+    }
 
-        stor.remove("docdate"); // 필요 없는 날짜 데이터는 제외
+    // 로딩 중
+    // if (dietViewModel.dietData == null) {
+    //   return const Center(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
 
-        stor.forEach((key, value) {
-          if (key == kBreakfastText) {
-            for (var e in value) {
-              breakfastKcal += e[kKcalText] * e[kAmountText];
-            }
-          }
-          if (key == kLunchText) {
-            for (var e in value) {
-              lunchKcal += e[kKcalText] * e[kAmountText];
-            }
-          }
-          if (key == kDinnerText) {
-            for (var e in value) {
-              dinnerKcal += e[kKcalText] * e[kAmountText];
-            }
-          }
-          if (key == kSnackText) {
-            for (var e in value) {
-              snackKcal += e[kKcalText] * e[kAmountText];
-            }
-          }
-        });
-
-        return Container(
-          alignment: Alignment.center,
-          child: Wrap(
-            direction: Axis.vertical,
+    return Container(
+      alignment: Alignment.center,
+      child: Wrap(
+        direction: Axis.vertical,
+        spacing: 15,
+        children: [
+          Wrap(
             spacing: 15,
+            direction: Axis.horizontal,
             children: [
-              Wrap(
-                spacing: 15,
-                direction: Axis.horizontal,
-                children: [
-                  dietButton(
-                      label: "아침",
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietView(0)));
-                      },
-                      kcal: breakfastKcal),
-                  dietButton(
-                      label: "점심",
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietView(1)));
-                      },
-                      kcal: lunchKcal),
-                ],
-              ),
-              Wrap(
-                spacing: 15,
-                direction: Axis.horizontal,
-                children: [
-                  dietButton(
-                      label: "저녁",
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietView(2)));
-                      },
-                      kcal: dinnerKcal),
-                  dietButton(
-                      label: "간식",
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddDietView(3)));
-                      },
-                      kcal: snackKcal),
-                ],
-              )
+              dietButton(
+                  label: "아침",
+                  onPressed: () => showAddDietView(context, MealType.breakfast),
+                  kcal: dietViewModel.breakfastKcal),
+              dietButton(
+                  label: "점심",
+                  onPressed: () => showAddDietView(context, MealType.lunch),
+                  kcal: dietViewModel.lunchKcal),
             ],
           ),
-        );
-      },
-      error: (error, stackTrace) {
-        return Center(child: Text("error : $error"));
-      },
-      loading: () {
-        return const CircularProgressIndicator();
-      },
+          Wrap(
+            spacing: 15,
+            direction: Axis.horizontal,
+            children: [
+              dietButton(
+                  label: "저녁",
+                  onPressed: () => showAddDietView(context, MealType.dinner),
+                  kcal: dietViewModel.dinnerKcal),
+              dietButton(
+                  label: "간식",
+                  onPressed: () => showAddDietView(context, MealType.snack),
+                  kcal: dietViewModel.snackKcal),
+            ],
+          )
+        ],
+      ),
     );
   }
 

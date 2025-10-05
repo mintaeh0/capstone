@@ -1,16 +1,20 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
+import 'package:project1/enums/meal_type.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:project1/views/diet_view.dart';
 import 'package:provider/provider.dart';
 import '../providers/diet_date_provider.dart';
 import '../providers/diet_stream_provider.dart';
-import '../providers/fab_visible_provider.dart';
 
 class DietListBuilder extends ConsumerStatefulWidget {
-  final String mealType;
+  final MealType mealType;
 
   const DietListBuilder(this.mealType, {super.key});
 
@@ -24,13 +28,15 @@ class DietListBuilderState extends ConsumerState<DietListBuilder> {
   @override
   void initState() {
     super.initState();
-    final FabVisible fabVisibleNotifier = ref.read(fabVisibleProvider.notifier);
+    // final FabVisible fabVisibleNotifier = ref.read(fabVisibleProvider.notifier);
     _dietListController.addListener(() {
       if (_dietListController.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        fabVisibleNotifier.hide();
+        // 숨기기
+        // fabVisibleNotifier.hide();
       } else {
-        fabVisibleNotifier.show();
+        // 보이기
+        // fabVisibleNotifier.show();
       }
     });
   }
@@ -43,66 +49,56 @@ class DietListBuilderState extends ConsumerState<DietListBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue dietListStream = ref.watch(dietStreamProvider);
+    // final AsyncValue dietListStream = ref.watch(dietStreamProvider);
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
+
+    log("${dietViewModel.dietData}");
+    log("Hello");
+
+    if (dietViewModel.dietData == null ||
+        !dietViewModel.dietData!.containsKey(widget.mealType.code)) {
+      return const SizedBox(
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.only(top: 200),
+            child: Center(child: Text("식단을 추가해보세요!")),
+          ),
+        ),
+      );
+    }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: dietListStream.when(
-        data: (data) {
-          Map<String, dynamic>? snapshotData = data.data();
-
-          if (data.exists &&
-              snapshotData != null &&
-              snapshotData.containsKey(widget.mealType)) {
-            dynamic dataArray = data.get(widget.mealType);
-
-            return ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              shrinkWrap: true,
-              controller: _dietListController,
-              scrollDirection: Axis.vertical,
-              itemCount: dataArray.length,
-              itemBuilder: (context, index) {
-                var mapData = dataArray[index] as Map<String, dynamic>;
-                return DietListCard(mapData, widget.mealType);
-              },
-            );
-          } else {
-            return const SizedBox(
-              height: double.maxFinite,
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 200),
-                  child: Center(child: Text("식단을 추가해보세요!")),
-                ),
-              ),
-            );
-          }
-        },
-        error: (error, stackTrace) {
-          return Center(child: Text('Error: $error'));
-        },
-        loading: () {
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          shrinkWrap: true,
+          controller: _dietListController,
+          scrollDirection: Axis.vertical,
+          itemCount: dietViewModel.dietData?[widget.mealType.code].length,
+          itemBuilder: (context, index) {
+            var mapData =
+                (dietViewModel.dietData?[widget.mealType.code][index] ?? {})
+                    as Map<String, dynamic>;
+            return DietListCard(mapData, widget.mealType);
+          },
+        ));
   }
 }
 
-class DietListCard extends ConsumerWidget {
+class DietListCard extends StatelessWidget {
   final Map<String, dynamic> mapData;
-  final String mealType;
-
+  final MealType mealType;
   const DietListCard(this.mapData, this.mealType, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-    final String dateString = ref.watch(dietDateProvider) as String;
+    // final String dateString = ref.watch(dietDateProvider) as String;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -140,18 +136,19 @@ class DietListCard extends ConsumerWidget {
                                               .collection(kUsersCollectionText)
                                               .doc(homeViewModel.userId)
                                               .collection(kDietCollectionText)
-                                              .doc(dateString);
+                                              .doc(
+                                                  dietViewModel.dietDateString);
 
                                       sampleRef.update({
-                                        mealType:
+                                        mealType.code:
                                             FieldValue.arrayRemove([mapData])
                                       }).then((_) {
                                         sampleRef.get().then((value) {
                                           dynamic stor = value.data();
                                           stor.remove("docdate");
 
-                                          if (stor[mealType].length < 1) {
-                                            stor.remove(mealType);
+                                          if (stor[mealType.code].length < 1) {
+                                            stor.remove(mealType.code);
                                           }
 
                                           if (stor.length < 1) {

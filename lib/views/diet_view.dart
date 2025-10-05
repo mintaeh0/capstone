@@ -1,26 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:project1/widgets/banner_ad_widget.dart';
 import 'package:project1/widgets/diet_chart.dart';
 import 'package:provider/provider.dart';
-import '../providers/diet_date_provider.dart';
 import '../widgets/diet_buttons.dart';
-import '../functions/date_controller.dart';
 
-class DietView extends ConsumerWidget {
+class DietView extends StatefulWidget {
   const DietView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<DietView> createState() => _DietViewState();
+}
+
+class _DietViewState extends State<DietView> {
+  @override
+  void initState() {
+    super.initState();
+    final HomeViewModel homeViewModel = context.read<HomeViewModel>();
+    final DietViewModel dietViewModel = context.read<DietViewModel>();
+    dietViewModel.listenDiet(homeViewModel.userId!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
     final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
     // final String dateString = ref.watch(dietDateProvider) as String;
     // final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
+
+    if (dietViewModel.state == DietViewModelState.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -33,7 +47,10 @@ class DietView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () => dietViewModel.decDietDate(),
+                      onPressed: () {
+                        dietViewModel.decDietDate();
+                        dietViewModel.restartListen(homeViewModel.userId!);
+                      },
                       icon: const Icon(
                         Icons.keyboard_arrow_left,
                         size: 40,
@@ -44,22 +61,25 @@ class DietView extends ConsumerWidget {
                       onPressed: () async {
                         DateTime? datetime = await showDatePicker(
                             context: context,
-                            initialDate:
-                                stringToDate(dietViewModel.dietDateString),
+                            initialDate: dietViewModel.dietDate,
                             firstDate: DateTime(2000),
                             lastDate: DateTime.now());
 
                         // 날짜가 선택이 되었다면, 날짜를 설정
                         if (datetime != null) {
                           dietViewModel.setDietDate(datetime);
+                          dietViewModel.restartListen(homeViewModel.userId!);
                         }
                       },
                       icon: const Icon(Icons.calendar_today)),
                   IconButton(
                       onPressed: () {
-                        if (dietViewModel.dietDate != DateTime.now()) {
-                          dietViewModel.incDietDate();
+                        if (dietViewModel.dietDate == DateTime.now()) {
+                          return;
                         }
+
+                        dietViewModel.incDietDate();
+                        dietViewModel.restartListen(homeViewModel.userId!);
                       },
                       icon: const Icon(
                         Icons.keyboard_arrow_right,
@@ -69,7 +89,7 @@ class DietView extends ConsumerWidget {
               )), // 날짜 조정 바
               const DietChart(),
               const SizedBox(height: 10),
-              // const DietButtons(),
+              const DietButtons(),
               const SizedBox(height: 20),
               FilledButton.tonal(
                   onPressed: () {

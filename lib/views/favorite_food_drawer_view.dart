@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/enums/meal_type.dart';
 import 'package:project1/functions/add_diet_func.dart';
 import '../constants/strings.dart';
 import '../providers/diet_date_provider.dart';
 import '../providers/user_stream_provider.dart';
 
 class FavoriteFoodDrawerView extends ConsumerStatefulWidget {
-  final String mealType;
+  final MealType mealType;
   const FavoriteFoodDrawerView(this.mealType, {super.key});
 
   @override
@@ -175,7 +176,10 @@ class FavoriteFoodDrawerViewState
                                 } catch (e) {
                                   Fluttertoast.showToast(msg: "$e");
                                 }
-                                Navigator.pop(context);
+
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
                               }
                             : null,
                         child: Text(
