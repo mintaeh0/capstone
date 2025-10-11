@@ -39,12 +39,13 @@ dependencies:
   flutter_dotenv: ^5.2.1
   flutter_localizations:
     sdk: flutter
-  flutter_riverpod: ^2.5.1
+  # flutter_riverpod: ^2.5.1
   flutter_secure_storage: ^9.0.0
   fluttertoast: ^8.2.4
   google_mobile_ads: ^6.0.0
   google_sign_in: 6.3.0
   intl: ^0.20.2
+  provider: ^6.1.5
   syncfusion_flutter_gauges: ^30.1.42
   url_launcher: ^6.3.0
 
