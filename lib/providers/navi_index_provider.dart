@@ -1,12 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final navigationIndexProvider =
-    StateNotifierProvider((ref) => NavigationIndex());
+// final navigationIndexProvider =
+//     StateNotifierProvider((ref) => NavigationIndex());
 
-class NavigationIndex extends StateNotifier {
-  NavigationIndex() : super(0);
+// class NavigationIndex extends StateNotifier {
+//   NavigationIndex() : super(0);
 
-  void setIndex(int value) {
-    state = value;
-  }
-}
+//   void setIndex(int value) {
+//     state = value;
+//   }
+// }

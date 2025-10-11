@@ -1,28 +1,23 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/enums/meal_type.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
-import 'package:project1/views/diet_view.dart';
 import 'package:provider/provider.dart';
-import '../providers/diet_date_provider.dart';
-import '../providers/diet_stream_provider.dart';
 
-class DietListBuilder extends ConsumerStatefulWidget {
+class DietListBuilder extends StatefulWidget {
   final MealType mealType;
 
   const DietListBuilder(this.mealType, {super.key});
 
   @override
-  DietListBuilderState createState() => DietListBuilderState();
+  State<DietListBuilder> createState() => _DietListBuilderState();
 }
 
-class DietListBuilderState extends ConsumerState<DietListBuilder> {
+class _DietListBuilderState extends State<DietListBuilder> {
   final ScrollController _dietListController = ScrollController();
 
   @override

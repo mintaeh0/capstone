@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/enums/meal_type.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
+import 'package:provider/provider.dart';
 import '../constants/strings.dart';
 import '../functions/add_diet_func.dart';
 import '../functions/add_favorite_food_func.dart';
-import '../providers/diet_date_provider.dart';
 
-class AddDietBottomSheetView extends ConsumerStatefulWidget {
+class AddDietBottomSheetView extends StatefulWidget {
   final MealType mealType;
 
   const AddDietBottomSheetView(this.mealType, {super.key});
 
   @override
-  AddDietBottomSheetViewState createState() => AddDietBottomSheetViewState();
+  State<AddDietBottomSheetView> createState() => _AddDietBottomSheetViewState();
 }
 
-class AddDietBottomSheetViewState
-    extends ConsumerState<AddDietBottomSheetView> {
+class _AddDietBottomSheetViewState extends State<AddDietBottomSheetView> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool favCheck = false;
 
@@ -26,7 +25,7 @@ class AddDietBottomSheetViewState
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dietDateProvider) as String;
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
     return SingleChildScrollView(
       child: Form(
@@ -84,7 +83,9 @@ class AddDietBottomSheetViewState
                     ),
                   ),
                   Expanded(
-                      flex: 1, child: dietSubmitButton(favCheck, dateString)),
+                      flex: 1,
+                      child: dietSubmitButton(
+                          favCheck, dietViewModel.dietDateString)),
                 ],
               )
             ]),

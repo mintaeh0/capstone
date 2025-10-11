@@ -1,27 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/enums/meal_type.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
+import 'package:project1/viewmodels/favorite_food_drawer_view_model.dart';
 import 'package:project1/views/add_diet_bottom_sheet_view.dart';
 import 'package:project1/views/favorite_food_drawer_view.dart';
 import 'package:project1/views/food_search_view.dart';
 import 'package:project1/widgets/diet_list_builder.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
 import 'package:provider/provider.dart';
-import '../providers/fab_visible_provider.dart';
 
 // 식단 추가 페이지
 
-class AddDietView extends ConsumerWidget {
+class AddDietView extends StatelessWidget {
   const AddDietView(this.mealType, {super.key});
 
   final MealType mealType;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
     final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
@@ -29,7 +28,12 @@ class AddDietView extends ConsumerWidget {
     // final bool fabVisible = ref.watch(fabVisibleProvider) as bool;
 
     return Scaffold(
-      endDrawer: Drawer(child: FavoriteFoodDrawerView(mealType)),
+      endDrawer: Drawer(
+          child: ChangeNotifierProvider(
+              create: (context) => FavoriteFoodDrawerViewModel(),
+              builder: (context, child) {
+                return FavoriteFoodDrawerView(mealType);
+              })),
       appBar: AppBar(
         centerTitle: true,
         title: Text("${dietViewModel.dietDateString}  ${mealType.name}"),
@@ -38,7 +42,11 @@ class AddDietView extends ConsumerWidget {
             icon: const Icon(Icons.manage_search),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FoodSearchView(mealType)));
+                  builder: (context) => ChangeNotifierProvider.value(
+                      value: dietViewModel,
+                      builder: (context, child) {
+                        return FoodSearchView(mealType);
+                      })));
             },
           ),
           IconButton(
@@ -137,7 +145,11 @@ class AddDietView extends ConsumerWidget {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setState) {
-                            return AddDietBottomSheetView(mealType);
+                            return ChangeNotifierProvider.value(
+                                value: dietViewModel,
+                                builder: (context, child) {
+                                  return AddDietBottomSheetView(mealType);
+                                });
                           },
                         );
                       },

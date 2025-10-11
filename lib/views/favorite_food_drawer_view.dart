@@ -1,28 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/enums/meal_type.dart';
 import 'package:project1/functions/add_diet_func.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
+import 'package:project1/viewmodels/favorite_food_drawer_view_model.dart';
+import 'package:project1/viewmodels/home_view_model.dart';
+import 'package:provider/provider.dart';
 import '../constants/strings.dart';
-import '../providers/diet_date_provider.dart';
-import '../providers/user_stream_provider.dart';
 
-class FavoriteFoodDrawerView extends ConsumerStatefulWidget {
+class FavoriteFoodDrawerView extends StatefulWidget {
   final MealType mealType;
   const FavoriteFoodDrawerView(this.mealType, {super.key});
 
   @override
-  FavoriteFoodDrawerViewState createState() => FavoriteFoodDrawerViewState();
+  State<FavoriteFoodDrawerView> createState() => _FavoriteFoodDrawerViewState();
 }
 
-class FavoriteFoodDrawerViewState
-    extends ConsumerState<FavoriteFoodDrawerView> {
+class _FavoriteFoodDrawerViewState extends State<FavoriteFoodDrawerView> {
   final GlobalKey naviKey = GlobalKey();
 
   @override
+  void initState() {
+    super.initState();
+    final FavoriteFoodDrawerViewModel favoriteFoodDrawerViewModel =
+        context.read<FavoriteFoodDrawerViewModel>();
+    final HomeViewModel homeViewModel = context.read<HomeViewModel>();
+
+    favoriteFoodDrawerViewModel.listenFavoriteFood(homeViewModel.userId!);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dietDateProvider) as String;
-    final AsyncValue drawStream = ref.watch(userStreamProvider);
+    // final String dateString = ref.watch(dietDateProvider) as String;
+    // final AsyncValue drawStream = ref.watch(userStreamProvider);
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
+    final FavoriteFoodDrawerViewModel favoriteFoodDrawerViewModel =
+        context.watch<FavoriteFoodDrawerViewModel>();
     Map<int, Map<String, dynamic>> foodMap = {};
 
     return Scaffold(
@@ -31,118 +44,110 @@ class FavoriteFoodDrawerViewState
         title: const Text("즐겨찾기"),
         automaticallyImplyLeading: false,
       ),
-      body: drawStream.when(
-        data: (data) {
-          dynamic snapshotData = data?.data();
-          List favFoods = snapshotData?[kFavsText] ?? [];
+      body: (favoriteFoodDrawerViewModel.userData == null ||
+              favoriteFoodDrawerViewModel.userData?[kFavsText] == null ||
+              favoriteFoodDrawerViewModel.favFoods.isEmpty)
+          ? const Center(child: Text("즐겨찾기에 음식을 등록하세요!"))
+          : ListView.builder(
+              padding: const EdgeInsets.all(10),
+              itemCount: favoriteFoodDrawerViewModel.favFoods.length,
+              itemBuilder: (context, index) {
+                bool itemCheckbox = false;
+                int foodAmount = 1;
 
-          if (snapshotData == null ||
-              snapshotData[kFavsText] == null ||
-              !(data!.exists) ||
-              favFoods.isEmpty) {
-            return const Center(child: Text("즐겨찾기에 음식을 등록하세요!"));
-          }
+                return StatefulBuilder(builder: (context, setState) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        itemCheckbox = !itemCheckbox;
+                      });
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(10),
-            itemCount: favFoods.length,
-            itemBuilder: (context, index) {
-              bool itemCheckbox = false;
-              int foodAmount = 1;
+                      Map<String, dynamic> dataMap = {
+                        kFoodNameText: favoriteFoodDrawerViewModel
+                            .favFoods[index][kFoodNameText],
+                        kCarboText: favoriteFoodDrawerViewModel.favFoods[index]
+                            [kCarboText],
+                        kProteinText: favoriteFoodDrawerViewModel
+                            .favFoods[index][kProteinText],
+                        kFatText: favoriteFoodDrawerViewModel.favFoods[index]
+                            [kFatText],
+                        kKcalText: favoriteFoodDrawerViewModel.favFoods[index]
+                            [kKcalText],
+                        kAmountText: foodAmount
+                      };
 
-              return StatefulBuilder(builder: (context, setState) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      itemCheckbox = !itemCheckbox;
-                    });
+                      if (itemCheckbox && !foodMap.containsKey(index)) {
+                        foodMap[index] = dataMap;
+                      }
 
-                    Map<String, dynamic> dataMap = {
-                      kFoodNameText: favFoods[index][kFoodNameText],
-                      kCarboText: favFoods[index][kCarboText],
-                      kProteinText: favFoods[index][kProteinText],
-                      kFatText: favFoods[index][kFatText],
-                      kKcalText: favFoods[index][kKcalText],
-                      kAmountText: foodAmount
-                    };
+                      if (!itemCheckbox && foodMap.containsKey(index)) {
+                        foodMap.remove(index);
+                      }
 
-                    if (itemCheckbox && !foodMap.containsKey(index)) {
-                      foodMap[index] = dataMap;
-                    }
-
-                    if (!itemCheckbox && foodMap.containsKey(index)) {
-                      foodMap.remove(index);
-                    }
-
-                    naviKey.currentState!.setState(() {});
-                  },
-                  child: Card.outlined(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                          color: itemCheckbox
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.black12,
-                          width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Text("${favFoods[index][kFoodNameText]}"),
-                          Visibility(
-                            visible: itemCheckbox,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        foodAmount < 2 ? () : foodAmount--;
-                                      });
-                                      foodMap[index]![kAmountText] = foodAmount;
-                                      naviKey.currentState!.setState(() {});
-                                    },
-                                    child: const Icon(
-                                      Icons.remove,
-                                      size: 30,
-                                    )),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Text("$foodAmount"),
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        foodAmount++;
-                                      });
-                                      foodMap[index]![kAmountText] = foodAmount;
-                                      naviKey.currentState!.setState(() {});
-                                    },
-                                    child: const Icon(
-                                      Icons.add,
-                                      size: 30,
-                                    ))
-                              ],
-                            ),
-                          )
-                        ],
+                      naviKey.currentState!.setState(() {});
+                    },
+                    child: Card.outlined(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                            color: itemCheckbox
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.black12,
+                            width: 2),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Text(
+                                "${favoriteFoodDrawerViewModel.favFoods[index][kFoodNameText]}"),
+                            Visibility(
+                              visible: itemCheckbox,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          foodAmount < 2 ? () : foodAmount--;
+                                        });
+                                        foodMap[index]![kAmountText] =
+                                            foodAmount;
+                                        naviKey.currentState!.setState(() {});
+                                      },
+                                      child: const Icon(
+                                        Icons.remove,
+                                        size: 30,
+                                      )),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Text("$foodAmount"),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          foodAmount++;
+                                        });
+                                        foodMap[index]![kAmountText] =
+                                            foodAmount;
+                                        naviKey.currentState!.setState(() {});
+                                      },
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 30,
+                                      ))
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              });
-            },
-          );
-        },
-        error: (error, stackTrace) {
-          return Center(child: Text("error : $error"));
-        },
-        loading: () {
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
+                  );
+                });
+              },
+            ),
       bottomNavigationBar: StatefulBuilder(
           key: naviKey,
           builder: (context, setState) {
@@ -171,7 +176,9 @@ class FavoriteFoodDrawerViewState
                                 try {
                                   for (Map<String, dynamic> e in foodList) {
                                     await addDietFunc(
-                                        dateString, widget.mealType, e);
+                                        dietViewModel.dietDateString,
+                                        widget.mealType,
+                                        e);
                                   }
                                 } catch (e) {
                                   Fluttertoast.showToast(msg: "$e");

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:project1/constants/strings.dart';
 import 'package:project1/viewmodels/diet_view_model.dart';
 import 'package:project1/viewmodels/home_view_model.dart';
@@ -74,7 +75,8 @@ class _DietViewState extends State<DietView> {
                       icon: const Icon(Icons.calendar_today)),
                   IconButton(
                       onPressed: () {
-                        if (dietViewModel.dietDate == DateTime.now()) {
+                        if (dietViewModel.dietDateString ==
+                            DateFormat("yyyy-MM-dd").format(DateTime.now())) {
                           return;
                         }
 

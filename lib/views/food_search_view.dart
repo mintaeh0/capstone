@@ -3,28 +3,29 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/enums/meal_type.dart';
+import 'package:project1/viewmodels/diet_view_model.dart';
+import 'package:provider/provider.dart';
 import '../functions/add_diet_func.dart';
-import '../providers/diet_date_provider.dart';
 
-class FoodSearchView extends ConsumerStatefulWidget {
+class FoodSearchView extends StatefulWidget {
   final MealType mealType;
 
   const FoodSearchView(this.mealType, {super.key});
 
   @override
-  FoodSearchViewState createState() => FoodSearchViewState();
+  State<FoodSearchView> createState() => _FoodSearchViewState();
 }
 
-class FoodSearchViewState extends ConsumerState<FoodSearchView> {
+class _FoodSearchViewState extends State<FoodSearchView> {
   String keyword = "";
   Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = ref.watch(dietDateProvider) as String;
+    // final String dateString = ref.watch(dietDateProvider) as String;
+    final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -409,8 +410,11 @@ class FoodSearchViewState extends ConsumerState<FoodSearchView> {
                                                       amountController.text),
                                                 };
                                                 try {
-                                                  addDietFunc(dateString,
-                                                      widget.mealType, foodMap);
+                                                  addDietFunc(
+                                                      dietViewModel
+                                                          .dietDateString,
+                                                      widget.mealType,
+                                                      foodMap);
                                                   Fluttertoast.showToast(
                                                       msg: "목록에 추가되었습니다!");
                                                 } catch (e) {
