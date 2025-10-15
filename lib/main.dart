@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:project1/constants/colors.dart';
+import 'package:project1/core/constant/color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:project1/views/splash_view.dart';
-import 'package:project1/viewmodels/splash_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:project1/core/router/router.dart';
 import 'firebase_options.dart';
 
 // 시작
@@ -24,9 +22,9 @@ ThemeData lightThemeData = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
       brightness: Brightness.light,
-      seedColor: primaryColor,
-      primary: primaryColor,
-      primaryContainer: primaryColor,
+      seedColor: AppColor.primaryColor,
+      primary: AppColor.primaryColor,
+      primaryContainer: AppColor.primaryColor,
       onPrimaryContainer: Colors.white,
       // primary: Color(0xff38DA87),
       surfaceTint: Colors.white,
@@ -35,7 +33,7 @@ ThemeData lightThemeData = ThemeData(
     appBarTheme: const AppBarTheme(
         // backgroundColor: Color(0xff38DA87),
         // surfaceTintColor: Color(0xff38DA87),
-        backgroundColor: primaryColor,
+        backgroundColor: AppColor.primaryColor,
         surfaceTintColor: Colors.white,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -61,9 +59,9 @@ ThemeData darkThemeData = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
       brightness: Brightness.light,
-      seedColor: primaryColor,
-      primary: primaryColor,
-      primaryContainer: primaryColor,
+      seedColor: AppColor.primaryColor,
+      primary: AppColor.primaryColor,
+      primaryContainer: AppColor.primaryColor,
       onPrimaryContainer: Colors.white,
       // primary: Color(0xff38DA87),
       surfaceTint: Colors.white,
@@ -72,7 +70,7 @@ ThemeData darkThemeData = ThemeData(
     appBarTheme: const AppBarTheme(
         // backgroundColor: Color(0xff38DA87),
         // surfaceTintColor: Color(0xff38DA87),
-        backgroundColor: primaryColor,
+        backgroundColor: AppColor.primaryColor,
         surfaceTintColor: Colors.white,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -99,7 +97,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -112,11 +111,6 @@ class MyApp extends StatelessWidget {
       darkTheme: darkThemeData,
       themeMode: ThemeMode.light,
       // themeMode: ThemeMode.dark,
-      home: ChangeNotifierProvider(
-          create: (context) => SplashViewModel(),
-          builder: (context, child) {
-            return SplashView();
-          }),
     );
   }
 }
