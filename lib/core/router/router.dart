@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:project1/core/constant/app_route_path.dart';
+import 'package:project1/di/di_setup.dart';
 import 'package:project1/core/enum/meal_type.dart';
 import 'package:project1/presentation/view/add_diet_view.dart';
 import 'package:project1/presentation/view/favorite_food_view.dart';
@@ -34,7 +35,7 @@ final router = GoRouter(
 final _splash = GoRoute(
   path: AppRoutePath.splash,
   builder: (context, state) => ChangeNotifierProvider(
-      create: (context) => SplashViewModel(),
+      create: (context) => getIt<SplashViewModel>(),
       builder: (context, child) {
         return SplashView();
       }),
@@ -44,7 +45,7 @@ final _splash = GoRoute(
 final _login = GoRoute(
   path: AppRoutePath.login,
   builder: (context, state) => ChangeNotifierProvider(
-      create: (context) => LoginViewModel(),
+      create: (context) => getIt<LoginViewModel>(),
       builder: (context, child) {
         return LoginView();
       }),
@@ -54,7 +55,7 @@ final _login = GoRoute(
 final _home = GoRoute(
   path: AppRoutePath.home,
   builder: (context, state) => ChangeNotifierProvider(
-      create: (context) => HomeViewModel(),
+      create: (context) => getIt<HomeViewModel>(),
       builder: (context, child) {
         return HomeView();
       }),
@@ -90,7 +91,8 @@ final _favoriteFood = GoRoute(
   path: AppRoutePath.favoriteFood,
   builder: (context, state) => MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => FavoriteFoodViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => getIt<FavoriteFoodViewModel>()),
         ChangeNotifierProvider.value(value: state.extra! as HomeViewModel),
       ],
       builder: (context, child) {
@@ -103,7 +105,8 @@ final _profileSetting = GoRoute(
   path: AppRoutePath.profileSetting,
   builder: (context, state) => MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ProfileSettingViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => getIt<ProfileSettingViewModel>()),
         ChangeNotifierProvider.value(value: state.extra! as HomeViewModel)
       ],
       builder: (context, child) {

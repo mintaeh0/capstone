@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:project1/core/constant/app_route_path.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/di/di_setup.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/favorite_food_drawer_view_model.dart';
 import 'package:project1/presentation/view/add_diet_bottom_sheet_view.dart';
@@ -31,7 +32,7 @@ class AddDietView extends StatelessWidget {
     return Scaffold(
       endDrawer: Drawer(
           child: ChangeNotifierProvider(
-              create: (context) => FavoriteFoodDrawerViewModel(),
+              create: (context) => getIt<FavoriteFoodDrawerViewModel>(),
               builder: (context, child) {
                 return FavoriteFoodDrawerView(mealType);
               })),

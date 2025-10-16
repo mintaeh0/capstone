@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class LoginViewModel extends ChangeNotifier {
   // 사용자 uid 저장
   Future<void> setUid(String uid) async {

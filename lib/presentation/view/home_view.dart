@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/core/constant/app_route_path.dart';
+import 'package:project1/di/di_setup.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/viewmodel/profile_view_model.dart';
@@ -80,7 +81,7 @@ class _HomeViewState extends State<HomeView> {
     final List<Widget> body = [
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => DietViewModel()),
+          ChangeNotifierProvider(create: (context) => getIt<DietViewModel>()),
           ChangeNotifierProvider.value(value: homeViewModel),
         ],
         builder: (context, child) => DietView(),
@@ -93,7 +94,8 @@ class _HomeViewState extends State<HomeView> {
       //     }),
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => ProfileViewModel()),
+          ChangeNotifierProvider(
+              create: (context) => getIt<ProfileViewModel>()),
           ChangeNotifierProvider.value(value: homeViewModel),
         ],
         builder: (context, child) => ProfileView(),

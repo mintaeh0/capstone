@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 
 enum SplashViewModelState { error, loading, autoLoggedIn, loginRequired }
 
+@injectable
 class SplashViewModel extends ChangeNotifier {
   SplashViewModelState state = SplashViewModelState.loading;
   String errorMessage = '';
