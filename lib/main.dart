@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:project1/core/constant/color.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:project1/di/di_setup.dart';
 import 'package:project1/core/router/router.dart';
 import 'firebase_options.dart';
 
@@ -15,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  configureDependencies();
   runApp(MyApp());
 }
 

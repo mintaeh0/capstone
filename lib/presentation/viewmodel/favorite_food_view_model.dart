@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:project1/core/constant/string.dart';
 
+@injectable
 class FavoriteFoodViewModel extends ChangeNotifier {
   Map<String, dynamic>? userData;
   StreamSubscription? _favoriteFoodSubscription;

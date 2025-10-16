@@ -3,8 +3,10 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:project1/core/constant/string.dart';
 
+@injectable
 class ProfileViewModel extends ChangeNotifier {
   Map<String, dynamic>? profileData;
   StreamSubscription? _profileSubscription;

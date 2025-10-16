@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:project1/core/constant/string.dart';
 
+@injectable
 class ProfileSettingViewModel extends ChangeNotifier {
   StreamSubscription? _profileSetSubscription;
   Map<String, dynamic>? profileSetData;

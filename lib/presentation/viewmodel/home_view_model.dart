@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 
 enum HomeViewModelState { idle, loading, error }
 
+@injectable
 class HomeViewModel extends ChangeNotifier {
   String? userId;
   String errorMessage = '';

@@ -3,12 +3,14 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
 
 enum DietViewModelState { idle, loading, error }
 
+@injectable
 class DietViewModel extends ChangeNotifier {
   DietViewModelState state = DietViewModelState.loading;
 
