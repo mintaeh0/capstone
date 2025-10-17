@@ -162,7 +162,7 @@ class _HomeViewState extends State<HomeView> {
                     automaticallyImplyLeading: false,
                     title: _title[homeViewModel.navigationBarIndex],
                     actions: [
-                      if (homeViewModel.navigationBarIndex == 2)
+                      if (homeViewModel.navigationBarIndex == 1)
                         IconButton(
                             tooltip: "로그아웃",
                             onPressed: () {
