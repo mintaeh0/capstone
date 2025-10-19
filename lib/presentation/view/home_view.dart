@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:project1/core/constant/app_route_path.dart';
 import 'package:project1/di/di_setup.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
@@ -67,18 +64,14 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  late final List<Widget> _body;
+
   @override
   void initState() {
     super.initState();
     final HomeViewModel homeViewModel = context.read<HomeViewModel>();
-    homeViewModel.init();
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
-
-    final List<Widget> body = [
+    _body = [
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => getIt<DietViewModel>()),
@@ -101,6 +94,11 @@ class _HomeViewState extends State<HomeView> {
         builder: (context, child) => ProfileView(),
       )
     ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
 
     return PopScope(
       canPop: false,
@@ -123,15 +121,11 @@ class _HomeViewState extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     FilledButton(
-                      onPressed: () {
-                        SystemNavigator.pop();
-                      },
+                      onPressed: () => SystemNavigator.pop(),
                       child: const Text("종료"),
                     ),
                     TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: () => context.pop(),
                         child: const Text("취소")),
                   ],
                 ),
@@ -186,30 +180,29 @@ class _HomeViewState extends State<HomeView> {
                                         children: [
                                           FilledButton(
                                               onPressed: () async {
-                                                try {
-                                                  await FirebaseAuth.instance
-                                                      .signOut();
-                                                  await GoogleSignIn()
-                                                      .signOut();
-                                                  await const FlutterSecureStorage()
-                                                      .delete(key: "uid");
-                                                  await homeViewModel
-                                                      .disableAutoLogin();
+                                                final success =
+                                                    await homeViewModel
+                                                        .signOut();
 
-                                                  if (context.mounted) {
-                                                    context
-                                                        .go(AppRoutePath.login);
-                                                  }
-                                                } catch (e) {
+                                                if (!context.mounted) {
+                                                  debugPrint(
+                                                      "HomeView: context unmounted before navigation");
                                                   Fluttertoast.showToast(
-                                                      msg: "$e");
+                                                    msg:
+                                                        "Mount Error : 로그아웃 처리가 완료되지 않았습니다",
+                                                  );
+                                                  return;
+                                                }
+
+                                                if (success) {
+                                                  context
+                                                      .go(AppRoutePath.login);
                                                 }
                                               },
                                               child: const Text("확인")),
                                           TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
                                               child: const Text("취소"))
                                         ],
                                       )
@@ -221,7 +214,10 @@ class _HomeViewState extends State<HomeView> {
                             icon: const Icon(Icons.power_settings_new))
                     ],
                   ),
-                  body: body[homeViewModel.navigationBarIndex],
+                  body: IndexedStack(
+                    index: homeViewModel.navigationBarIndex,
+                    children: _body,
+                  ),
                   bottomNavigationBar: Container(
                     clipBehavior: Clip.hardEdge,
                     decoration: const BoxDecoration(
@@ -237,6 +233,8 @@ class _HomeViewState extends State<HomeView> {
                       // selectedItemColor: Colors.white,
                       // unselectedItemColor: Colors.white,
                       currentIndex: homeViewModel.navigationBarIndex,
+                      // showSelectedLabels: false,
+                      // showUnselectedLabels: false,
                       selectedLabelStyle: const TextStyle(fontSize: 0),
                       unselectedLabelStyle: const TextStyle(fontSize: 0),
                       onTap: (int newIndex) =>
