@@ -7,8 +7,6 @@ import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/viewmodel/profile_view_model.dart';
 import 'package:project1/presentation/widget/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-// 프로필 페이지
 
 // final profileFutureProvider =
 //     FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
@@ -24,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 //       .get();
 // });
 
+// 프로필 페이지
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -90,8 +89,7 @@ class _ProfileViewState extends State<ProfileView> {
                                     fontSize: 18),
                               ),
                               onTap: () {
-                                launchUrl(Uri.parse(
-                                    "https://open.kakao.com/o/sxLbtovg"));
+                                profileViewModel.openKakaoLink();
                               },
                             )
                           ],
@@ -99,16 +97,18 @@ class _ProfileViewState extends State<ProfileView> {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                context.pop();
                               },
                               child: const Text("닫기"))
                         ],
                       ))),
           const SizedBox(height: 5),
           menuItem(
-              "설정",
-              () => context.push(AppRoutePath.profileSetting,
-                  extra: homeViewModel)),
+            "설정",
+            () {
+              context.push(AppRoutePath.profileSetting, extra: homeViewModel);
+            },
+          ),
         ],
       );
     }
@@ -116,16 +116,12 @@ class _ProfileViewState extends State<ProfileView> {
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.all(20),
-      child: Column(children: [
+      child: Column(spacing: 10, children: [
         profileCard(),
         inbodyGoalCard(profileViewModel.profileData),
-        const SizedBox(height: 10),
         const BannerAdWidget(),
-        // const SizedBox(height: 10),
         // bmiCard(),
-        const SizedBox(height: 20),
         settingButton(),
-        const SizedBox(height: 10),
         GestureDetector(
           child: Text(
             "라이센스 보기",
@@ -139,7 +135,7 @@ class _ProfileViewState extends State<ProfileView> {
             showLicensePage(context: context);
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         const BannerAdWidget(),
         const SizedBox(height: 10),
       ]),
@@ -155,10 +151,6 @@ class _ProfileViewState extends State<ProfileView> {
           children: [
             Text(
               "${FirebaseAuth.instance.currentUser!.displayName}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "${175}cm",
               style: const TextStyle(fontSize: 20),
             ),
           ],
@@ -180,6 +172,7 @@ class _ProfileViewState extends State<ProfileView> {
             style: TextStyle(fontSize: 18),
           ),
           Row(
+            spacing: 10,
             children: [
               const Column(children: [
                 Text("탄수화물"),
@@ -187,7 +180,6 @@ class _ProfileViewState extends State<ProfileView> {
                 Text("지방"),
                 Text("칼로리"),
               ]),
-              const SizedBox(width: 10),
               Column(children: [
                 Text("${userdata?[AppString.carboGoal] ?? 0}"),
                 Text("${userdata?[AppString.protGoal] ?? 0}"),
@@ -298,11 +290,13 @@ class _ProfileViewState extends State<ProfileView> {
       child: Card.outlined(
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(title, style: const TextStyle(fontSize: 17)),
-            const Icon(Icons.keyboard_arrow_right_rounded)
-          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 17)),
+              const Icon(Icons.keyboard_arrow_right_rounded)
+            ],
+          ),
         ),
       ),
     );
