@@ -1,12 +1,17 @@
 class AppString {
+  // collection name
   static const String dietCollection = "diet";
   static const String inbodyCollection = "inbody";
   static const String usersCollection = "users";
+
   static const String favorites = "favs";
+
+  // nutri goal
   static const String carboGoal = "carboGoal";
   static const String protGoal = "protGoal";
   static const String fatGoal = "fatGoal";
   static const String kcalGoal = "kcalGoal";
+
   static const String carbo = "carbo";
   static const String sugar = "sugar";
   static const String dietaryFiber = "dietFib";
@@ -15,6 +20,7 @@ class AppString {
   static const String saturatedFat = "satFat";
   static const String transFat = "transFat";
   static const String kcal = "kcal";
+
   static const String foodSize = "foodSize";
   static const String companyName = "companyNm";
   static const String foodName = "foodNm";

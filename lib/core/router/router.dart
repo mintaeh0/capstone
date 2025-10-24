@@ -7,13 +7,13 @@ import 'package:project1/presentation/view/favorite_food_view.dart';
 import 'package:project1/presentation/view/food_search_view.dart';
 import 'package:project1/presentation/view/home_view.dart';
 import 'package:project1/presentation/view/login_view.dart';
-import 'package:project1/presentation/view/proflie_set_view.dart';
+import 'package:project1/presentation/view/proflie_setting_view.dart';
 import 'package:project1/presentation/view/splash_view.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/favorite_food_view_model.dart';
 import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/viewmodel/login_view_model.dart';
-import 'package:project1/presentation/viewmodel/profile_set_view_model.dart';
+import 'package:project1/presentation/viewmodel/profile_setting_view_model.dart';
 import 'package:project1/presentation/viewmodel/splash_view_model.dart';
 import 'package:provider/provider.dart';
 

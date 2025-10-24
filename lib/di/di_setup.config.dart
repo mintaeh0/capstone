@@ -18,7 +18,7 @@ import 'package:project1/presentation/viewmodel/favorite_food_view_model.dart'
     as _i929;
 import 'package:project1/presentation/viewmodel/home_view_model.dart' as _i876;
 import 'package:project1/presentation/viewmodel/login_view_model.dart' as _i29;
-import 'package:project1/presentation/viewmodel/profile_set_view_model.dart'
+import 'package:project1/presentation/viewmodel/profile_setting_view_model.dart'
     as _i355;
 import 'package:project1/presentation/viewmodel/profile_view_model.dart'
     as _i168;
