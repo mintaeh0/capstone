@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project1/core/constant/app_route_path.dart';
@@ -7,20 +6,6 @@ import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/viewmodel/profile_view_model.dart';
 import 'package:project1/presentation/widget/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
-
-// final profileFutureProvider =
-//     FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
-//   final String userId = ref.watch(userIdProvider).asData!.value!;
-
-//   return FirebaseFirestore.instance
-//       .collection(kUsersCollectionText)
-//       .doc(userId)
-//       .collection(kInbodyCollectionText)
-//       .where("docdate", isNull: false)
-//       .orderBy("docdate", descending: true)
-//       .limit(1)
-//       .get();
-// });
 
 // 프로필 페이지
 class ProfileView extends StatefulWidget {
@@ -31,9 +16,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  // late num _currentWeight = 0, _height, _bmiNum = 0;
-  // String _bmiString = "체중(kg), 신장(cm) 입력 필요";
-
   @override
   void initState() {
     super.initState();
@@ -106,6 +88,7 @@ class _ProfileViewState extends State<ProfileView> {
           menuItem(
             "설정",
             () {
+              // 프로필 설정 화면으로 이동
               context.push(AppRoutePath.profileSetting, extra: homeViewModel);
             },
           ),
@@ -117,7 +100,7 @@ class _ProfileViewState extends State<ProfileView> {
         child: Padding(
       padding: const EdgeInsets.all(20),
       child: Column(spacing: 10, children: [
-        profileCard(),
+        profileCard(profileViewModel.userName),
         inbodyGoalCard(profileViewModel.profileData),
         const BannerAdWidget(),
         // bmiCard(),
@@ -142,7 +125,7 @@ class _ProfileViewState extends State<ProfileView> {
     ));
   }
 
-  Widget profileCard() {
+  Widget profileCard(String userName) {
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -150,7 +133,7 @@ class _ProfileViewState extends State<ProfileView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${FirebaseAuth.instance.currentUser!.displayName}",
+              userName,
               style: const TextStyle(fontSize: 20),
             ),
           ],
@@ -174,12 +157,14 @@ class _ProfileViewState extends State<ProfileView> {
           Row(
             spacing: 10,
             children: [
-              const Column(children: [
-                Text("탄수화물"),
-                Text("단백질"),
-                Text("지방"),
-                Text("칼로리"),
-              ]),
+              const Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text("탄수화물"),
+                    Text("단백질"),
+                    Text("지방"),
+                    Text("칼로리"),
+                  ]),
               Column(children: [
                 Text("${userdata?[AppString.carboGoal] ?? 0}"),
                 Text("${userdata?[AppString.protGoal] ?? 0}"),
@@ -193,6 +178,7 @@ class _ProfileViewState extends State<ProfileView> {
     ));
   }
 
+  // BMI 영역 카드
   // Widget bmiCard() {
   //   return Card.outlined(
   //     child: Padding(
@@ -219,6 +205,7 @@ class _ProfileViewState extends State<ProfileView> {
   //   );
   // }
 
+  // BMI 게이지
   // Widget bmiGauge() {
   //   return SfLinearGauge(
   //     minimum: 15,
