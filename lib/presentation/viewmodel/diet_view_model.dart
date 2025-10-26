@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/core/enum/nutrition.dart';
 
 enum DietViewModelState { idle, loading, error }
 
@@ -101,22 +102,22 @@ class DietViewModel extends ChangeNotifier {
         dietData!.forEach((key, value) {
           if (key == MealType.breakfast.code) {
             for (var e in value) {
-              breakfastKcal += e[AppString.kcal] * e[AppString.amount];
+              breakfastKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.lunch.code) {
             for (var e in value) {
-              lunchKcal += e[AppString.kcal] * e[AppString.amount];
+              lunchKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.dinner.code) {
             for (var e in value) {
-              dinnerKcal += e[AppString.kcal] * e[AppString.amount];
+              dinnerKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.snack.code) {
             for (var e in value) {
-              snackKcal += e[AppString.kcal] * e[AppString.amount];
+              snackKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
         });
@@ -135,10 +136,10 @@ class DietViewModel extends ChangeNotifier {
 
         dietData!.forEach((key, value) {
           for (Map ch in value) {
-            carbo += ch[AppString.carbo] * ch["amount"];
-            protein += ch[AppString.protein] * ch["amount"];
-            fat += ch[AppString.fat] * ch["amount"];
-            kcal += ch[AppString.kcal] * ch["amount"];
+            carbo += ch[Nutrition.carbo.code] * ch["amount"];
+            protein += ch[Nutrition.prot.code] * ch["amount"];
+            fat += ch[Nutrition.fat.code] * ch["amount"];
+            kcal += ch[Nutrition.kcal.code] * ch["amount"];
           }
         });
 

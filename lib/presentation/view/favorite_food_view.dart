@@ -1,12 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
+import 'package:project1/core/enum/nutrition.dart';
 import 'package:project1/presentation/viewmodel/favorite_food_view_model.dart';
 import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../core/constant/string.dart';
-import '../../function/add_favorite_food_func.dart';
 
 class FavoriteFoodView extends StatefulWidget {
   const FavoriteFoodView({super.key});
@@ -16,9 +16,6 @@ class FavoriteFoodView extends StatefulWidget {
 }
 
 class _FavoriteFoodViewState extends State<FavoriteFoodView> {
-  final _form = GlobalKey<FormState>();
-  late String _name, _carbo, _protein, _fat, _kcal;
-
   @override
   void initState() {
     super.initState();
@@ -57,47 +54,95 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
               builder: (context) {
                 return SingleChildScrollView(
                   child: Form(
-                    key: _form,
+                    key: favoriteFoodViewModel.form,
                     child: Container(
                       width: double.infinity,
                       padding: EdgeInsets.only(
                           bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                            spacing: 10,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("즐겨찾기 추가", style: TextStyle(fontSize: 15)),
-                              Text("※ 정보가 없을 시 0 입력"),
-                            ],
-                          ),
-                          Container(height: 10),
-                          nameInput(),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(flex: 1, child: nutriInput(0)),
-                              const SizedBox(width: 10),
-                              Expanded(flex: 1, child: nutriInput(1))
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(flex: 1, child: nutriInput(2)),
-                              const SizedBox(width: 10),
-                              Expanded(flex: 1, child: nutriInput(3))
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(children: [
-                            Expanded(flex: 1, child: Container()),
-                            Expanded(flex: 2, child: dietSubmitButton()),
-                            Expanded(flex: 1, child: Container())
-                          ])
-                        ]),
+                              const Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("즐겨찾기 추가",
+                                      style: TextStyle(fontSize: 15)),
+                                  Text("※ 정보가 없을 시 0 입력"),
+                                ],
+                              ),
+                              nameInputTextField(onSaved: (newValue) {
+                                favoriteFoodViewModel.name = newValue!;
+                              }),
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: nutriInputTextField(
+                                        Nutrition.carbo,
+                                        onSaved: (newValue) {
+                                          favoriteFoodViewModel.carbo =
+                                              newValue!;
+                                        },
+                                      )),
+                                  Expanded(
+                                      flex: 1,
+                                      child: nutriInputTextField(
+                                        Nutrition.prot,
+                                        onSaved: (newValue) {
+                                          favoriteFoodViewModel.protein =
+                                              newValue!;
+                                        },
+                                      ))
+                                ],
+                              ),
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: nutriInputTextField(
+                                        Nutrition.fat,
+                                        onSaved: (newValue) {
+                                          favoriteFoodViewModel.fat = newValue!;
+                                        },
+                                      )),
+                                  Expanded(
+                                      flex: 1,
+                                      child: nutriInputTextField(
+                                        Nutrition.kcal,
+                                        onSaved: (newValue) {
+                                          favoriteFoodViewModel.kcal =
+                                              newValue!;
+                                        },
+                                      ))
+                                ],
+                              ),
+                              Row(children: [
+                                Expanded(flex: 1, child: Container()),
+                                Expanded(
+                                    flex: 2,
+                                    child: FilledButton(
+                                        onPressed: () async {
+                                          try {
+                                            await favoriteFoodViewModel
+                                                .addFavoriteFood();
+
+                                            if (context.mounted) {
+                                              context.pop();
+                                            }
+                                          } catch (e) {
+                                            Fluttertoast.showToast(msg: "$e");
+                                          }
+                                        },
+                                        child: const Text("저장"))),
+                                Expanded(flex: 1, child: Container())
+                              ])
+                            ]),
                       ),
                     ),
                   ),
@@ -129,14 +174,14 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
                               child: Row(
                                 children: [
                                   const SizedBox(width: 20),
-                                  const Column(
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("탄수화물"),
-                                      Text("단백질"),
-                                      Text("지방"),
-                                      Text("칼로리"),
+                                      Text(Nutrition.carbo.text),
+                                      Text(Nutrition.prot.text),
+                                      Text(Nutrition.fat.text),
+                                      Text(Nutrition.kcal.text),
                                     ],
                                   ),
                                   const VerticalDivider(),
@@ -144,23 +189,23 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                          "${favoriteFoodViewModel.favFoods[index][AppString.carbo]}"),
+                                          "${favoriteFoodViewModel.favFoods[index][Nutrition.carbo.code]}"),
                                       Text(
-                                          "${favoriteFoodViewModel.favFoods[index][AppString.protein]}"),
+                                          "${favoriteFoodViewModel.favFoods[index][Nutrition.prot.code]}"),
                                       Text(
-                                          "${favoriteFoodViewModel.favFoods[index][AppString.fat]}"),
+                                          "${favoriteFoodViewModel.favFoods[index][Nutrition.fat.code]}"),
                                       Text(
-                                          "${favoriteFoodViewModel.favFoods[index][AppString.kcal]}"),
+                                          "${favoriteFoodViewModel.favFoods[index][Nutrition.kcal.code]}"),
                                     ],
                                   ),
-                                  const Column(
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(" g"),
-                                      Text(" g"),
-                                      Text(" g"),
-                                      Text(" kcal"),
+                                      Text(" ${Nutrition.carbo.text}"),
+                                      Text(" ${Nutrition.prot.text}"),
+                                      Text(" ${Nutrition.fat.text}"),
+                                      Text(" ${Nutrition.kcal.text}"),
                                     ],
                                   )
                                 ],
@@ -171,26 +216,30 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  TextButton(
-                                      onPressed: () {
+                                  FilledButton.tonal(
+                                      onPressed: () async {
                                         try {
-                                          FirebaseFirestore.instance
-                                              .collection(
-                                                  AppString.usersCollection)
-                                              .doc(homeViewModel.userId)
-                                              .update({
-                                            AppString.favorites:
-                                                FieldValue.arrayRemove([
-                                              favoriteFoodViewModel
-                                                  .favFoods[index]
-                                            ])
-                                          });
+                                          favoriteFoodViewModel
+                                              .deleteFavoriteFood(
+                                                  homeViewModel.userId!, index);
+                                          if (context.mounted) {
+                                            context.pop();
+                                          }
+
+                                          Fluttertoast.showToast(
+                                              msg: "삭제되었습니다");
                                         } catch (e) {
                                           Fluttertoast.showToast(msg: "$e");
                                         }
-                                        Navigator.pop(context);
-                                        Fluttertoast.showToast(msg: "삭제되었습니다");
                                       },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            WidgetStateProperty.all(
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .error
+                                                    .withAlpha(20)),
+                                      ),
                                       child: Text(
                                         "삭제",
                                         style: TextStyle(
@@ -198,9 +247,9 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
                                                 .colorScheme
                                                 .error),
                                       )),
-                                  TextButton(
+                                  FilledButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        context.pop();
                                       },
                                       child: const Text("닫기")),
                                 ],
@@ -227,7 +276,7 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
               ));
   }
 
-  Widget nameInput() {
+  Widget nameInputTextField({void Function(String?)? onSaved}) {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
@@ -236,9 +285,7 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
           return null;
         }
       },
-      onSaved: (newValue) {
-        _name = newValue as String;
-      },
+      onSaved: onSaved,
       keyboardType: TextInputType.text,
       decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -248,13 +295,8 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
     );
   }
 
-  Widget nutriInput(int typeNum) {
-    List type = [
-      ["탄수화물", "g"],
-      ["단백질", "g"],
-      ["지방", "g"],
-      ["칼로리", "kcal"]
-    ];
+  Widget nutriInputTextField(Nutrition nutrition,
+      {void Function(String?)? onSaved}) {
     return TextFormField(
       validator: (value) {
         if (value!.isEmpty ||
@@ -265,65 +307,19 @@ class _FavoriteFoodViewState extends State<FavoriteFoodView> {
           return null;
         }
       },
-      onSaved: (newValue) {
-        switch (typeNum) {
-          case 0:
-            _carbo = newValue as String;
-            break;
-          case 1:
-            _protein = newValue as String;
-            break;
-          case 2:
-            _fat = newValue as String;
-            break;
-          case 3:
-            _kcal = newValue as String;
-            break;
-        }
-      },
+      onSaved: onSaved,
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(
-            typeNum == 3 ? r'^\d{1,4}(\.\d{0,1})?' : r'^\d{1,3}(\.\d{0,1})?'))
+        FilteringTextInputFormatter.allow(RegExp(nutrition == Nutrition.kcal
+            ? r'^\d{1,4}(\.\d{0,1})?'
+            : r'^\d{1,3}(\.\d{0,1})?'))
       ],
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
           border: const OutlineInputBorder(),
-          labelText: type[typeNum][0],
+          labelText: nutrition.text,
           errorStyle: const TextStyle(fontSize: 0),
           contentPadding: const EdgeInsets.all(10),
-          suffixText: type[typeNum][1]),
+          suffixText: nutrition.unit),
     );
-  }
-
-  Widget dietSubmitButton() {
-    return FilledButton(
-        onPressed: () async {
-          if (_form.currentState!.validate()) {
-            _form.currentState!.save();
-            Map<String, dynamic> foodMap = {
-              AppString.foodName: _name,
-              AppString.carbo: int.tryParse(_carbo) ?? double.parse(_carbo),
-              AppString.protein:
-                  int.tryParse(_protein) ?? double.parse(_protein),
-              AppString.fat: int.tryParse(_fat) ?? double.parse(_fat),
-              AppString.kcal: int.tryParse(_kcal) ?? double.parse(_kcal),
-            };
-
-            try {
-              await addFavFoodFunc({
-                AppString.foodName: foodMap[AppString.foodName],
-                AppString.carbo: foodMap[AppString.carbo],
-                AppString.protein: foodMap[AppString.protein],
-                AppString.fat: foodMap[AppString.fat],
-                AppString.kcal: foodMap[AppString.kcal],
-              });
-            } catch (e) {
-              Fluttertoast.showToast(msg: "$e");
-            }
-
-            Navigator.of(context).pop();
-          }
-        },
-        child: const Text("저장"));
   }
 }

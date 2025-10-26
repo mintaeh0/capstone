@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/core/enum/nutrition.dart';
 import 'package:project1/function/add_diet_func.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/favorite_food_drawer_view_model.dart';
@@ -66,14 +67,14 @@ class _FavoriteFoodDrawerViewState extends State<FavoriteFoodDrawerView> {
                       Map<String, dynamic> dataMap = {
                         AppString.foodName: favoriteFoodDrawerViewModel
                             .favFoods[index][AppString.foodName],
-                        AppString.carbo: favoriteFoodDrawerViewModel
-                            .favFoods[index][AppString.carbo],
-                        AppString.protein: favoriteFoodDrawerViewModel
-                            .favFoods[index][AppString.protein],
-                        AppString.fat: favoriteFoodDrawerViewModel
-                            .favFoods[index][AppString.fat],
-                        AppString.kcal: favoriteFoodDrawerViewModel
-                            .favFoods[index][AppString.kcal],
+                        Nutrition.carbo.code: favoriteFoodDrawerViewModel
+                            .favFoods[index][Nutrition.carbo.code],
+                        Nutrition.prot.code: favoriteFoodDrawerViewModel
+                            .favFoods[index][Nutrition.prot.code],
+                        Nutrition.fat.code: favoriteFoodDrawerViewModel
+                            .favFoods[index][Nutrition.fat.code],
+                        Nutrition.kcal.code: favoriteFoodDrawerViewModel
+                            .favFoods[index][Nutrition.kcal.code],
                         AppString.amount: foodAmount
                       };
 
