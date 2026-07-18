@@ -411,10 +411,10 @@ class _FoodSearchViewState extends State<FoodSearchView> {
                                                 };
                                                 try {
                                                   addDietFunc(
-                                                      dietViewModel
+                                                      mealDate: dietViewModel
                                                           .dietDateString,
-                                                      widget.mealType,
-                                                      foodMap);
+                                                      mealType: widget.mealType,
+                                                      foodMap: foodMap);
                                                   Fluttertoast.showToast(
                                                       msg: "목록에 추가되었습니다!");
                                                 } catch (e) {

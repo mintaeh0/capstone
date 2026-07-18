@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:project1/core/constant/string.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/widget/banner_ad_widget.dart';
@@ -30,9 +30,6 @@ class _DietViewState extends State<DietView> {
     final HomeViewModel homeViewModel = context.watch<HomeViewModel>();
     final DietViewModel dietViewModel = context.watch<DietViewModel>();
 
-    // final String dateString = ref.watch(dietDateProvider) as String;
-    // final DateString dateStringNotifier = ref.read(dietDateProvider.notifier);
-
     if (dietViewModel.state == DietViewModelState.loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -49,6 +46,7 @@ class _DietViewState extends State<DietView> {
                 children: [
                   IconButton(
                       onPressed: () {
+                        // 날짜 감소
                         dietViewModel.decDietDate();
                         dietViewModel.restartListen(homeViewModel.userId!);
                       },
@@ -75,11 +73,13 @@ class _DietViewState extends State<DietView> {
                       icon: const Icon(Icons.calendar_today)),
                   IconButton(
                       onPressed: () {
+                        // 오늘 날짜라면 증가 불가
                         if (dietViewModel.dietDateString ==
                             DateFormat("yyyy-MM-dd").format(DateTime.now())) {
                           return;
                         }
 
+                        // 날짜 증가
                         dietViewModel.incDietDate();
                         dietViewModel.restartListen(homeViewModel.userId!);
                       },
@@ -107,20 +107,21 @@ class _DietViewState extends State<DietView> {
                               children: [
                                 TextButton(
                                     onPressed: () {
-                                      Navigator.pop(context);
+                                      context.pop();
                                     },
                                     child: const Text("취소")),
                                 FilledButton(
                                     onPressed: () async {
-                                      await FirebaseFirestore.instance
-                                          .collection(AppString.usersCollection)
-                                          .doc(homeViewModel.userId)
-                                          .collection(AppString.dietCollection)
-                                          .doc(dietViewModel.dietDateString)
-                                          .delete();
+                                      try {
+                                        await dietViewModel.deleteCurrentDiet(
+                                            homeViewModel.userId!);
 
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
+                                      } catch (e) {
+                                        Fluttertoast.showToast(
+                                            msg: "삭제 중 오류가 발생했습니다.");
                                       }
                                     },
                                     child: const Text("삭제")),

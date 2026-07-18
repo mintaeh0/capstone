@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project1/core/constant/app_route_path.dart';
@@ -7,23 +6,8 @@ import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:project1/presentation/viewmodel/profile_view_model.dart';
 import 'package:project1/presentation/widget/banner_ad_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 // 프로필 페이지
-
-// final profileFutureProvider =
-//     FutureProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
-//   final String userId = ref.watch(userIdProvider).asData!.value!;
-
-//   return FirebaseFirestore.instance
-//       .collection(kUsersCollectionText)
-//       .doc(userId)
-//       .collection(kInbodyCollectionText)
-//       .where("docdate", isNull: false)
-//       .orderBy("docdate", descending: true)
-//       .limit(1)
-//       .get();
-// });
-
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -32,9 +16,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  // late num _currentWeight = 0, _height, _bmiNum = 0;
-  // String _bmiString = "체중(kg), 신장(cm) 입력 필요";
-
   @override
   void initState() {
     super.initState();
@@ -90,8 +71,7 @@ class _ProfileViewState extends State<ProfileView> {
                                     fontSize: 18),
                               ),
                               onTap: () {
-                                launchUrl(Uri.parse(
-                                    "https://open.kakao.com/o/sxLbtovg"));
+                                profileViewModel.openKakaoLink();
                               },
                             )
                           ],
@@ -99,16 +79,19 @@ class _ProfileViewState extends State<ProfileView> {
                         actions: [
                           TextButton(
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                context.pop();
                               },
                               child: const Text("닫기"))
                         ],
                       ))),
           const SizedBox(height: 5),
           menuItem(
-              "설정",
-              () => context.push(AppRoutePath.profileSetting,
-                  extra: homeViewModel)),
+            "설정",
+            () {
+              // 프로필 설정 화면으로 이동
+              context.push(AppRoutePath.profileSetting, extra: homeViewModel);
+            },
+          ),
         ],
       );
     }
@@ -116,16 +99,12 @@ class _ProfileViewState extends State<ProfileView> {
     return SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.all(20),
-      child: Column(children: [
-        profileCard(),
+      child: Column(spacing: 10, children: [
+        profileCard(profileViewModel.userName),
         inbodyGoalCard(profileViewModel.profileData),
-        const SizedBox(height: 10),
         const BannerAdWidget(),
-        // const SizedBox(height: 10),
         // bmiCard(),
-        const SizedBox(height: 20),
         settingButton(),
-        const SizedBox(height: 10),
         GestureDetector(
           child: Text(
             "라이센스 보기",
@@ -139,14 +118,14 @@ class _ProfileViewState extends State<ProfileView> {
             showLicensePage(context: context);
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         const BannerAdWidget(),
         const SizedBox(height: 10),
       ]),
     ));
   }
 
-  Widget profileCard() {
+  Widget profileCard(String userName) {
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -154,11 +133,7 @@ class _ProfileViewState extends State<ProfileView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${FirebaseAuth.instance.currentUser!.displayName}",
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              "${175}cm",
+              userName,
               style: const TextStyle(fontSize: 20),
             ),
           ],
@@ -180,14 +155,16 @@ class _ProfileViewState extends State<ProfileView> {
             style: TextStyle(fontSize: 18),
           ),
           Row(
+            spacing: 10,
             children: [
-              const Column(children: [
-                Text("탄수화물"),
-                Text("단백질"),
-                Text("지방"),
-                Text("칼로리"),
-              ]),
-              const SizedBox(width: 10),
+              const Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text("탄수화물"),
+                    Text("단백질"),
+                    Text("지방"),
+                    Text("칼로리"),
+                  ]),
               Column(children: [
                 Text("${userdata?[AppString.carboGoal] ?? 0}"),
                 Text("${userdata?[AppString.protGoal] ?? 0}"),
@@ -201,6 +178,7 @@ class _ProfileViewState extends State<ProfileView> {
     ));
   }
 
+  // BMI 영역 카드
   // Widget bmiCard() {
   //   return Card.outlined(
   //     child: Padding(
@@ -227,6 +205,7 @@ class _ProfileViewState extends State<ProfileView> {
   //   );
   // }
 
+  // BMI 게이지
   // Widget bmiGauge() {
   //   return SfLinearGauge(
   //     minimum: 15,
@@ -298,11 +277,13 @@ class _ProfileViewState extends State<ProfileView> {
       child: Card.outlined(
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(title, style: const TextStyle(fontSize: 17)),
-            const Icon(Icons.keyboard_arrow_right_rounded)
-          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 17)),
+              const Icon(Icons.keyboard_arrow_right_rounded)
+            ],
+          ),
         ),
       ),
     );

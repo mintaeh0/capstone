@@ -1,11 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project1/core/constant/app_route_path.dart';
 import 'package:project1/presentation/viewmodel/login_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 // 로그인 페이지
 
@@ -17,15 +15,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  String? _uid;
-  bool isLoading = false;
-  GlobalKey buttonsKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final LoginViewModel loginViewModel = context.watch<LoginViewModel>();
@@ -63,66 +52,64 @@ class _LoginViewState extends State<LoginView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    StatefulBuilder(
-                        key: buttonsKey,
-                        builder: (context, setState) {
-                          return Column(
-                            children: [
-                              Visibility(
-                                  visible: isLoading,
-                                  child: const CircularProgressIndicator()),
-                              Visibility(
-                                visible: !isLoading,
-                                child: Column(
-                                  children: [
-                                    const Row(
-                                      children: [
-                                        Expanded(
-                                            child: Divider(
-                                          color: Colors.black38,
-                                        )),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          "로그인하여 시작하기",
-                                          style:
-                                              TextStyle(color: Colors.black38),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Expanded(
-                                            child: Divider(
-                                          color: Colors.black38,
-                                        )),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    GestureDetector(
-                                        onTap: () async {
-                                          // try {
-                                          _uid = await signInWithGoogle();
+                    Column(
+                      children: [
+                        loginViewModel.isLoading
+                            ? const CircularProgressIndicator()
+                            : Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Expanded(
+                                          child: Divider(
+                                        color: Colors.black38,
+                                      )),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "로그인하여 시작하기",
+                                        style: TextStyle(color: Colors.black38),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                          child: Divider(
+                                        color: Colors.black38,
+                                      )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  GestureDetector(
+                                      onTap: () async {
+                                        bool success =
+                                            await loginViewModel.signIn();
 
-                                          if (_uid != null) {
-                                            await loginViewModel
-                                                .enableAutoLogin();
-                                            await loginViewModel.setUid(_uid!);
+                                        if (!context.mounted) {
+                                          debugPrint(
+                                              "LoginView: context unmounted before navigation");
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                "Mount Error : 로그인 처리가 완료되지 않았습니다",
+                                          );
+                                          return;
+                                        }
 
-                                            if (context.mounted) {
-                                              context.go(AppRoutePath.home);
-                                            }
-                                          }
-                                          // } catch (e) {
-                                          //   Fluttertoast.showToast(msg: "$e");
-                                          // }
-                                        },
-                                        child: Image.asset(
-                                          "assets/images/google_sign_in_light.png",
-                                          width: 250,
-                                        )),
-                                  ],
-                                ),
+                                        if (success) {
+                                          context.go(AppRoutePath.home);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text('로그인에 실패했습니다')),
+                                          );
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/google_sign_in_light.png",
+                                        width: 250,
+                                      )),
+                                ],
                               ),
-                            ],
-                          );
-                        }),
+                      ],
+                    ),
                     const SizedBox(height: 50),
                   ],
                 ),
@@ -132,41 +119,5 @@ class _LoginViewState extends State<LoginView> {
         ),
       )),
     );
-  }
-
-  Future<String?> signInWithGoogle() async {
-    String? uid;
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      Fluttertoast.showToast(
-          msg: "로그인 취소됨",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM);
-      return uid;
-    }
-
-    buttonsKey.currentState!.setState(() {
-      isLoading = true;
-    });
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.idToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    uid = userCredential.user!.uid;
-
-    return uid;
   }
 }

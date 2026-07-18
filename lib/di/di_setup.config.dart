@@ -18,8 +18,8 @@ import 'package:project1/presentation/viewmodel/favorite_food_view_model.dart'
     as _i929;
 import 'package:project1/presentation/viewmodel/home_view_model.dart' as _i876;
 import 'package:project1/presentation/viewmodel/login_view_model.dart' as _i29;
-import 'package:project1/presentation/viewmodel/profile_set_view_model.dart'
-    as _i355;
+import 'package:project1/presentation/viewmodel/profile_setting_view_model.dart'
+    as _i954;
 import 'package:project1/presentation/viewmodel/profile_view_model.dart'
     as _i168;
 import 'package:project1/presentation/viewmodel/splash_view_model.dart'
@@ -43,10 +43,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i929.FavoriteFoodViewModel());
     gh.factory<_i876.HomeViewModel>(() => _i876.HomeViewModel());
     gh.factory<_i29.LoginViewModel>(() => _i29.LoginViewModel());
-    gh.factory<_i355.ProfileSettingViewModel>(
-        () => _i355.ProfileSettingViewModel());
     gh.factory<_i168.ProfileViewModel>(() => _i168.ProfileViewModel());
     gh.factory<_i977.SplashViewModel>(() => _i977.SplashViewModel());
+    gh.factory<_i954.ProfileSettingViewModel>(
+        () => _i954.ProfileSettingViewModel());
     return this;
   }
 }

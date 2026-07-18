@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/core/enum/nutrition.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:project1/presentation/viewmodel/home_view_model.dart';
 import 'package:provider/provider.dart';
@@ -181,7 +182,7 @@ class DietListCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 10, top: 20),
                 child: Text(
-                  "${mapData[AppString.carbo]}\n탄수화물",
+                  "${mapData[Nutrition.carbo.code]}\n탄수화물",
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
@@ -191,7 +192,7 @@ class DietListCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData[AppString.protein]}\n단백질",
+                    "${mapData[Nutrition.prot.code]}\n단백질",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -202,7 +203,7 @@ class DietListCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData[AppString.fat]}\n지방",
+                    "${mapData[Nutrition.fat.code]}\n지방",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -213,7 +214,7 @@ class DietListCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, bottom: 10, top: 20),
                   child: Text(
-                    "${mapData[AppString.kcal]}\n칼로리",
+                    "${mapData[Nutrition.kcal.code]}\n칼로리",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),

@@ -1,17 +1,18 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/core/enum/nutrition.dart';
 
 enum DietViewModelState { idle, loading, error }
 
 @injectable
 class DietViewModel extends ChangeNotifier {
+  // state
+  final _firestore = FirebaseFirestore.instance;
   DietViewModelState state = DietViewModelState.loading;
 
   // ===========================================
@@ -64,7 +65,6 @@ class DietViewModel extends ChangeNotifier {
   void restartListen(String userId) async {
     await _dietSubscription?.cancel();
     listenDiet(userId);
-    notifyListeners();
   }
 
   void listenDiet(String userId) {
@@ -84,10 +84,7 @@ class DietViewModel extends ChangeNotifier {
       //   return;
       // }
 
-      log("listened");
       dietData = doc.data();
-
-      log(dietData.toString());
 
       // dietViewModel.dietData!.remove("docdate"); // 필요 없는 날짜 데이터는 제외
 
@@ -101,22 +98,22 @@ class DietViewModel extends ChangeNotifier {
         dietData!.forEach((key, value) {
           if (key == MealType.breakfast.code) {
             for (var e in value) {
-              breakfastKcal += e[AppString.kcal] * e[AppString.amount];
+              breakfastKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.lunch.code) {
             for (var e in value) {
-              lunchKcal += e[AppString.kcal] * e[AppString.amount];
+              lunchKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.dinner.code) {
             for (var e in value) {
-              dinnerKcal += e[AppString.kcal] * e[AppString.amount];
+              dinnerKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
           if (key == MealType.snack.code) {
             for (var e in value) {
-              snackKcal += e[AppString.kcal] * e[AppString.amount];
+              snackKcal += e[Nutrition.kcal.code] * e[AppString.amount];
             }
           }
         });
@@ -135,10 +132,10 @@ class DietViewModel extends ChangeNotifier {
 
         dietData!.forEach((key, value) {
           for (Map ch in value) {
-            carbo += ch[AppString.carbo] * ch["amount"];
-            protein += ch[AppString.protein] * ch["amount"];
-            fat += ch[AppString.fat] * ch["amount"];
-            kcal += ch[AppString.kcal] * ch["amount"];
+            carbo += ch[Nutrition.carbo.code] * ch["amount"];
+            protein += ch[Nutrition.prot.code] * ch["amount"];
+            fat += ch[Nutrition.fat.code] * ch["amount"];
+            kcal += ch[Nutrition.kcal.code] * ch["amount"];
           }
         });
 
@@ -155,6 +152,16 @@ class DietViewModel extends ChangeNotifier {
       state = DietViewModelState.idle;
       notifyListeners();
     });
+  }
+
+  // 일일 데이터 삭제
+  Future<void> deleteCurrentDiet(String userId) async {
+    await _firestore
+        .collection(AppString.usersCollection)
+        .doc(userId)
+        .collection(AppString.dietCollection)
+        .doc(dietDateString)
+        .delete();
   }
 
   @override

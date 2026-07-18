@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:project1/core/enum/meal_type.dart';
+import 'package:project1/core/enum/nutrition.dart';
 import 'package:project1/presentation/viewmodel/diet_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../core/constant/string.dart';
@@ -196,25 +197,30 @@ class _AddDietBottomSheetViewState extends State<AddDietBottomSheetView> {
             _form.currentState!.save();
             Map<String, dynamic> foodMap = {
               AppString.foodName: _name,
-              AppString.carbo: int.tryParse(_carbo) ?? double.parse(_carbo),
-              AppString.protein: int.tryParse(_protein) ?? double.parse(_protein),
-              AppString.fat: int.tryParse(_fat) ?? double.parse(_fat),
-              AppString.kcal: int.tryParse(_kcal) ?? double.parse(_kcal),
+              Nutrition.carbo.code:
+                  int.tryParse(_carbo) ?? double.parse(_carbo),
+              Nutrition.prot.code:
+                  int.tryParse(_protein) ?? double.parse(_protein),
+              Nutrition.fat.code: int.tryParse(_fat) ?? double.parse(_fat),
+              Nutrition.kcal.code: int.tryParse(_kcal) ?? double.parse(_kcal),
               AppString.amount: int.parse(_amount),
             };
 
             if (favCheck) {
               await addFavFoodFunc({
                 AppString.foodName: foodMap[AppString.foodName],
-                AppString.carbo: foodMap[AppString.carbo],
-                AppString.protein: foodMap[AppString.protein],
-                AppString.fat: foodMap[AppString.fat],
-                AppString.kcal: foodMap[AppString.kcal],
+                Nutrition.carbo.code: foodMap[Nutrition.carbo.code],
+                Nutrition.prot.code: foodMap[Nutrition.prot.code],
+                Nutrition.fat.code: foodMap[Nutrition.fat.code],
+                Nutrition.kcal.code: foodMap[Nutrition.kcal.code],
               });
             }
 
             try {
-              await addDietFunc(dateString, widget.mealType, foodMap);
+              await addDietFunc(
+                  mealDate: dateString,
+                  mealType: widget.mealType,
+                  foodMap: foodMap);
             } catch (e) {
               Fluttertoast.showToast(msg: "$e");
             }
