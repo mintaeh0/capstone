@@ -45,12 +45,13 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // Java 8 -> 11 이상으로 업그레이드 권장
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11' // Java 버전과 일치
     }
 
     sourceSets {
@@ -79,16 +80,22 @@ android {
     }
 
     buildTypes {
+        debug {
+            // 디버그용 설정
+            signingConfig signingConfigs.debug
+            debuggable true
+            minifyEnabled false // 디버그 시 비활성화
+            shrinkResources false // 디버그 시 비활성화
+            // applicationIdSuffix ".debug"
+            resValue "string", "app_name", "O2EAT Debug"
+        }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            
             signingConfig signingConfigs.release
-
-            // useProguard true
+            debuggable false // 명시적으로 설정
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_name", "O2EAT"
         }
     }
 }

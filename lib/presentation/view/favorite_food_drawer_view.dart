@@ -176,11 +176,12 @@ class _FavoriteFoodDrawerViewState extends State<FavoriteFoodDrawerView> {
                                 });
 
                                 try {
-                                  for (Map<String, dynamic> e in foodList) {
+                                  for (Map<String, dynamic> foodMap
+                                      in foodList) {
                                     await addDietFunc(
-                                        dietViewModel.dietDateString,
-                                        widget.mealType,
-                                        e);
+                                        mealDate: dietViewModel.dietDateString,
+                                        mealType: widget.mealType,
+                                        foodMap: foodMap);
                                   }
                                 } catch (e) {
                                   Fluttertoast.showToast(msg: "$e");

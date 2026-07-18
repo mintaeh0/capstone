@@ -67,6 +67,9 @@ class LoginViewModel extends ChangeNotifier {
       // uid를 반환하지 않으면 실패
       // 사용자가 로그인 취소 포함
       if (googleUid == null) {
+        _isLoading = false;
+        notifyListeners();
+        debugPrint("here");
         return false;
       }
 
@@ -75,8 +78,11 @@ class LoginViewModel extends ChangeNotifier {
 
       // 로그인 성공
       return true;
-    } catch (e) {
+    } catch (e, s) {
       // 로그인 실패
+      debugPrint("here2");
+      debugPrint("Error : $e");
+      debugPrint("Stack Trace : $s");
       _isLoading = false;
       notifyListeners();
       return false;

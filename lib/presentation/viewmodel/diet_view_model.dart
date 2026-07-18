@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -13,6 +11,8 @@ enum DietViewModelState { idle, loading, error }
 
 @injectable
 class DietViewModel extends ChangeNotifier {
+  // state
+  final _firestore = FirebaseFirestore.instance;
   DietViewModelState state = DietViewModelState.loading;
 
   // ===========================================
@@ -65,7 +65,6 @@ class DietViewModel extends ChangeNotifier {
   void restartListen(String userId) async {
     await _dietSubscription?.cancel();
     listenDiet(userId);
-    notifyListeners();
   }
 
   void listenDiet(String userId) {
@@ -85,10 +84,7 @@ class DietViewModel extends ChangeNotifier {
       //   return;
       // }
 
-      log("listened");
       dietData = doc.data();
-
-      log(dietData.toString());
 
       // dietViewModel.dietData!.remove("docdate"); // 필요 없는 날짜 데이터는 제외
 
@@ -156,6 +152,16 @@ class DietViewModel extends ChangeNotifier {
       state = DietViewModelState.idle;
       notifyListeners();
     });
+  }
+
+  // 일일 데이터 삭제
+  Future<void> deleteCurrentDiet(String userId) async {
+    await _firestore
+        .collection(AppString.usersCollection)
+        .doc(userId)
+        .collection(AppString.dietCollection)
+        .doc(dietDateString)
+        .delete();
   }
 
   @override

@@ -217,7 +217,10 @@ class _AddDietBottomSheetViewState extends State<AddDietBottomSheetView> {
             }
 
             try {
-              await addDietFunc(dateString, widget.mealType, foodMap);
+              await addDietFunc(
+                  mealDate: dateString,
+                  mealType: widget.mealType,
+                  foodMap: foodMap);
             } catch (e) {
               Fluttertoast.showToast(msg: "$e");
             }

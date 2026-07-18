@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project1/core/constant/string.dart';
 import 'package:project1/core/enum/meal_type.dart';
-import 'uid_info_controller.dart';
+import 'package:project1/function/uid_info_controller.dart';
 
 Future<void> addDietFunc(
-    String mealDate, MealType mealType, Map<String, dynamic> foodMap) async {
+    {required String mealDate,
+    required MealType mealType,
+    required Map<String, dynamic> foodMap}) async {
   // Firebase 경로 설정
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   dynamic stor;
